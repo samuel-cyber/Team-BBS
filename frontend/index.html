@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SUWE — Built for the Market</title>
+  <style>
+    /* ── Reset & Base ── */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0a2e1a;
+      color: #f5f0e8;
+      min-height: 100vh;
+    }
+
+    /* ── Navigation ── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 60px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .nav-logo {
+      font-size: 26px;
+      font-weight: 700;
+      color: #c9a84c;
+      letter-spacing: 2px;
+    }
+
+    .nav-tagline {
+      font-size: 13px;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 1px;
+    }
+
+    /* ── Hero Section ── */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 40px 80px;
+      min-height: 85vh;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(201, 168, 76, 0.15);
+      color: #c9a84c;
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 30px;
+    }
+
+    .hero h1 {
+      font-size: 58px;
+      font-weight: 700;
+      line-height: 1.15;
+      max-width: 700px;
+      margin-bottom: 20px;
+    }
+
+    /* The gold word in the headline */
+    .hero h1 span {
+      color: #c9a84c;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: rgba(255,255,255,0.6);
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 50px;
+    }
+
+    /* ── Sign In Button ── */
+    .btn-google {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #ffffff;
+      color: #1a1a1a;
+      padding: 16px 32px;
+      border-radius: 50px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-google:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+    }
+
+    .btn-facebook {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #1877F2;
+    color: #ffffff;
+    padding: 16px 32px;
+    border-radius: 50px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+    justify-content: center;
+    min-width: 280px;
+    }
+
+    .btn-facebook:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(24,119,242,0.4);
+    }
+
+    /* Google G and Facebook F icon as SVG inline */
+    .btn-google svg {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .btn-facebook svg {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    /* ── Stats Row ── */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      padding: 40px 60px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 28px;
+      font-weight: 700;
+      color: #c9a84c;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: rgba(255,255,255,0.45);
+      margin-top: 4px;
+    }
+
+    /* ── Features Row ── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding: 60px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 30px;
+    }
+
+    .feature-icon {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+
+    .feature-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .feature-desc {
+      font-size: 14px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.6;
+    }
+
+    /* ── Loading State ── */
+    #loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10,46,26,0.95);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 16px;
+      z-index: 999;
+    }
+
+    #loading-overlay.show {
+      display: flex;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(201,168,76,0.2);
+      border-top-color: #c9a84c;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading overlay shown while Google auth processes -->
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <p style="color: rgba(255,255,255,0.6); font-size: 14px;">Connecting your account...</p>
+  </div>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-logo">SUWE</div>
+    <div class="nav-tagline">Built for the market</div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge">Now open for vendors</div>
+
+    <h1>Your market.<br/>Your money.<br/><span>Your future.</span></h1>
+
+    <p>
+      Track your business, save with your community, 
+      and connect with traders across Nigeria. 
+      All in one place built for you.
+    </p>
+
+    
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 14px;">
+
+    <!-- Google Sign In -->
+    <button class="btn-google" id="google-signin-btn">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:22px;height:22px;">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+    </button>
+
+    <!-- Facebook Sign In -->
+    <button class="btn-facebook" id="facebook-signin-btn">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:22px;height:22px;">
+        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="#1877F2"/>
+        </svg>
+        Continue with Facebook
+    </button>
+
+    <p style="font-size: 13px; color: rgba(255,255,255,0.3); margin-top: 6px;">
+        Free to join. No hidden charges.
+    </p>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-item">
+      <div class="stat-number">40M+</div>
+      <div class="stat-label">Informal traders in Nigeria</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">₦0</div>
+      <div class="stat-label">Cost to join SUWE</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">3</div>
+      <div class="stat-label">Tools in one platform</div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="feature-card">
+      <div class="feature-icon">🧠</div>
+      <div class="feature-title">AI Business Tracker</div>
+      <div class="feature-desc">Log your sales and let AI calculate your real profit, predict market prices, and tell you exactly what to restock.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔄</div>
+      <div class="feature-title">Trusted Ajo System</div>
+      <div class="feature-desc">Join savings groups matched by real business performance. Every naira protected by Interswitch.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🤝</div>
+      <div class="feature-title">Trade Community</div>
+      <div class="feature-desc">Connect with vendors for bulk buying, price coordination, and supplier recommendations.</div>
+    </div>
+  </section>
+
+  <script type="module">
+    // Import only what this page needs from our shared file
+    import { signInWithGoogle, getCurrentUser, getVendorProfile } 
+      from '/frontend/js/supabase.js';
+
+    // Check if someone is already logged in when the page loads
+    // If they are, skip the landing page entirely
+    async function checkExistingSession() {
+      const user = await getCurrentUser();
+
+      if (user) {
+        // They are already logged in — check if profile is complete
+        const profile = await getVendorProfile(user.id);
+
+        if (profile) {
+          // Full profile exists — go straight to dashboard
+          window.location.href = '/frontend/pages/dashboard.html';
+        } else {
+          // Logged in but no profile — go to onboarding
+          window.location.href = '/frontend/pages/onboarding.html';
+        }
+      }
+      // If no user — do nothing, let them see the landing page normally
+    }
+
+    // Run the session check immediately when page loads
+    checkExistingSession();
+
+    // Handle the Google sign in button click
+    document.getElementById('google-signin-btn').addEventListener('click', async () => {
+      // Show the loading spinner while Google processes
+      document.getElementById('loading-overlay').classList.add('show');
+
+      const result = await signInWithGoogle();
+
+      if (!result.success) {
+        // Hide spinner and show error if something went wrong
+        document.getElementById('loading-overlay').classList.remove('show');
+        alert('Sign in failed. Please try again.');
+      }
+      // If successful, Google redirects automatically — no code needed here
+    });
+
+
+    // Handle Facebook sign in button click
+    // Works identically to Google — just calls a different function
+    document.getElementById('facebook-signin-btn').addEventListener('click', async () => {
+    document.getElementById('loading-overlay').classList.add('show');
+
+    const result = await signInWithFacebook();
+
+    if (!result.success) {
+        document.getElementById('loading-overlay').classList.remove('show');
+        alert('Sign in failed. Please try again.');
+    }
+    // If successful Facebook redirects automatically just like Google
+    });
+  </script>
+
+</body>
+</html>
