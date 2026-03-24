@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SUWE — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green-deep:   #0a2e1a;
+      --green-mid:    #134d2c;
+      --green-light:  #1a6637;
+      --gold:         #c9a84c;
+      --gold-soft:    #e8c96a;
+      --cream:        #f5f0e8;
+      --surface:      #ffffff;
+      --surface-2:    #f7f8f5;
+      --surface-3:    #eef0eb;
+      --text-primary: #111a14;
+      --text-mid:     #3d5244;
+      --text-soft:    #7a9485;
+      --border:       #dde5df;
+      --red:          #e05c4b;
+      --blue:         #3b7dd8;
+      --radius:       14px;
+      --radius-sm:    8px;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--surface-2);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 220px;
+      height: 100vh;
+      background: var(--green-deep);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 0;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      color: var(--gold);
+      letter-spacing: 2px;
+      padding: 0 24px 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .sidebar-logo span {
+      display: block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.3);
+      font-weight: 400;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .nav-section {
+      padding: 20px 14px 6px;
+    }
+
+    .nav-label {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      padding: 0 10px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      color: rgba(255,255,255,0.55);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-bottom: 2px;
+    }
+
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+    .nav-item.active { background: rgba(201,168,76,0.15); color: var(--gold); }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 14px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .user-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--green-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .user-name { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.8); }
+    .user-market { font-size: 11px; color: rgba(255,255,255,0.3); }
+
+    /* ── MAIN ── */
+    .main {
+      margin-left: 220px;
+      padding: 32px 36px;
+      min-height: 100vh;
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 30px;
+    }
+
+    .topbar-greeting h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .topbar-greeting p {
+      font-size: 13px;
+      color: var(--text-soft);
+      margin-top: 2px;
+    }
+
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+
+    .notif-btn {
+      width: 38px; height: 38px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; position: relative;
+    }
+
+    .notif-dot {
+      position: absolute; top: 7px; right: 7px;
+      width: 7px; height: 7px;
+      background: var(--red); border-radius: 50%;
+      border: 1.5px solid var(--surface);
+    }
+
+    /* ── LOG SALE BUTTON (PRIMARY CTA) ── */
+    .btn-log-sale {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--green-deep);
+      color: var(--gold);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-log-sale:hover {
+      background: var(--green-light);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(10,46,26,0.2);
+    }
+
+    .btn-log-sale .plus { font-size: 18px; line-height: 1; }
+
+    /* ── STATS ROW ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+
+    .stat-card.gold::before  { background: var(--gold); }
+    .stat-card.green::before { background: var(--green-light); }
+    .stat-card.red::before   { background: var(--red); }
+    .stat-card.blue::before  { background: var(--blue); }
+
+    .stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-soft);
+      margin-bottom: 10px;
+    }
+
+    .stat-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .stat-value .currency { font-size: 16px; vertical-align: super; margin-right: 2px; }
+
+    .stat-change {
+      font-size: 12px;
+      margin-top: 8px;
+      display: flex; align-items: center; gap: 4px;
+    }
+
+    .stat-change.up   { color: #1a8a4a; }
+    .stat-change.down { color: var(--red); }
+    .stat-change.neutral { color: var(--text-soft); }
+
+    /* ── CONTENT GRID ── */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+    }
+
+    .left-col { display: flex; flex-direction: column; gap: 20px; }
+    .right-col { display: flex; flex-direction: column; gap: 20px; }
+
+    /* ── SECTION CARDS ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .card-title .badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .badge-gold  { background: rgba(201,168,76,0.12); color: var(--gold); }
+    .badge-green { background: rgba(26,102,55,0.1); color: var(--green-light); }
+    .badge-red   { background: rgba(224,92,75,0.1); color: var(--red); }
+
+    .card-action {
+      font-size: 12px;
+      color: var(--text-soft);
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      transition: all 0.15s;
+    }
+    .card-action:hover { color: var(--green-deep); border-color: var(--green-deep); }
+
+    /* ── SALES CHART ── */
+    .chart-area { padding: 20px 22px; }
+
+    .chart-tabs {
+      display: flex; gap: 4px;
+      margin-bottom: 20px;
+    }
+
+    .chart-tab {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid transparent;
+      color: var(--text-soft);
+      transition: all 0.15s;
+    }
+
+    .chart-tab.active {
+      background: var(--green-deep);
+      color: var(--gold);
+    }
+
+    .chart-tab:hover:not(.active) {
+      border-color: var(--border);
+      color: var(--text-primary);
+    }
+
+    /* Simple bar chart */
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 120px;
+      padding-bottom: 24px;
+      position: relative;
+    }
+
+    .bar-chart::after {
+      content: '';
+      position: absolute;
+      bottom: 24px; left: 0; right: 0;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .bar {
+      width: 100%;
+      border-radius: 4px 4px 0 0;
+      transition: all 0.4s cubic-bezier(.34,1.56,.64,1);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .bar.profit { background: var(--green-light); }
+    .bar.revenue { background: rgba(26,102,55,0.15); }
+    .bar.today { background: var(--gold); }
+
+    .bar:hover { filter: brightness(1.1); }
+
+    .bar-label {
+      font-size: 10px;
+      color: var(--text-soft);
+      position: absolute;
+      bottom: -20px;
+      white-space: nowrap;
+    }
+
+    /* ── RESTOCK ── */
+    .restock-list { padding: 6px 0; }
+
+    .restock-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 22px;
+      border-bottom: 1px solid var(--surface-3);
+      transition: background 0.15s;
+      cursor: pointer;
+    }
+
+    .restock-item:last-child { border-bottom: none; }
+    .restock-item:hover { background: var(--surface-2); }
+
+    .restock-icon {
+      width: 36px; height: 36px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .restock-icon.urgent   { background: rgba(224,92,75,0.1); }
+    .restock-icon.medium   { background: rgba(201,168,76,0.1); }
+    .restock-icon.low      { background: rgba(26,102,55,0.08); }
+
+    .restock-info { flex: 1; }
+    .restock-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .restock-detail { font-size: 12px; color: var(--text-soft); margin-top: 2px; }
+
+    .restock-urgency {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+
+    .urgency-urgent { background: rgba(224,92,75,0.1); color: var(--red); }
+    .urgency-medium { background: rgba(201,168,76,0.12); color: #a07820; }
+    .urgency-low    { background: rgba(26,102,55,0.08); color: var(--green-light); }
+
+    /* ── AJO CARD ── */
+    .ajo-body { padding: 20px 22px; }
+
+    .ajo-group-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .ajo-meta {
+      font-size: 12px;
+      color: var(--text-soft);
+      margin-bottom: 18px;
+    }
+
+    .ajo-progress-label {
+      display: flex; justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .ajo-progress-label .amount { font-weight: 600; color: var(--text-primary); }
+
+    .progress-track {
+      height: 8px;
+      background: var(--surface-3);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green-light), var(--gold-soft));
+      border-radius: 4px;
+      width: 62%;
+      transition: width 0.6s ease;
+    }
+
+    .ajo-members {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .member-stack {
+      display: flex;
+    }
+
+    .member-dot {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      border: 2px solid var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 600; color: white;
+      margin-left: -6px;
+    }
+
+    .member-dot:first-child { margin-left: 0; }
+
+    .ajo-members-label { font-size: 12px; color: var(--text-soft); }
+
+    .ajo-next-due {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+    }
+
+    .due-label { font-size: 11px; color: var(--text-soft); margin-bottom: 2px; }
+    .due-date  { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+
+    .btn-pay {
+      background: var(--green-deep);
+      color: var(--gold);
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-pay:hover { background: var(--green-light); }
+
+    /* ── COMMUNITY FEED ── */
+    .feed-list { padding: 6px 0; }
+
+    .feed-item {
+      display: flex; gap: 12px;
+      padding: 14px 22px;
+      border-bottom: 1px solid var(--surface-3);
+      transition: background 0.15s;
+      cursor: pointer;
+    }
+    .feed-item:last-child { border-bottom: none; }
+    .feed-item:hover { background: var(--surface-2); }
+
+    .feed-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; color: white;
+      flex-shrink: 0;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .feed-content { flex: 1; }
+
+    .feed-meta {
+      display: flex; align-items: center; gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .feed-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .feed-market { font-size: 11px; color: var(--text-soft); }
+    .feed-time { font-size: 11px; color: var(--text-soft); margin-left: auto; }
+
+    .feed-text { font-size: 13px; color: var(--text-mid); line-height: 1.5; }
+
+    .feed-tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    /* ── LOG SALE MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(10,46,26,0.5);
+      z-index: 200;
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 32px;
+      width: 440px;
+      max-width: 94vw;
+      animation: modalIn 0.25s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    @keyframes modalIn {
+      from { transform: scale(0.92) translateY(10px); opacity: 0; }
+      to   { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .modal-sub {
+      font-size: 13px;
+      color: var(--text-soft);
+      margin-bottom: 24px;
+    }
+
+    .form-group { margin-bottom: 18px; }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-mid);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+      display: block;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--surface);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .form-input:focus, .form-select:focus { border-color: var(--green-light); }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    .profit-preview {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .profit-preview-label { font-size: 12px; color: var(--text-soft); }
+    .profit-preview-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--green-light);
+    }
+
+    .modal-actions { display: flex; gap: 10px; }
+
+    .btn-cancel {
+      flex: 1;
+      padding: 13px;
+      border: 1.5px solid var(--border);
+      border-radius: 50px;
+      background: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-mid);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-cancel:hover { border-color: var(--text-mid); }
+
+    .btn-confirm {
+      flex: 2;
+      padding: 13px;
+      border: none;
+      border-radius: 50px;
+      background: var(--green-deep);
+      color: var(--gold);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-confirm:hover { background: var(--green-light); transform: translateY(-1px); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1100px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .content-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 20px 16px; }
+    }
+
+    /* ── ANIMATIONS ── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeUp 0.4s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-up:nth-child(1) { animation-delay: 0.05s; }
+    .fade-up:nth-child(2) { animation-delay: 0.1s; }
+    .fade-up:nth-child(3) { animation-delay: 0.15s; }
+    .fade-up:nth-child(4) { animation-delay: 0.2s; }
+  </style>
+</head>
+<body>
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">SUWE<span>Built for the market</span></div>
+
+    <div class="nav-section">
+      <div class="nav-label">Main</div>
+      <div class="nav-item active"><span class="icon">⊞</span> Dashboard</div>
+      <div class="nav-item"><span class="icon">📊</span> Sales</div>
+      <div class="nav-item"><span class="icon">📦</span> Inventory</div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Community</div>
+      <div class="nav-item"><span class="icon">🔄</span> My Ajo</div>
+      <div class="nav-item"><span class="icon">🤝</span> Traders</div>
+      <div class="nav-item"><span class="icon">📢</span> Feed</div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Account</div>
+      <div class="nav-item"><span class="icon">⚙️</span> Settings</div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar">AM</div>
+        <div>
+          <div class="user-name">Adaeze M.</div>
+          <div class="user-market">Balogun Market</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-greeting">
+        <h2>Good morning, Adaeze 👋</h2>
+        <p>Tuesday, 24 March 2026 · Balogun Market</p>
+      </div>
+      <div class="topbar-right">
+        <div class="notif-btn">🔔<div class="notif-dot"></div></div>
+        <button class="btn-log-sale" id="open-modal">
+          <span class="plus">+</span> Log a Sale
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card gold fade-up">
+        <div class="stat-label">Today's Revenue</div>
+        <div class="stat-value"><span class="currency">₦</span>18,400</div>
+        <div class="stat-change up">↑ 12% vs yesterday</div>
+      </div>
+      <div class="stat-card green fade-up">
+        <div class="stat-label">Today's Profit</div>
+        <div class="stat-value"><span class="currency">₦</span>6,230</div>
+        <div class="stat-change up">↑ 8% vs yesterday</div>
+      </div>
+      <div class="stat-card blue fade-up">
+        <div class="stat-label">Week Revenue</div>
+        <div class="stat-value"><span class="currency">₦</span>92,100</div>
+        <div class="stat-change neutral">→ On track</div>
+      </div>
+      <div class="stat-card red fade-up">
+        <div class="stat-label">Items Low Stock</div>
+        <div class="stat-value">4</div>
+        <div class="stat-change down">↓ Restock needed</div>
+      </div>
+    </div>
+
+    <!-- Content Grid -->
+    <div class="content-grid">
+
+      <!-- LEFT COLUMN -->
+      <div class="left-col">
+
+        <!-- Sales Chart -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              Sales Overview
+              <span class="badge badge-green">This Week</span>
+            </div>
+            <div class="card-action">Export</div>
+          </div>
+          <div class="chart-area">
+            <div class="chart-tabs">
+              <div class="chart-tab active">This Week</div>
+              <div class="chart-tab">This Month</div>
+              <div class="chart-tab">3 Months</div>
+            </div>
+            <div class="bar-chart" id="bar-chart">
+              <!-- Bars injected by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Restock Suggestions -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              🧠 AI Restock Suggestions
+              <span class="badge badge-red">4 Urgent</span>
+            </div>
+            <div class="card-action">See all</div>
+          </div>
+          <div class="restock-list">
+            <div class="restock-item">
+              <div class="restock-icon urgent">🌶️</div>
+              <div class="restock-info">
+                <div class="restock-name">Tatashe (Red Bell Pepper)</div>
+                <div class="restock-detail">3 bags left · Sells ~8 bags/day · Market price ↑ this week</div>
+              </div>
+              <span class="restock-urgency urgency-urgent">Urgent</span>
+            </div>
+            <div class="restock-item">
+              <div class="restock-icon urgent">🧅</div>
+              <div class="restock-info">
+                <div class="restock-name">Onions (50kg bag)</div>
+                <div class="restock-detail">1 bag left · Best supplier: Alhaji Musa, Oyingbo</div>
+              </div>
+              <span class="restock-urgency urgency-urgent">Urgent</span>
+            </div>
+            <div class="restock-item">
+              <div class="restock-icon medium">🍅</div>
+              <div class="restock-info">
+                <div class="restock-name">Roma Tomatoes</div>
+                <div class="restock-detail">7 crates left · Predicts 5-day runway · Buy by Thu</div>
+              </div>
+              <span class="restock-urgency urgency-medium">This Week</span>
+            </div>
+            <div class="restock-item">
+              <div class="restock-icon low">🥬</div>
+              <div class="restock-info">
+                <div class="restock-name">Ugu Leaves</div>
+                <div class="restock-detail">12 bundles · Weekend demand spike expected</div>
+              </div>
+              <span class="restock-urgency urgency-low">Monitor</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Community Feed -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              🤝 Trade Community
+              <span class="badge badge-gold">3 New</span>
+            </div>
+            <div class="card-action">Post</div>
+          </div>
+          <div class="feed-list">
+            <div class="feed-item">
+              <div class="feed-avatar" style="background:#c9a84c; color:#0a2e1a;">F</div>
+              <div class="feed-content">
+                <div class="feed-meta">
+                  <span class="feed-name">Fatima Bello</span>
+                  <span class="feed-market">· Mile 12</span>
+                  <span class="feed-time">2h ago</span>
+                </div>
+                <div class="feed-text">Anyone buying tomatoes bulk this week? I have a supplier offering ₦12,000 per crate if we do 20+ crates together.</div>
+                <span class="feed-tag badge-green" style="background:rgba(26,102,55,0.08); color:var(--green-light);">Bulk Buy</span>
+              </div>
+            </div>
+            <div class="feed-item">
+              <div class="feed-avatar" style="background:#3b7dd8;">C</div>
+              <div class="feed-content">
+                <div class="feed-meta">
+                  <span class="feed-name">Chidi Okonkwo</span>
+                  <span class="feed-market">· Oshodi</span>
+                  <span class="feed-time">5h ago</span>
+                </div>
+                <div class="feed-text">Pepper prices at Ketu went up 30% since Monday. Anyone else seeing this? Moving my buying to Mile 12 this week.</div>
+                <span class="feed-tag" style="background:rgba(224,92,75,0.1); color:var(--red);">Price Alert</span>
+              </div>
+            </div>
+            <div class="feed-item">
+              <div class="feed-avatar" style="background:#5a4a8a;">N</div>
+              <div class="feed-content">
+                <div class="feed-meta">
+                  <span class="feed-name">Ngozi Eze</span>
+                  <span class="feed-market">· Tejuosho</span>
+                  <span class="feed-time">1d ago</span>
+                </div>
+                <div class="feed-text">New Ajo group forming for fabric traders. ₦10,000/month contribution. Looking for 10 serious traders. DM me.</div>
+                <span class="feed-tag badge-gold" style="background:rgba(201,168,76,0.12); color:#a07820;">Ajo Group</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /left-col -->
+
+      <!-- RIGHT COLUMN -->
+      <div class="right-col">
+
+        <!-- Ajo Status -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              🔄 Ajo Savings Group
+            </div>
+            <div class="card-action">Details</div>
+          </div>
+          <div class="ajo-body">
+            <div class="ajo-group-name">Balogun Strong Women</div>
+            <div class="ajo-meta">Rotating savings · ₦15,000/month · 8 members</div>
+
+            <div class="ajo-progress-label">
+              <span style="color:var(--text-soft); font-size:12px">Cycle progress</span>
+              <span class="amount">₦74,400 / ₦120,000</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill"></div>
+            </div>
+
+            <div class="ajo-members">
+              <div class="member-stack">
+                <div class="member-dot" style="background:#c9a84c; color:#0a2e1a;">A</div>
+                <div class="member-dot" style="background:#3b7dd8;">F</div>
+                <div class="member-dot" style="background:#1a6637;">C</div>
+                <div class="member-dot" style="background:#e05c4b;">N</div>
+                <div class="member-dot" style="background:#5a4a8a;">+4</div>
+              </div>
+              <span class="ajo-members-label">8 active members · All up to date</span>
+            </div>
+
+            <div class="ajo-next-due">
+              <div>
+                <div class="due-label">Next contribution</div>
+                <div class="due-date">April 1, 2026 · ₦15,000</div>
+              </div>
+              <button class="btn-pay">Pay Early</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Quick Actions</div>
+          </div>
+          <div style="padding: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <button onclick="document.getElementById('open-modal').click()" style="padding:14px 10px; border:1.5px solid var(--border); border-radius:var(--radius-sm); background:var(--surface); cursor:pointer; text-align:center; font-family:'DM Sans',sans-serif; transition:all 0.15s;" onmouseover="this.style.borderColor='var(--green-deep)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:20px; margin-bottom:6px;">💰</div>
+              <div style="font-size:12px; font-weight:600; color:var(--text-primary)">Log Sale</div>
+            </button>
+            <button style="padding:14px 10px; border:1.5px solid var(--border); border-radius:var(--radius-sm); background:var(--surface); cursor:pointer; text-align:center; font-family:'DM Sans',sans-serif; transition:all 0.15s;" onmouseover="this.style.borderColor='var(--green-deep)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:20px; margin-bottom:6px;">📦</div>
+              <div style="font-size:12px; font-weight:600; color:var(--text-primary)">Update Stock</div>
+            </button>
+            <button style="padding:14px 10px; border:1.5px solid var(--border); border-radius:var(--radius-sm); background:var(--surface); cursor:pointer; text-align:center; font-family:'DM Sans',sans-serif; transition:all 0.15s;" onmouseover="this.style.borderColor='var(--green-deep)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:20px; margin-bottom:6px;">🔄</div>
+              <div style="font-size:12px; font-weight:600; color:var(--text-primary)">Pay Ajo</div>
+            </button>
+            <button style="padding:14px 10px; border:1.5px solid var(--border); border-radius:var(--radius-sm); background:var(--surface); cursor:pointer; text-align:center; font-family:'DM Sans',sans-serif; transition:all 0.15s;" onmouseover="this.style.borderColor='var(--green-deep)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:20px; margin-bottom:6px;">📢</div>
+              <div style="font-size:12px; font-weight:600; color:var(--text-primary)">Post to Feed</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Today's summary -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Today's Sales Log</div>
+            <div class="card-action">View all</div>
+          </div>
+          <div style="padding: 6px 0;">
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 22px; border-bottom:1px solid var(--surface-3);">
+              <div>
+                <div style="font-size:13px; font-weight:600; color:var(--text-primary)">Tomatoes (3 crates)</div>
+                <div style="font-size:11px; color:var(--text-soft); margin-top:2px">9:14 AM</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:13px; font-weight:700; color:var(--green-light)">+₦6,000</div>
+                <div style="font-size:11px; color:var(--text-soft)">₦1,800 profit</div>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 22px; border-bottom:1px solid var(--surface-3);">
+              <div>
+                <div style="font-size:13px; font-weight:600; color:var(--text-primary)">Pepper (2 bags)</div>
+                <div style="font-size:11px; color:var(--text-soft); margin-top:2px">11:02 AM</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:13px; font-weight:700; color:var(--green-light)">+₦8,400</div>
+                <div style="font-size:11px; color:var(--text-soft)">₦2,900 profit</div>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 22px;">
+              <div>
+                <div style="font-size:13px; font-weight:600; color:var(--text-primary)">Onions (mixed)</div>
+                <div style="font-size:11px; color:var(--text-soft); margin-top:2px">1:45 PM</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:13px; font-weight:700; color:var(--green-light)">+₦4,000</div>
+                <div style="font-size:11px; color:var(--text-soft)">₦1,530 profit</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /right-col -->
+    </div><!-- /content-grid -->
+
+  </main><!-- /main -->
+
+  <!-- ── LOG SALE MODAL ── -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-title">Log a Sale</div>
+      <div class="modal-sub">Enter what you sold and SUWE calculates your real profit.</div>
+
+      <div class="form-group">
+        <label class="form-label">Item Name</label>
+        <input class="form-input" type="text" placeholder="e.g. Tomatoes, Onions, Pepper…" id="item-name"/>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Selling Price (₦)</label>
+          <input class="form-input" type="number" placeholder="0" id="sell-price" oninput="calcProfit()"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cost Price (₦)</label>
+          <input class="form-input" type="number" placeholder="0" id="cost-price" oninput="calcProfit()"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Quantity</label>
+          <input class="form-input" type="number" placeholder="1" id="quantity" value="1" oninput="calcProfit()"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Unit</label>
+          <select class="form-select" id="unit">
+            <option>bags</option>
+            <option>crates</option>
+            <option>bundles</option>
+            <option>pieces</option>
+            <option>kg</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="profit-preview">
+        <div>
+          <div class="profit-preview-label">Estimated Profit</div>
+          <div style="font-size:11px; color:var(--text-soft); margin-top:2px" id="profit-breakdown">Fill in prices above</div>
+        </div>
+        <div class="profit-preview-value" id="profit-value">₦—</div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" id="close-modal">Cancel</button>
+        <button class="btn-confirm" id="confirm-sale">Save Sale ✓</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Bar chart ──
+    const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const revenue = [61000, 74000, 55000, 82000, 92100, 0, 0];
+    const profit  = [18000, 22000, 16000, 27000, 28400, 0, 0];
+    const today   = 4; // Thursday index
+    const maxVal  = Math.max(...revenue);
+
+    const chart = document.getElementById('bar-chart');
+    days.forEach((day, i) => {
+      if (revenue[i] === 0) {
+        const col = document.createElement('div');
+        col.className = 'bar-col';
+        col.innerHTML = `<div style="flex:1"></div><div style="height:1px;width:100%;background:var(--border)"></div><div style="font-size:10px;color:var(--text-soft);margin-top:6px">${day}</div>`;
+        chart.appendChild(col);
+        return;
+      }
+      const revH  = Math.round((revenue[i] / maxVal) * 90);
+      const profH = Math.round((profit[i]  / maxVal) * 90);
+      const isToday = i === today;
+
+      const col = document.createElement('div');
+      col.className = 'bar-col';
+      col.style.position = 'relative';
+      col.innerHTML = `
+        <div class="bar ${isToday ? 'today' : 'revenue'}" style="height:${revH}px; position:relative; width:100%">
+          <div class="bar ${isToday ? 'today' : 'profit'}" style="height:${profH}px; width:100%; position:absolute; bottom:0; opacity:${isToday ? 1 : 0.6}"></div>
+          <span class="bar-label">${day}</span>
+        </div>
+      `;
+      chart.appendChild(col);
+    });
+
+    // Chart tab switching (visual only)
+    document.querySelectorAll('.chart-tab').forEach(t => {
+      t.addEventListener('click', () => {
+        document.querySelectorAll('.chart-tab').forEach(x => x.classList.remove('active'));
+        t.classList.add('active');
+      });
+    });
+
+    // ── Modal ──
+    const overlay = document.getElementById('modal-overlay');
+    document.getElementById('open-modal').addEventListener('click', () => overlay.classList.add('open'));
+    document.getElementById('close-modal').addEventListener('click', () => overlay.classList.remove('open'));
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+
+    function calcProfit() {
+      const sell  = parseFloat(document.getElementById('sell-price').value)  || 0;
+      const cost  = parseFloat(document.getElementById('cost-price').value)   || 0;
+      const qty   = parseFloat(document.getElementById('quantity').value)     || 1;
+      const unit  = document.getElementById('unit').value;
+      const profit = (sell - cost) * qty;
+      const margin = sell > 0 ? Math.round((profit / (sell * qty)) * 100) : 0;
+
+      if (sell > 0 && cost > 0) {
+        document.getElementById('profit-value').textContent = `₦${profit.toLocaleString()}`;
+        document.getElementById('profit-value').style.color = profit >= 0 ? 'var(--green-light)' : 'var(--red)';
+        document.getElementById('profit-breakdown').textContent = `${qty} ${unit} · ${margin}% margin`;
+      } else {
+        document.getElementById('profit-value').textContent = '₦—';
+        document.getElementById('profit-breakdown').textContent = 'Fill in prices above';
+      }
+    }
+
+    document.getElementById('confirm-sale').addEventListener('click', () => {
+      const name = document.getElementById('item-name').value.trim();
+      if (!name) { document.getElementById('item-name').focus(); return; }
+      overlay.classList.remove('open');
+      // TODO: call supabase to save sale
+      alert(`Sale logged! ✓\n\nSUWE will update your profit dashboard.`);
+    });
+  </script>
+
+</body>
+</html>
