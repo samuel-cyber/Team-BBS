@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SUWE — Complete Your Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green-dark:   #0b3d20;
+      --green-mid:    #145a32;
+      --green-bright: #1a7a3f;
+      --gold:         #d4a843;
+      --gold-light:   #f0c96a;
+      --cream:        #f5f0e8;
+      --text-muted:   rgba(245,240,232,0.55);
+      --text-dim:     rgba(245,240,232,0.35);
+      --card-border:  rgba(255,255,255,0.09);
+      --card-bg:      rgba(255,255,255,0.045);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--green-dark);
+      color: var(--cream);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    .container {
+      position: relative;
+      width: 100%;
+      max-width: 560px;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    /* ── Logo ── */
+    .logo {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .logo-tile {
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .logo-tile .s {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px; font-weight: 900;
+      color: var(--green-dark);
+    }
+    .logo-tile .coin {
+      position: absolute;
+      bottom: -5px; right: -5px;
+      width: 18px; height: 18px;
+      background: var(--green-bright);
+      border-radius: 50%;
+      border: 2px solid var(--green-dark);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px;
+    }
+    .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px; font-weight: 700;
+      color: var(--cream);
+    }
+
+    /* ── Progress bar ── */
+    .progress-wrap {
+      margin-bottom: 28px;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .progress-track {
+      height: 4px;
+      background: var(--card-border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: 2px;
+      transition: width 0.5s ease;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 40px;
+    }
+
+    .card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 6px;
+    }
+    .card-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    /* ── Steps ── */
+    .step { display: none; }
+    .step.active { display: block; animation: fadeUp 0.3s ease both; }
+
+    /* ── Form elements ── */
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 7px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 13px 16px;
+      font-size: 15px;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--cream);
+      outline: none;
+      transition: border-color 0.2s;
+      appearance: none;
+    }
+    .form-group select option { background: var(--green-mid); color: var(--cream); }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--gold); }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: var(--text-dim); }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .field-note {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    /* Category checkboxes */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .cat-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      font-size: 13px;
+      color: var(--text-muted);
+      user-select: none;
+    }
+    .cat-option input[type="checkbox"] { display: none; }
+    .cat-option.checked {
+      border-color: var(--gold);
+      background: rgba(212,168,67,0.1);
+      color: var(--gold-light);
+    }
+
+    /* ── Buttons ── */
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 28px;
+    }
+    .btn-back {
+      flex: 0 0 auto;
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 14px 22px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .btn-back:hover { border-color: var(--gold); color: var(--cream); }
+
+    .btn-next {
+      flex: 1;
+      background: var(--gold);
+      color: var(--green-dark);
+      border: none;
+      padding: 14px;
+      border-radius: 50px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-next:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(212,168,67,0.35);
+    }
+    .btn-next:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* ── Error box ── */
+    .error-box {
+      background: rgba(226,75,74,0.12);
+      border: 1px solid rgba(226,75,74,0.3);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #f09595;
+      margin-bottom: 18px;
+      display: none;
+    }
+    .error-box.show { display: block; }
+
+    /* ── Success state ── */
+    .success-wrap {
+      text-align: center;
+      padding: 20px 0;
+    }
+    .success-icon {
+      font-size: 52px;
+      margin-bottom: 20px;
+    }
+    .success-wrap h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+    .success-wrap p {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    /* ── Loading overlay ── */
+    #loading {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(7,28,15,0.9);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+    #loading.show { display: flex; }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid rgba(212,168,67,0.2);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <div id="loading">
+    <div class="spinner"></div>
+    <p style="color:var(--text-muted);font-size:14px;">Saving your profile...</p>
+  </div>
+
+  <div class="container">
+
+    <!-- Logo -->
+    <div class="logo">
+      <div class="logo-tile">
+        <span class="s">S</span>
+        <div class="coin">₦</div>
+      </div>
+      <span class="logo-text">UWE</span>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="step-label">Step 1 of 3</span>
+        <span id="step-pct">33%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill" style="width:33%"></div>
+      </div>
+    </div>
+
+    <!-- Card -->
+    <div class="card">
+      <div class="error-box" id="error-box"></div>
+
+      <!-- ── STEP 1: Contact Info ── -->
+      <div class="step active" id="step-1">
+        <h2>Let's set up your profile</h2>
+        <p class="card-sub">
+          Tell us a bit about yourself. This helps SUWE personalise
+          your business insights and match you with the right ajo groups.
+        </p>
+
+        <div class="form-group">
+          <label>Full name</label>
+          <input type="text" id="full-name" placeholder="Amaka Okonkwo"/>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Phone number</label>
+            <input type="tel" id="phone" placeholder="08012345678"/>
+          </div>
+          <div class="form-group">
+            <label>State</label>
+            <select id="state">
+              <option value="">Select state</option>
+              <option>Lagos</option><option>Abuja (FCT)</option>
+              <option>Kano</option><option>Rivers</option>
+              <option>Oyo</option><option>Anambra</option>
+              <option>Delta</option><option>Enugu</option>
+              <option>Kaduna</option><option>Imo</option>
+              <option>Ogun</option><option>Osun</option>
+              <option>Edo</option><option>Kwara</option>
+              <option>Cross River</option><option>Ondo</option>
+              <option>Ekiti</option><option>Benue</option>
+              <option>Plateau</option><option>Kogi</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Market / Business location</label>
+          <input type="text" id="market-location" placeholder="e.g. Oshodi Market, Lagos"/>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-next" id="next-1">Continue →</button>
+        </div>
+      </div>
+
+      <!-- ── STEP 2: Business Info ── -->
+      <div class="step" id="step-2">
+        <h2>About your business</h2>
+        <p class="card-sub">
+          What do you sell? Select all categories that apply.
+          This helps the AI give you accurate market price predictions.
+        </p>
+
+        <div class="form-group">
+          <label>What do you sell?</label>
+          <div class="category-grid" id="category-grid">
+            <div class="cat-option" data-value="Food & Provisions">🍅 Food & Provisions</div>
+            <div class="cat-option" data-value="Clothing & Fabric">👗 Clothing & Fabric</div>
+            <div class="cat-option" data-value="Electronics">📱 Electronics</div>
+            <div class="cat-option" data-value="Building Materials">🧱 Building Materials</div>
+            <div class="cat-option" data-value="Cosmetics & Beauty">💄 Cosmetics</div>
+            <div class="cat-option" data-value="Household Items">🏠 Household Items</div>
+            <div class="cat-option" data-value="Spare Parts">🔧 Spare Parts</div>
+            <div class="cat-option" data-value="Farm Produce">🌽 Farm Produce</div>
+            <div class="cat-option" data-value="Other">📦 Other</div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top:20px;">
+          <label>How long have you been trading?</label>
+          <select id="trading-years">
+            <option value="">Select</option>
+            <option value="Less than 1 year">Less than 1 year</option>
+            <option value="1–3 years">1–3 years</option>
+            <option value="3–5 years">3–5 years</option>
+            <option value="5–10 years">5–10 years</option>
+            <option value="Over 10 years">Over 10 years</option>
+          </select>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-back" id="back-2">← Back</button>
+          <button class="btn-next" id="next-2">Continue →</button>
+        </div>
+      </div>
+
+      <!-- ── STEP 3: BVN Verification ── -->
+      <div class="step" id="step-3">
+        <h2>Identity verification</h2>
+        <p class="card-sub">
+          Your BVN (Bank Verification Number) is required to
+          participate in SUWE's ajo savings system. It is used
+          only to verify your identity through Interswitch —
+          we never store your full BVN or share it with anyone.
+        </p>
+
+        <div class="form-group">
+          <label>Bank Verification Number (BVN)</label>
+          <input
+            type="text"
+            id="bvn"
+            placeholder="11-digit BVN"
+            maxlength="11"
+            inputmode="numeric"
+          />
+          <div class="field-note">
+            Your BVN is an 11-digit number. Dial *565*0# on any
+            Nigerian network to find yours. Verification is powered
+            by Interswitch and takes a few seconds.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Referral code <span style="color:var(--text-dim)">(optional)</span></label>
+          <input type="text" id="referral" placeholder="Enter code if you have one"/>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-back" id="back-3">← Back</button>
+          <button class="btn-next" id="finish-btn">Complete setup →</button>
+        </div>
+      </div>
+
+      <!-- ── SUCCESS ── -->
+      <div class="step" id="step-success">
+        <div class="success-wrap">
+          <div class="success-icon">🎉</div>
+          <h2>You're all set!</h2>
+          <p>
+            Welcome to SUWE. Your vendor profile has been saved.
+            Your Business Credit Score journey starts now —
+            the more you track, the stronger your score grows.
+          </p>
+          <button class="btn-next" id="go-dashboard" style="max-width:280px;margin:0 auto;display:block;">
+            Go to my dashboard →
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const SUPABASE_URL      = 'YOUR_SUPABASE_URL_HERE';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ── Helpers ──────────────────────────────────────
+    const $ = id => document.getElementById(id);
+    const showError = msg => {
+      $('error-box').textContent = msg;
+      $('error-box').classList.add('show');
+    };
+    const hideError = () => $('error-box').classList.remove('show');
+    const showLoading = () => $('loading').classList.add('show');
+    const hideLoading = () => $('loading').classList.remove('show');
+
+    // ── Step tracking ────────────────────────────────
+    let currentStep = 1;
+    const TOTAL_STEPS = 3;
+
+    function goToStep(n) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      $('step-' + (n === 'success' ? 'success' : n)).classList.add('active');
+
+      if (n !== 'success') {
+        currentStep = n;
+        const pct = Math.round((n / TOTAL_STEPS) * 100);
+        $('step-label').textContent = `Step ${n} of ${TOTAL_STEPS}`;
+        $('step-pct').textContent = pct + '%';
+        $('progress-fill').style.width = pct + '%';
+      } else {
+        $('step-label').textContent = 'All done!';
+        $('step-pct').textContent = '100%';
+        $('progress-fill').style.width = '100%';
+      }
+
+      hideError();
+    }
+
+    // ── Category checkbox logic ───────────────────────
+    const selectedCategories = new Set();
+
+    document.querySelectorAll('.cat-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        const val = opt.dataset.value;
+        if (selectedCategories.has(val)) {
+          selectedCategories.delete(val);
+          opt.classList.remove('checked');
+        } else {
+          selectedCategories.add(val);
+          opt.classList.add('checked');
+        }
+      });
+    });
+
+    // ── Gate: check session on page load ─────────────
+    // Checks if user is logged in and redirects only if profile is complete.
+    // If not logged in, we keep them on onboarding so they can complete it
+    // after authentication completes (or manual login).
+    async function checkAndPrefill() {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+      if (authError) {
+        console.warn('Supabase auth check error:', authError.message);
+      }
+
+      if (!user) {
+        // Not logged in yet — stay on onboarding and allow user to continue
+        console.warn('No user in session; staying on onboarding page.');
+        return;
+      }
+
+      // They are logged in — check if profile already complete
+      const { data: profile, error: profileError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError) {
+        console.warn('Profile lookup error:', profileError.message);
+      }
+
+      if (profile && profile.phone) {
+        // Profile is already complete — skip onboarding
+        window.location.href = '/frontend/pages/dashboard.html';
+        return;
+      }
+
+      // Pre-fill whatever Supabase already knows
+      if (user.user_metadata?.full_name) {
+        $('full-name').value = user.user_metadata.full_name;
+      }
+      if (user.email) {
+        window._userEmail = user.email;
+      }
+      window._userId = user.id;
+    }
+
+    checkAndPrefill();
+
+    // ── STEP 1 → STEP 2 ──────────────────────────────
+    $('next-1').addEventListener('click', (event) => {
+      event.preventDefault();
+      hideError();
+      console.log('next-1 clicked');
+
+      const name     = $('full-name').value.trim();
+      const phoneRaw = $('phone').value.trim();
+      const state    = $('state').value;
+      const location = $('market-location').value.trim();
+
+      // Normalise phone formats: "08012345678", "2348012345678", "+2348012345678"
+      let normalizedPhone = phoneRaw.replace(/[^0-9+]/g, '');
+      if (normalizedPhone.startsWith('+234')) {
+        normalizedPhone = '0' + normalizedPhone.slice(4);
+      } else if (normalizedPhone.startsWith('234')) {
+        normalizedPhone = '0' + normalizedPhone.slice(3);
+      }
+      // Convert any 11-digit number starting with 0 to pure 10-digit format.
+      normalizedPhone = normalizedPhone.replace(/\D/g, '');
+      if (normalizedPhone.startsWith('0') && normalizedPhone.length === 11) {
+        normalizedPhone = normalizedPhone.slice(1);
+      }
+      if (normalizedPhone.startsWith('0') && normalizedPhone.length === 10) {
+        // OK
+      } else if (normalizedPhone.length === 10 && !normalizedPhone.startsWith('0')) {
+        // allow 10-digit local form e.g. 8012345678
+        normalizedPhone = '0' + normalizedPhone;
+      }
+
+      console.log({ name, phoneRaw, normalizedPhone, state, location });
+
+      if (!name || !normalizedPhone || !state || !location) {
+        showError('Please complete all fields before continuing.');
+        return;
+      }
+
+      if (!/^0[0-9]{9}$/.test(normalizedPhone)) {
+        showError('Please enter a valid 10-digit Nigerian phone number (e.g. 08012345678 or +2348012345678).');
+        return;
+      }
+
+      // Save normalized value back to the input so the final profile uses correct format
+      $('phone').value = normalizedPhone;
+
+      goToStep(2);
+    });
+
+    // ── STEP 2 → STEP 3 ──────────────────────────────
+    $('next-2').addEventListener('click', (event) => {
+      event.preventDefault();
+      hideError();
+      console.log('next-2 clicked, selectedCategories:', Array.from(selectedCategories));
+
+      if (selectedCategories.size === 0) {
+        // Avoid hard-blocking if category selection fails due to UI issue.
+        if (!confirm('You have not selected a product category. Continue anyway?')) {
+          showError('Please select at least one product category to get tailored recommendations.');
+          return;
+        }
+      }
+
+      if (!$('trading-years').value) {
+        showError('Please tell us how long you have been trading.');
+        return;
+      }
+      goToStep(3);
+    });
+
+    // ── Back buttons ──────────────────────────────────
+    $('back-2').addEventListener('click', () => goToStep(1));
+    $('back-3').addEventListener('click', () => goToStep(2));
+
+    // ── STEP 3 → Save everything to Supabase ─────────
+    $('finish-btn').addEventListener('click', async () => {
+      const bvn = $('bvn').value.trim();
+
+      if (!bvn || bvn.length !== 11 || !/^\d+$/.test(bvn)) {
+        showError('Please enter a valid 11-digit BVN.');
+        return;
+      }
+
+      showLoading();
+
+      try {
+        // Collect all the form data from every step
+        const profileData = {
+          id:                  window._userId,
+          email:               window._userEmail || '',
+          full_name:           $('full-name').value.trim(),
+          phone:               $('phone').value.trim(),
+          market_location:     $('market-location').value.trim() + ', ' + $('state').value,
+          product_categories:  Array.from(selectedCategories).join(', '),
+          identity_verified:   false,
+          // We store only that BVN was submitted — not the BVN itself
+          // Actual verification happens via Interswitch on Day 3
+          bvn_submitted:       true
+        };
+
+        // Save to Supabase users table
+        // upsert prevents duplicates — if this user already has a row
+        // it updates it, otherwise it creates one
+        const { error } = await supabase
+          .from('users')
+          .upsert(profileData, { onConflict: 'id' });
+
+        hideLoading();
+
+        if (error) {
+          showError('Something went wrong saving your profile. Please try again.');
+          console.error('Supabase upsert error:', error);
+          return;
+        }
+
+        // All good — show success state
+        goToStep('success');
+
+      } catch (err) {
+        hideLoading();
+        showError('An unexpected error occurred. Please try again.');
+        console.error(err);
+      }
+    });
+
+    // ── Go to dashboard from success screen ──────────
+    $('go-dashboard').addEventListener('click', () => {
+      window.location.href = '/frontend/pages/dashboard.html';
+    });
+
+  </script>
+</body>
+</html> 
