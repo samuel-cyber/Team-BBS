@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SUWE — My Ajo</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green-deep:  #0a2e1a;
+      --green-mid:   #134d2c;
+      --green-light: #1a6637;
+      --gold:        #c9a84c;
+      --gold-soft:   #e8c96a;
+      --gold-pale:   #fdf6e3;
+      --cream:       #f5f0e8;
+      --surface:     #ffffff;
+      --surface-2:   #f7f8f5;
+      --surface-3:   #eef0eb;
+      --text-primary:#111a14;
+      --text-mid:    #3d5244;
+      --text-soft:   #7a9485;
+      --border:      #dde5df;
+      --red:         #e05c4b;
+      --red-pale:    #fdf1ef;
+      --blue:        #3b7dd8;
+      --radius:      16px;
+      --radius-sm:   10px;
+      --radius-xs:   6px;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--surface-2);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR (same as dashboard) ── */
+    .sidebar {
+      position: fixed; top:0; left:0;
+      width: 220px; height: 100vh;
+      background: var(--green-deep);
+      display: flex; flex-direction: column;
+      padding: 28px 0; z-index: 100;
+    }
+    .sidebar-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; color: var(--gold);
+      letter-spacing: 2px;
+      padding: 0 24px 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .sidebar-logo span {
+      display: block; font-family: 'DM Sans', sans-serif;
+      font-size: 10px; letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.3); font-weight: 400;
+      text-transform: uppercase; margin-top: 2px;
+    }
+    .nav-section { padding: 20px 14px 6px; }
+    .nav-label {
+      font-size: 10px; letter-spacing: 1.5px;
+      text-transform: uppercase; color: rgba(255,255,255,0.25);
+      padding: 0 10px; margin-bottom: 6px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: var(--radius-sm);
+      color: rgba(255,255,255,0.55); font-size: 14px;
+      font-weight: 500; cursor: pointer;
+      transition: all 0.15s; margin-bottom: 2px;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+    .nav-item.active { background: rgba(201,168,76,0.15); color: var(--gold); }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+    .sidebar-footer {
+      margin-top: auto; padding: 16px 14px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .user-pill {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.05);
+    }
+    .user-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--green-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; color: var(--gold); flex-shrink: 0;
+    }
+    .user-name  { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.8); }
+    .user-market{ font-size: 11px; color: rgba(255,255,255,0.3); }
+
+    /* ── MAIN ── */
+    .main { margin-left: 220px; padding: 32px 36px; min-height: 100vh; }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px; font-weight: 800;
+      color: var(--text-primary); margin-bottom: 4px;
+    }
+    .page-header p { font-size: 13px; color: var(--text-soft); }
+
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+
+    .btn-outline {
+      padding: 10px 18px; border: 1.5px solid var(--border);
+      border-radius: 50px; background: var(--surface);
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      font-weight: 600; color: var(--text-mid); cursor: pointer;
+      transition: all 0.15s; display: flex; align-items: center; gap: 6px;
+    }
+    .btn-outline:hover { border-color: var(--green-deep); color: var(--green-deep); }
+
+    .btn-primary {
+      padding: 10px 20px; border: none;
+      border-radius: 50px; background: var(--green-deep);
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      font-weight: 600; color: var(--gold); cursor: pointer;
+      transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+    }
+    .btn-primary:hover { background: var(--green-light); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(10,46,26,0.2); }
+
+    /* ── GROUP TABS ── */
+    .group-tabs {
+      display: flex; gap: 8px; margin-bottom: 24px;
+      overflow-x: auto; padding-bottom: 4px;
+    }
+    .group-tab {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 16px; border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: var(--surface); cursor: pointer;
+      white-space: nowrap; transition: all 0.15s;
+      font-size: 13px; font-weight: 500; color: var(--text-mid);
+    }
+    .group-tab:hover { border-color: var(--green-deep); color: var(--green-deep); }
+    .group-tab.active {
+      background: var(--green-deep); border-color: var(--green-deep);
+      color: var(--gold);
+    }
+    .group-tab .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+    }
+    .dot-green  { background: #4caf7d; }
+    .dot-gold   { background: var(--gold); }
+    .dot-add    { background: var(--border); font-size: 14px; width: auto; height: auto; }
+
+    /* ── MAIN GRID ── */
+    .ajo-grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 20px;
+    }
+    .left-col  { display: flex; flex-direction: column; gap: 20px; }
+    .right-col { display: flex; flex-direction: column; gap: 20px; }
+
+    /* ── CARD BASE ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 22px; border-bottom: 1px solid var(--border);
+    }
+    .card-title {
+      font-size: 14px; font-weight: 600; color: var(--text-primary);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card-action {
+      font-size: 12px; color: var(--text-soft); cursor: pointer;
+      padding: 5px 10px; border-radius: 6px;
+      border: 1px solid var(--border); transition: all 0.15s;
+    }
+    .card-action:hover { color: var(--green-deep); border-color: var(--green-deep); }
+
+    /* ── HERO GROUP CARD ── */
+    .group-hero {
+      background: var(--green-deep);
+      border-radius: var(--radius);
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 0;
+    }
+    .group-hero::before {
+      content: '';
+      position: absolute; top: -40px; right: -40px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .group-hero::after {
+      content: '';
+      position: absolute; bottom: -60px; left: 30%;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(26,102,55,0.3) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .hero-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 22px; position: relative; z-index: 1;
+    }
+    .hero-badge {
+      background: rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.3);
+      color: var(--gold); font-size: 11px;
+      letter-spacing: 1px; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 20px;
+      margin-bottom: 10px; display: inline-block;
+    }
+    .hero-group-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px; font-weight: 800;
+      color: #ffffff; margin-bottom: 4px;
+    }
+    .hero-meta { font-size: 13px; color: rgba(255,255,255,0.45); }
+
+    .hero-status {
+      background: rgba(76,175,125,0.2);
+      border: 1px solid rgba(76,175,125,0.4);
+      color: #4caf7d; font-size: 11px; font-weight: 600;
+      padding: 5px 12px; border-radius: 20px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .status-pulse {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #4caf7d;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    /* Circular progress */
+    .hero-body {
+      display: grid; grid-template-columns: auto 1fr;
+      gap: 28px; align-items: center;
+      position: relative; z-index: 1;
+    }
+
+    .ring-wrap { position: relative; width: 110px; height: 110px; flex-shrink: 0; }
+    .ring-wrap svg { transform: rotate(-90deg); }
+    .ring-bg    { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 8; }
+    .ring-fill  {
+      fill: none; stroke: var(--gold); stroke-width: 8;
+      stroke-linecap: round;
+      stroke-dasharray: 283;
+      stroke-dashoffset: 108; /* 62% filled: 283*(1-0.62)=107.5 */
+      transition: stroke-dashoffset 1s ease;
+    }
+    .ring-label {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      color: white;
+    }
+    .ring-pct   { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; line-height:1; }
+    .ring-sub   { font-size:10px; color: rgba(255,255,255,0.45); margin-top:2px; }
+
+    .hero-stats { display: flex; flex-direction: column; gap: 14px; }
+    .hero-stat-row { display: flex; gap: 24px; }
+    .hero-stat { }
+    .hstat-label { font-size:10px; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.35); margin-bottom:3px; }
+    .hstat-value { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:#fff; }
+    .hstat-value .sm { font-size: 13px; vertical-align: super; }
+
+    .hero-progress-bar {
+      height: 6px; background: rgba(255,255,255,0.1);
+      border-radius: 3px; overflow: hidden; margin-top: 6px;
+    }
+    .hero-progress-fill {
+      height: 100%; width: 62%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-soft));
+      border-radius: 3px;
+    }
+
+    .next-due-strip {
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px; margin-top: 20px;
+      position: relative; z-index: 1;
+    }
+    .due-info .due-label { font-size:11px; color:rgba(255,255,255,0.35); margin-bottom:2px; }
+    .due-info .due-val   { font-size:14px; font-weight:600; color:#fff; }
+    .due-countdown { text-align:right; }
+    .due-days       { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--gold); line-height:1; }
+    .due-days-label { font-size:10px; color:rgba(255,255,255,0.35); }
+
+    .btn-pay-now {
+      padding: 10px 22px; border: none;
+      border-radius: 50px;
+      background: var(--gold); color: var(--green-deep);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-pay-now:hover { background: var(--gold-soft); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(201,168,76,0.35); }
+
+    /* ── MEMBER PAYMENT STATUS ── */
+    .members-grid { padding: 6px 0; }
+
+    .member-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 13px 22px;
+      border-bottom: 1px solid var(--surface-3);
+      transition: background 0.15s;
+    }
+    .member-row:last-child { border-bottom: none; }
+    .member-row:hover { background: var(--surface-2); }
+
+    .m-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; color: white;
+      flex-shrink: 0; font-family: 'Playfair Display', serif;
+    }
+    .m-info { flex: 1; }
+    .m-name   { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .m-market { font-size: 11px; color: var(--text-soft); margin-top: 1px; }
+
+    .m-turn {
+      font-size: 11px; font-weight: 600;
+      padding: 3px 9px; border-radius: 20px; margin-right: 4px;
+    }
+    .turn-current { background: rgba(201,168,76,0.15); color: #a07820; }
+    .turn-next    { background: rgba(59,125,216,0.1); color: var(--blue); }
+    .turn-done    { background: var(--surface-3); color: var(--text-soft); }
+
+    .m-status {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 12px; font-weight: 600;
+    }
+    .m-status .dot { width: 7px; height: 7px; border-radius: 50%; }
+    .paid   { color: #1a8a4a; }
+    .paid   .dot { background: #1a8a4a; }
+    .unpaid { color: var(--red); }
+    .unpaid .dot { background: var(--red); }
+    .pending{ color: var(--gold); }
+    .pending .dot{ background: var(--gold); }
+
+    /* ── PAYOUT HISTORY ── */
+    .history-list { padding: 6px 0; }
+
+    .history-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 22px;
+      border-bottom: 1px solid var(--surface-3);
+    }
+    .history-item:last-child { border-bottom: none; }
+
+    .h-icon {
+      width: 38px; height: 38px; border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .h-icon.received  { background: rgba(26,102,55,0.1); }
+    .h-icon.paid-out  { background: rgba(201,168,76,0.1); }
+    .h-icon.contrib   { background: rgba(59,125,216,0.08); }
+
+    .h-info { flex: 1; }
+    .h-title  { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .h-detail { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+
+    .h-amount { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; }
+    .h-amount.in  { color: var(--green-light); }
+    .h-amount.out { color: var(--text-mid); }
+
+    /* ── SECOND GROUP (smaller card) ── */
+    .mini-group {
+      border-radius: var(--radius);
+      padding: 20px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      position: relative; overflow: hidden;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .mini-group:hover { border-color: var(--green-light); box-shadow: 0 4px 20px rgba(10,46,26,0.08); }
+    .mini-group-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px; font-weight: 700;
+      color: var(--text-primary); margin-bottom: 3px;
+    }
+    .mini-group-meta { font-size: 12px; color: var(--text-soft); margin-bottom: 14px; }
+    .mini-progress-track {
+      height: 5px; background: var(--surface-3);
+      border-radius: 3px; overflow: hidden; margin-bottom: 10px;
+    }
+    .mini-progress-fill {
+      height: 100%; border-radius: 3px;
+      background: linear-gradient(90deg, var(--green-light), var(--gold-soft));
+    }
+    .mini-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px;
+    }
+    .mini-amount { font-weight: 600; color: var(--text-primary); }
+    .mini-due    { color: var(--text-soft); }
+
+    /* ── JOIN GROUPS ── */
+    .discover-grid {
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .discover-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 22px;
+      border-bottom: 1px solid var(--surface-3);
+      transition: background 0.15s; cursor: pointer;
+    }
+    .discover-item:last-child { border-bottom: none; }
+    .discover-item:hover { background: var(--surface-2); }
+
+    .d-icon {
+      width: 40px; height: 40px; border-radius: var(--radius-sm);
+      background: var(--surface-3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .d-info { flex: 1; }
+    .d-name   { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .d-detail { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+
+    .d-tags { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
+    .d-tag {
+      font-size: 10px; padding: 2px 7px;
+      border-radius: 20px; font-weight: 500;
+    }
+    .tag-open    { background: rgba(26,102,55,0.08); color: var(--green-light); }
+    .tag-food    { background: rgba(201,168,76,0.12); color: #a07820; }
+    .tag-fabric  { background: rgba(59,125,216,0.1); color: var(--blue); }
+    .tag-general { background: var(--surface-3); color: var(--text-soft); }
+    .tag-full    { background: rgba(224,92,75,0.1); color: var(--red); }
+
+    .btn-join {
+      padding: 7px 14px; border: 1.5px solid var(--green-deep);
+      border-radius: 20px; background: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; font-weight: 600;
+      color: var(--green-deep); cursor: pointer;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-join:hover { background: var(--green-deep); color: var(--gold); }
+    .btn-join.full { border-color: var(--border); color: var(--text-soft); cursor: not-allowed; }
+
+    /* ── CREATE GROUP MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(10,46,26,0.55); z-index: 200;
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--surface); border-radius: 20px;
+      padding: 32px; width: 480px; max-width: 94vw;
+      max-height: 90vh; overflow-y: auto;
+      animation: modalIn 0.25s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes modalIn {
+      from { transform: scale(0.92) translateY(10px); opacity: 0; }
+      to   { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .modal-header { margin-bottom: 24px; }
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; font-weight: 800; margin-bottom: 5px;
+    }
+    .modal-sub { font-size: 13px; color: var(--text-soft); }
+
+    .form-group  { margin-bottom: 18px; }
+    .form-label  {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+      text-transform: uppercase; color: var(--text-mid);
+      display: block; margin-bottom: 7px;
+    }
+    .form-input, .form-select {
+      width: 100%; padding: 12px 14px;
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      color: var(--text-primary); background: var(--surface);
+      outline: none; transition: border-color 0.15s;
+    }
+    .form-input:focus, .form-select:focus { border-color: var(--green-light); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    .interswitch-note {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--gold-pale); border: 1px solid rgba(201,168,76,0.3);
+      border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 22px;
+      font-size: 12px; color: #7a5c10; line-height: 1.5;
+    }
+    .interswitch-note .lock { font-size: 18px; flex-shrink: 0; }
+
+    .modal-actions { display: flex; gap: 10px; }
+    .btn-cancel {
+      flex: 1; padding: 13px;
+      border: 1.5px solid var(--border); border-radius: 50px;
+      background: none; font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 600; color: var(--text-mid);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .btn-cancel:hover { border-color: var(--text-mid); }
+    .btn-confirm {
+      flex: 2; padding: 13px; border: none; border-radius: 50px;
+      background: var(--green-deep); color: var(--gold);
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      font-weight: 600; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-confirm:hover { background: var(--green-light); transform: translateY(-1px); }
+
+    /* ── FADE UP ── */
+    .fade-up {
+      opacity: 0; transform: translateY(16px);
+      animation: fadeUp 0.4s ease forwards;
+    }
+    @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+    .fade-up:nth-child(1) { animation-delay: 0.05s; }
+    .fade-up:nth-child(2) { animation-delay: 0.1s; }
+    .fade-up:nth-child(3) { animation-delay: 0.15s; }
+    .fade-up:nth-child(4) { animation-delay: 0.2s; }
+
+    @media (max-width: 1100px) { .ajo-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 768px)  { .sidebar { display: none; } .main { margin-left: 0; padding: 20px 16px; } }
+  </style>
+</head>
+<body>
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">SUWE<span>Built for the market</span></div>
+    <div class="nav-section">
+      <div class="nav-label">Main</div>
+      <div class="nav-item"><span class="icon">⊞</span> Dashboard</div>
+      <div class="nav-item"><span class="icon">📊</span> Sales</div>
+      <div class="nav-item"><span class="icon">📦</span> Inventory</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Community</div>
+      <div class="nav-item active"><span class="icon">🔄</span> My Ajo</div>
+      <div class="nav-item"><span class="icon">🤝</span> Traders</div>
+      <div class="nav-item"><span class="icon">📢</span> Feed</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Account</div>
+      <div class="nav-item"><span class="icon">⚙️</span> Settings</div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar">AM</div>
+        <div>
+          <div class="user-name">Adaeze M.</div>
+          <div class="user-market">Balogun Market</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div>
+        <h1>My Ajo Groups</h1>
+        <p>You are active in 2 groups · Total saved this year: ₦89,400</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-outline" id="open-join">🔍 Find a Group</button>
+        <button class="btn-primary" id="open-create">＋ Create Group</button>
+      </div>
+    </div>
+
+    <!-- Group Tabs -->
+    <div class="group-tabs">
+      <div class="group-tab active" data-group="1">
+        <span class="dot dot-gold"></span> Balogun Strong Women
+      </div>
+      <div class="group-tab" data-group="2">
+        <span class="dot dot-green"></span> Oshodi Traders Ajo
+      </div>
+      <div class="group-tab" style="color:var(--text-soft); cursor:pointer; border-style:dashed;" id="open-join-tab">
+        <span style="font-size:16px; line-height:1;">＋</span> Join Group
+      </div>
+    </div>
+
+    <!-- AJO GRID -->
+    <div class="ajo-grid">
+
+      <!-- LEFT COLUMN -->
+      <div class="left-col">
+
+        <!-- Hero Group Card -->
+        <div class="group-hero fade-up" id="group-hero-card">
+          <div class="hero-top">
+            <div>
+              <div class="hero-badge" id="hero-badge">Rotating · Cycle 5 of 8</div>
+              <div class="hero-group-name" id="hero-name">Balogun Strong Women</div>
+              <div class="hero-meta" id="hero-meta">8 members · ₦15,000/month · Protected by Interswitch</div>
+            </div>
+            <div class="hero-status">
+              <div class="status-pulse"></div> Active
+            </div>
+          </div>
+
+          <div class="hero-body">
+            <div class="ring-wrap">
+              <svg width="110" height="110" viewBox="0 0 110 110">
+                <circle class="ring-bg"   cx="55" cy="55" r="45"/>
+                <circle class="ring-fill" cx="55" cy="55" r="45" id="ring-fill"/>
+              </svg>
+              <div class="ring-label">
+                <div class="ring-pct" id="ring-pct">62%</div>
+                <div class="ring-sub">funded</div>
+              </div>
+            </div>
+
+            <div class="hero-stats">
+              <div class="hero-stat-row">
+                <div class="hero-stat">
+                  <div class="hstat-label">Pot Size</div>
+                  <div class="hstat-value" id="hero-pot"><span class="sm">₦</span>120,000</div>
+                </div>
+                <div class="hero-stat">
+                  <div class="hstat-label">Collected</div>
+                  <div class="hstat-value" id="hero-collected"><span class="sm">₦</span>74,400</div>
+                </div>
+              </div>
+              <div>
+                <div class="hstat-label" style="color:rgba(255,255,255,0.35); font-size:10px; margin-bottom:6px">Cycle progress</div>
+                <div class="hero-progress-bar"><div class="hero-progress-fill" id="hero-bar"></div></div>
+              </div>
+              <div class="hero-stat-row">
+                <div class="hero-stat">
+                  <div class="hstat-label">This cycle payout</div>
+                  <div class="hstat-value" style="color:var(--gold-soft)" id="hero-payout"><span class="sm">₦</span>120,000</div>
+                </div>
+                <div class="hero-stat">
+                  <div class="hstat-label">Recipient</div>
+                  <div class="hstat-value" style="font-size:14px; margin-top:2px" id="hero-recipient">Chioma O.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="next-due-strip">
+            <div class="due-info">
+              <div class="due-label">Your next contribution</div>
+              <div class="due-val">April 1, 2026 · ₦15,000</div>
+            </div>
+            <div class="due-countdown">
+              <div class="due-days" id="days-left">7</div>
+              <div class="due-days-label">days left</div>
+            </div>
+            <button class="btn-pay-now">Pay Now via Interswitch</button>
+          </div>
+        </div>
+
+        <!-- Member Payment Status -->
+        <div class="card fade-up">
+          <div class="card-header">
+            <div class="card-title">👥 Member Payment Status
+              <span style="font-size:11px; padding:2px 8px; border-radius:20px; background:rgba(26,102,55,0.1); color:var(--green-light);">Cycle 5</span>
+            </div>
+            <div class="card-action">Message all</div>
+          </div>
+          <div class="members-grid" id="members-grid">
+            <!-- injected by JS -->
+          </div>
+        </div>
+
+      </div><!-- /left-col -->
+
+      <!-- RIGHT COLUMN -->
+      <div class="right-col">
+
+        <!-- Second active group -->
+        <div class="fade-up">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text-soft); margin-bottom:10px; font-weight:600;">Your Other Group</div>
+          <div class="mini-group" data-group="2" id="mini-group">
+            <div class="mini-group-name">Oshodi Traders Ajo</div>
+            <div class="mini-group-meta">6 members · ₦10,000/month · Cycle 3 of 6</div>
+            <div class="mini-progress-track">
+              <div class="mini-progress-fill" style="width:50%"></div>
+            </div>
+            <div class="mini-footer">
+              <span class="mini-amount">₦30,000 / ₦60,000</span>
+              <span class="mini-due">Next due: Apr 5</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payout History -->
+        <div class="card fade-up">
+          <div class="card-header">
+            <div class="card-title">🏦 Payout History</div>
+            <div class="card-action">All records</div>
+          </div>
+          <div class="history-list">
+            <div class="history-item">
+              <div class="h-icon received">💰</div>
+              <div class="h-info">
+                <div class="h-title">You received the pot</div>
+                <div class="h-detail">Balogun Strong Women · Cycle 2 · Jan 1, 2026</div>
+              </div>
+              <div class="h-amount in">+₦120,000</div>
+            </div>
+            <div class="history-item">
+              <div class="h-icon contrib">💳</div>
+              <div class="h-info">
+                <div class="h-title">Monthly contribution</div>
+                <div class="h-detail">Balogun Strong Women · Mar 1, 2026</div>
+              </div>
+              <div class="h-amount out">−₦15,000</div>
+            </div>
+            <div class="history-item">
+              <div class="h-icon contrib">💳</div>
+              <div class="h-info">
+                <div class="h-title">Monthly contribution</div>
+                <div class="h-detail">Oshodi Traders Ajo · Mar 5, 2026</div>
+              </div>
+              <div class="h-amount out">−₦10,000</div>
+            </div>
+            <div class="history-item">
+              <div class="h-icon contrib">💳</div>
+              <div class="h-info">
+                <div class="h-title">Monthly contribution</div>
+                <div class="h-detail">Balogun Strong Women · Feb 1, 2026</div>
+              </div>
+              <div class="h-amount out">−₦15,000</div>
+            </div>
+            <div class="history-item">
+              <div class="h-icon contrib">💳</div>
+              <div class="h-info">
+                <div class="h-title">Monthly contribution</div>
+                <div class="h-detail">Balogun Strong Women · Jan 1, 2026</div>
+              </div>
+              <div class="h-amount out">−₦15,000</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Groups to discover -->
+        <div class="card fade-up">
+          <div class="card-header">
+            <div class="card-title">🔍 Open Groups Near You</div>
+            <div class="card-action">Browse all</div>
+          </div>
+          <div class="discover-grid">
+            <div class="discover-item">
+              <div class="d-icon">🍅</div>
+              <div class="d-info">
+                <div class="d-name">Mile 12 Food Traders</div>
+                <div class="d-detail">₦20,000/month · 12 members · 2 spots left</div>
+                <div class="d-tags">
+                  <span class="d-tag tag-open">Open</span>
+                  <span class="d-tag tag-food">Food</span>
+                </div>
+              </div>
+              <button class="btn-join">Join</button>
+            </div>
+            <div class="discover-item">
+              <div class="d-icon">🧵</div>
+              <div class="d-info">
+                <div class="d-name">Tejuosho Fabric Savers</div>
+                <div class="d-detail">₦10,000/month · 10 members · 3 spots left</div>
+                <div class="d-tags">
+                  <span class="d-tag tag-open">Open</span>
+                  <span class="d-tag tag-fabric">Fabric</span>
+                </div>
+              </div>
+              <button class="btn-join">Join</button>
+            </div>
+            <div class="discover-item">
+              <div class="d-icon">🏪</div>
+              <div class="d-info">
+                <div class="d-name">Lagos General Market Women</div>
+                <div class="d-detail">₦5,000/month · 15 members · Full</div>
+                <div class="d-tags">
+                  <span class="d-tag tag-full">Full</span>
+                  <span class="d-tag tag-general">General</span>
+                </div>
+              </div>
+              <button class="btn-join full" disabled>Full</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /right-col -->
+    </div>
+
+  </main>
+
+  <!-- ── CREATE GROUP MODAL ── -->
+  <div class="modal-overlay" id="modal-create">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Create an Ajo Group</div>
+        <div class="modal-sub">Set up your rules. Interswitch handles all payments automatically.</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Group Name</label>
+        <input class="form-input" type="text" placeholder="e.g. Balogun Strong Women"/>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Monthly Contribution (₦)</label>
+          <input class="form-input" type="number" placeholder="10,000"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Max Members</label>
+          <input class="form-input" type="number" placeholder="8" min="3" max="20"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Payout Order</label>
+          <select class="form-select">
+            <option>Random draw</option>
+            <option>Admin decides</option>
+            <option>Rotation by join date</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contribution Day</label>
+          <select class="form-select">
+            <option>1st of month</option>
+            <option>5th of month</option>
+            <option>15th of month</option>
+            <option>Last day of month</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Who can join?</label>
+        <select class="form-select">
+          <option>Anyone on SUWE (open group)</option>
+          <option>Invite only (private group)</option>
+          <option>Same market only</option>
+        </select>
+      </div>
+
+      <div class="interswitch-note">
+        <span class="lock">🔒</span>
+        <span>All contributions are collected and distributed automatically via <strong>Interswitch</strong>. No member handles money — everything is protected and auditable.</span>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" id="close-create">Cancel</button>
+        <button class="btn-confirm">Create Group →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── JOIN / DISCOVER MODAL ── -->
+  <div class="modal-overlay" id="modal-join">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Find an Ajo Group</div>
+        <div class="modal-sub">Browse groups that match your market and budget.</div>
+      </div>
+      <div class="form-row" style="margin-bottom:14px">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Budget (₦/month)</label>
+          <select class="form-select">
+            <option>Any amount</option>
+            <option>Under ₦5,000</option>
+            <option>₦5,000–₦15,000</option>
+            <option>₦15,000–₦30,000</option>
+            <option>Over ₦30,000</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Category</label>
+          <select class="form-select">
+            <option>All categories</option>
+            <option>Food & Produce</option>
+            <option>Fabric & Fashion</option>
+            <option>Electronics</option>
+            <option>General</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Your Market</label>
+        <select class="form-select">
+          <option>Balogun Market</option>
+          <option>Mile 12</option>
+          <option>Oshodi</option>
+          <option>Tejuosho</option>
+          <option>Any market</option>
+        </select>
+      </div>
+      <div class="interswitch-note">
+        <span class="lock">🔒</span>
+        <span>All groups on SUWE use <strong>Interswitch</strong> for automatic, protected payments. Your money is never held by another person.</span>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="close-join">Cancel</button>
+        <button class="btn-confirm">Search Groups →</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Member data ──
+    const groups = {
+      1: {
+        name: 'Balogun Strong Women',
+        badge: 'Rotating · Cycle 5 of 8',
+        meta: '8 members · ₦15,000/month · Protected by Interswitch',
+        pot: '120,000', collected: '74,400', pct: 62,
+        payout: '120,000', recipient: 'Chioma O.',
+        members: [
+          { name:'Adaeze M.', market:'Balogun', color:'#c9a84c', textColor:'#0a2e1a', turn:'current', status:'paid',    amount:'₦15,000' },
+          { name:'Fatima B.', market:'Mile 12',  color:'#3b7dd8', textColor:'#fff',    turn:'next',    status:'paid',    amount:'₦15,000' },
+          { name:'Chioma O.', market:'Balogun',  color:'#1a6637', textColor:'#fff',    turn:'done',    status:'paid',    amount:'₦15,000' },
+          { name:'Ngozi E.',  market:'Tejuosho', color:'#5a4a8a', textColor:'#fff',    turn:'done',    status:'paid',    amount:'₦15,000' },
+          { name:'Amaka T.',  market:'Balogun',  color:'#d8753b', textColor:'#fff',    turn:'done',    status:'pending', amount:'Due Apr 1' },
+          { name:'Kemi A.',   market:'Oshodi',   color:'#4a8a6a', textColor:'#fff',    turn:'done',    status:'unpaid',  amount:'Overdue' },
+          { name:'Blessing U.',market:'Balogun', color:'#8a4a5a', textColor:'#fff',    turn:'done',    status:'paid',    amount:'₦15,000' },
+          { name:'Hauwa D.',  market:'Ketu',     color:'#6a7a3a', textColor:'#fff',    turn:'done',    status:'paid',    amount:'₦15,000' },
+        ]
+      },
+      2: {
+        name: 'Oshodi Traders Ajo',
+        badge: 'Rotating · Cycle 3 of 6',
+        meta: '6 members · ₦10,000/month · Protected by Interswitch',
+        pot: '60,000', collected: '30,000', pct: 50,
+        payout: '60,000', recipient: 'Emeka K.',
+        members: [
+          { name:'Adaeze M.',  market:'Balogun', color:'#c9a84c', textColor:'#0a2e1a', turn:'next',    status:'paid',    amount:'₦10,000' },
+          { name:'Emeka K.',   market:'Oshodi',  color:'#3b7dd8', textColor:'#fff',    turn:'current', status:'paid',    amount:'₦10,000' },
+          { name:'Tunde S.',   market:'Oshodi',  color:'#1a6637', textColor:'#fff',    turn:'done',    status:'paid',    amount:'₦10,000' },
+          { name:'Sade O.',    market:'Oshodi',  color:'#d8753b', textColor:'#fff',    turn:'done',    status:'pending', amount:'Due Apr 5' },
+          { name:'Bola A.',    market:'Oshodi',  color:'#4a8a6a', textColor:'#fff',    turn:'done',    status:'unpaid',  amount:'Overdue' },
+          { name:'Remi T.',    market:'Oshodi',  color:'#5a4a8a', textColor:'#fff',    turn:'done',    status:'paid',    amount:'₦10,000' },
+        ]
+      }
+    };
+
+    let activeGroup = 1;
+
+    function renderGroup(id) {
+      const g = groups[id];
+
+      document.getElementById('hero-badge').textContent     = g.badge;
+      document.getElementById('hero-name').textContent      = g.name;
+      document.getElementById('hero-meta').textContent      = g.meta;
+      document.getElementById('hero-pot').innerHTML         = `<span class="sm">₦</span>${g.pot}`;
+      document.getElementById('hero-collected').innerHTML   = `<span class="sm">₦</span>${g.collected}`;
+      document.getElementById('hero-payout').innerHTML      = `<span class="sm">₦</span>${g.payout}`;
+      document.getElementById('hero-recipient').textContent = g.recipient;
+      document.getElementById('ring-pct').textContent       = g.pct + '%';
+
+      // Ring: circumference = 2π×45 ≈ 283
+      const offset = Math.round(283 * (1 - g.pct / 100));
+      document.getElementById('ring-fill').style.strokeDashoffset = offset;
+      document.getElementById('hero-bar').style.width = g.pct + '%';
+
+      // Members
+      const grid = document.getElementById('members-grid');
+      grid.innerHTML = '';
+      g.members.forEach(m => {
+        const initials = m.name.split(' ').map(w => w[0]).join('').slice(0,2);
+        const turnLabel = m.turn === 'current' ? 'Receiving now' : m.turn === 'next' ? 'Next' : 'Waiting';
+        const turnClass = m.turn === 'current' ? 'turn-current' : m.turn === 'next' ? 'turn-next' : 'turn-done';
+        const statusClass = m.status;
+        const statusIcon  = m.status === 'paid' ? '✓ Paid' : m.status === 'pending' ? '⏳ Pending' : '✗ Overdue';
+
+        grid.innerHTML += `
+          <div class="member-row">
+            <div class="m-avatar" style="background:${m.color}; color:${m.textColor}">${initials}</div>
+            <div class="m-info">
+              <div class="m-name">${m.name}</div>
+              <div class="m-market">${m.market}</div>
+            </div>
+            <span class="m-turn ${turnClass}">${turnLabel}</span>
+            <div class="m-status ${statusClass}">
+              <div class="dot"></div>${statusIcon}
+            </div>
+          </div>`;
+      });
+    }
+
+    // Tab switching
+    document.querySelectorAll('.group-tab[data-group]').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.group-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        activeGroup = parseInt(tab.dataset.group);
+        renderGroup(activeGroup);
+      });
+    });
+
+    // Mini group click swaps to that group
+    document.getElementById('mini-group').addEventListener('click', () => {
+      document.querySelectorAll('.group-tab[data-group]').forEach(t => {
+        t.classList.toggle('active', t.dataset.group === '2');
+      });
+      activeGroup = 2;
+      renderGroup(2);
+    });
+
+    // Days left calculation
+    const due = new Date('2026-04-01');
+    const today = new Date();
+    const diff  = Math.ceil((due - today) / (1000*60*60*24));
+    document.getElementById('days-left').textContent = Math.max(diff, 0);
+
+    // Modals
+    const createModal = document.getElementById('modal-create');
+    const joinModal   = document.getElementById('modal-join');
+
+    document.getElementById('open-create').addEventListener('click', () => createModal.classList.add('open'));
+    document.getElementById('close-create').addEventListener('click', () => createModal.classList.remove('open'));
+    document.getElementById('open-join').addEventListener('click', () => joinModal.classList.add('open'));
+    document.getElementById('open-join-tab').addEventListener('click', () => joinModal.classList.add('open'));
+    document.getElementById('close-join').addEventListener('click', () => joinModal.classList.remove('open'));
+    createModal.addEventListener('click', e => { if (e.target === createModal) createModal.classList.remove('open'); });
+    joinModal.addEventListener('click',   e => { if (e.target === joinModal)   joinModal.classList.remove('open'); });
+
+    // Join buttons in discover
+    document.querySelectorAll('.btn-join:not(.full)').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        joinModal.classList.add('open');
+      });
+    });
+
+    // Initial render
+    renderGroup(1);
+  </script>
+
+</body>
+</html>
