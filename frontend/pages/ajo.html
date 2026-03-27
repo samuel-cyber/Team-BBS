@@ -7,702 +7,431 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --green-deep:  #0a2e1a;
-      --green-mid:   #134d2c;
-      --green-light: #1a6637;
-      --gold:        #c9a84c;
-      --gold-soft:   #e8c96a;
-      --gold-pale:   #fdf6e3;
-      --cream:       #f5f0e8;
-      --surface:     #ffffff;
-      --surface-2:   #f7f8f5;
-      --surface-3:   #eef0eb;
-      --text-primary:#111a14;
-      --text-mid:    #3d5244;
-      --text-soft:   #7a9485;
-      --border:      #dde5df;
-      --red:         #e05c4b;
-      --red-pale:    #fdf1ef;
-      --blue:        #3b7dd8;
-      --radius:      16px;
-      --radius-sm:   10px;
-      --radius-xs:   6px;
+      --green-deep:#0a2e1a;--green-mid:#134d2c;--green-light:#1a6637;
+      --gold:#c9a84c;--gold-soft:#e8c96a;--gold-pale:#fdf6e3;
+      --surface:#ffffff;--surface-2:#f7f8f5;--surface-3:#eef0eb;
+      --text-primary:#111a14;--text-mid:#3d5244;--text-soft:#7a9485;
+      --border:#dde5df;--red:#e05c4b;--blue:#3b7dd8;
+      --radius:16px;--radius-sm:10px;
     }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'DM Sans',sans-serif;background:var(--surface-2);color:var(--text-primary);min-height:100vh;}
+    a{color:inherit;text-decoration:none;}
 
-    * { margin:0; padding:0; box-sizing:border-box; }
+    /* SIDEBAR */
+    .sidebar{position:fixed;top:0;left:0;width:220px;height:100vh;background:var(--green-deep);display:flex;flex-direction:column;padding:28px 0;z-index:100;transition:transform 0.28s cubic-bezier(.4,0,.2,1);}
+    .sidebar-logo{font-family:'Playfair Display',serif;font-size:22px;color:var(--gold);letter-spacing:2px;padding:0 24px 28px;border-bottom:1px solid rgba(255,255,255,0.07);}
+    .sidebar-logo span{display:block;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:1.5px;color:rgba(255,255,255,0.3);font-weight:400;text-transform:uppercase;margin-top:2px;}
+    .nav-section{padding:20px 14px 6px;}
+    .nav-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.25);padding:0 10px;margin-bottom:6px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-sm);color:rgba(255,255,255,0.55);font-size:14px;font-weight:500;cursor:pointer;transition:all 0.15s;margin-bottom:2px;}
+    .nav-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.85);}
+    .nav-item.active{background:rgba(201,168,76,0.15);color:var(--gold);}
+    .nav-item .icon{font-size:16px;width:20px;text-align:center;}
+    .sidebar-footer{margin-top:auto;padding:16px 14px;border-top:1px solid rgba(255,255,255,0.07);}
+    .user-pill{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);background:rgba(255,255,255,0.05);}
+    .user-avatar{width:32px;height:32px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--gold);flex-shrink:0;}
+    .user-name{font-size:13px;font-weight:500;color:rgba(255,255,255,0.8);}
+    .user-market{font-size:11px;color:rgba(255,255,255,0.3);}
+    .sign-out-btn{width:100%;margin-top:8px;padding:8px;border-radius:var(--radius-sm);background:none;border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.35);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all 0.15s;}
+    .sign-out-btn:hover{border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.6);}
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--surface-2);
-      color: var(--text-primary);
-      min-height: 100vh;
-    }
+    /* SIDEBAR BACKDROP */
+    #sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(10,46,26,0.5);z-index:99;backdrop-filter:blur(2px);}
+    #sidebar-backdrop.show{display:block;}
 
-    /* ── SIDEBAR (same as dashboard) ── */
-    .sidebar {
-      position: fixed; top:0; left:0;
-      width: 220px; height: 100vh;
-      background: var(--green-deep);
-      display: flex; flex-direction: column;
-      padding: 28px 0; z-index: 100;
-    }
-    .sidebar-logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 22px; color: var(--gold);
-      letter-spacing: 2px;
-      padding: 0 24px 28px;
-      border-bottom: 1px solid rgba(255,255,255,0.07);
-    }
-    .sidebar-logo span {
-      display: block; font-family: 'DM Sans', sans-serif;
-      font-size: 10px; letter-spacing: 1.5px;
-      color: rgba(255,255,255,0.3); font-weight: 400;
-      text-transform: uppercase; margin-top: 2px;
-    }
-    .nav-section { padding: 20px 14px 6px; }
-    .nav-label {
-      font-size: 10px; letter-spacing: 1.5px;
-      text-transform: uppercase; color: rgba(255,255,255,0.25);
-      padding: 0 10px; margin-bottom: 6px;
-    }
-    .nav-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 14px; border-radius: var(--radius-sm);
-      color: rgba(255,255,255,0.55); font-size: 14px;
-      font-weight: 500; cursor: pointer;
-      transition: all 0.15s; margin-bottom: 2px;
-    }
-    .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
-    .nav-item.active { background: rgba(201,168,76,0.15); color: var(--gold); }
-    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
-    .sidebar-footer {
-      margin-top: auto; padding: 16px 14px;
-      border-top: 1px solid rgba(255,255,255,0.07);
-    }
-    .user-pill {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px; border-radius: var(--radius-sm);
-      background: rgba(255,255,255,0.05);
-    }
-    .user-avatar {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: var(--green-light);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 600; color: var(--gold); flex-shrink: 0;
-    }
-    .user-name  { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.8); }
-    .user-market{ font-size: 11px; color: rgba(255,255,255,0.3); }
+    /* HAMBURGER */
+    #hamburger-btn{display:none;align-items:center;justify-content:center;width:38px;height:38px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:18px;flex-shrink:0;}
 
-    /* ── MAIN ── */
-    .main { margin-left: 220px; padding: 32px 36px; min-height: 100vh; }
+    /* MAIN */
+    .main{margin-left:220px;padding:32px 36px;min-height:100vh;}
 
-    /* ── PAGE HEADER ── */
-    .page-header {
-      display: flex; align-items: flex-start; justify-content: space-between;
-      margin-bottom: 28px;
-    }
-    .page-header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 28px; font-weight: 800;
-      color: var(--text-primary); margin-bottom: 4px;
-    }
-    .page-header p { font-size: 13px; color: var(--text-soft); }
+    /* PAGE HEADER */
+    .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:12px;flex-wrap:wrap;}
+    .page-header h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:800;color:var(--text-primary);margin-bottom:4px;}
+    .page-header p{font-size:13px;color:var(--text-soft);}
+    .header-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+    .btn-outline{padding:10px 18px;border:1.5px solid var(--border);border-radius:50px;background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text-mid);cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
+    .btn-outline:hover{border-color:var(--green-deep);color:var(--green-deep);}
+    .btn-primary{padding:10px 20px;border:none;border-radius:50px;background:var(--green-deep);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--gold);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
+    .btn-primary:hover{background:var(--green-light);transform:translateY(-1px);}
+    .notif-badge{background:var(--red);color:white;font-size:10px;font-weight:700;padding:1px 5px;border-radius:10px;margin-left:2px;}
 
-    .header-actions { display: flex; gap: 10px; align-items: center; }
+    /* TABS */
+    .group-tabs{display:flex;gap:8px;margin-bottom:24px;overflow-x:auto;padding-bottom:4px;}
+    .group-tab{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:50px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;white-space:nowrap;transition:all 0.15s;font-size:13px;font-weight:500;color:var(--text-mid);}
+    .group-tab:hover{border-color:var(--green-deep);color:var(--green-deep);}
+    .group-tab.active{background:var(--green-deep);border-color:var(--green-deep);color:var(--gold);}
+    .tab-dot{width:7px;height:7px;border-radius:50%;}
+    .dot-gold{background:var(--gold);}
+    .dot-green{background:#4caf7d;}
 
-    .btn-outline {
-      padding: 10px 18px; border: 1.5px solid var(--border);
-      border-radius: 50px; background: var(--surface);
-      font-family: 'DM Sans', sans-serif; font-size: 13px;
-      font-weight: 600; color: var(--text-mid); cursor: pointer;
-      transition: all 0.15s; display: flex; align-items: center; gap: 6px;
-    }
-    .btn-outline:hover { border-color: var(--green-deep); color: var(--green-deep); }
+    /* AJO GRID */
+    .ajo-grid{display:grid;grid-template-columns:1fr 360px;gap:20px;}
+    .left-col{display:flex;flex-direction:column;gap:20px;}
+    .right-col{display:flex;flex-direction:column;gap:20px;}
 
-    .btn-primary {
-      padding: 10px 20px; border: none;
-      border-radius: 50px; background: var(--green-deep);
-      font-family: 'DM Sans', sans-serif; font-size: 13px;
-      font-weight: 600; color: var(--gold); cursor: pointer;
-      transition: all 0.2s; display: flex; align-items: center; gap: 6px;
-    }
-    .btn-primary:hover { background: var(--green-light); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(10,46,26,0.2); }
+    /* CARD */
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+    .card-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);}
+    .card-title{font-size:14px;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:8px;}
+    .card-action{font-size:12px;color:var(--text-soft);cursor:pointer;padding:5px 10px;border-radius:6px;border:1px solid var(--border);transition:all 0.15s;}
+    .card-action:hover{color:var(--green-deep);border-color:var(--green-deep);}
 
-    /* ── GROUP TABS ── */
-    .group-tabs {
-      display: flex; gap: 8px; margin-bottom: 24px;
-      overflow-x: auto; padding-bottom: 4px;
-    }
-    .group-tab {
-      display: flex; align-items: center; gap: 8px;
-      padding: 8px 16px; border-radius: 50px;
-      border: 1.5px solid var(--border);
-      background: var(--surface); cursor: pointer;
-      white-space: nowrap; transition: all 0.15s;
-      font-size: 13px; font-weight: 500; color: var(--text-mid);
-    }
-    .group-tab:hover { border-color: var(--green-deep); color: var(--green-deep); }
-    .group-tab.active {
-      background: var(--green-deep); border-color: var(--green-deep);
-      color: var(--gold);
-    }
-    .group-tab .dot {
-      width: 7px; height: 7px; border-radius: 50%;
-    }
-    .dot-green  { background: #4caf7d; }
-    .dot-gold   { background: var(--gold); }
-    .dot-add    { background: var(--border); font-size: 14px; width: auto; height: auto; }
+    /* HERO */
+    .group-hero{background:var(--green-deep);border-radius:var(--radius);padding:28px;position:relative;overflow:hidden;}
+    .group-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(201,168,76,0.12) 0%,transparent 70%);border-radius:50%;pointer-events:none;}
+    .hero-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;position:relative;z-index:1;gap:12px;}
+    .hero-badge{background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);color:var(--gold);font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:10px;display:inline-block;}
+    .hero-group-name{font-family:'Playfair Display',serif;font-size:24px;font-weight:800;color:#fff;margin-bottom:4px;}
+    .hero-meta{font-size:13px;color:rgba(255,255,255,0.45);}
+    .hero-status{background:rgba(76,175,125,0.2);border:1px solid rgba(76,175,125,0.4);color:#4caf7d;font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;display:flex;align-items:center;gap:5px;white-space:nowrap;flex-shrink:0;}
+    .status-pulse{width:6px;height:6px;border-radius:50%;background:#4caf7d;animation:blink 1.8s ease-in-out infinite;}
+    @keyframes blink{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(1.3);}}
 
-    /* ── MAIN GRID ── */
-    .ajo-grid {
-      display: grid;
-      grid-template-columns: 1fr 360px;
-      gap: 20px;
-    }
-    .left-col  { display: flex; flex-direction: column; gap: 20px; }
-    .right-col { display: flex; flex-direction: column; gap: 20px; }
+    /* RING */
+    .hero-body{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center;position:relative;z-index:1;}
+    .ring-wrap{position:relative;width:110px;height:110px;flex-shrink:0;}
+    .ring-wrap svg{transform:rotate(-90deg);}
+    .ring-bg{fill:none;stroke:rgba(255,255,255,0.08);stroke-width:8;}
+    .ring-fill{fill:none;stroke:var(--gold);stroke-width:8;stroke-linecap:round;stroke-dasharray:283;stroke-dashoffset:283;transition:stroke-dashoffset 1.2s ease;}
+    .ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;}
+    .ring-pct{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;line-height:1;}
+    .ring-sub{font-size:10px;color:rgba(255,255,255,0.45);margin-top:2px;}
+    .hero-stats{display:flex;flex-direction:column;gap:14px;}
+    .hero-stat-row{display:flex;gap:24px;flex-wrap:wrap;}
+    .hstat-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.35);margin-bottom:3px;}
+    .hstat-value{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;}
+    .hstat-value .sm{font-size:13px;vertical-align:super;}
+    .hero-progress-bar{height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;margin-top:6px;}
+    .hero-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold-soft));border-radius:3px;transition:width 1.2s ease;}
 
-    /* ── CARD BASE ── */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-    .card-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 22px; border-bottom: 1px solid var(--border);
-    }
-    .card-title {
-      font-size: 14px; font-weight: 600; color: var(--text-primary);
-      display: flex; align-items: center; gap: 8px;
-    }
-    .card-action {
-      font-size: 12px; color: var(--text-soft); cursor: pointer;
-      padding: 5px 10px; border-radius: 6px;
-      border: 1px solid var(--border); transition: all 0.15s;
-    }
-    .card-action:hover { color: var(--green-deep); border-color: var(--green-deep); }
+    /* DUE STRIP */
+    .next-due-strip{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-sm);padding:12px 16px;margin-top:20px;position:relative;z-index:1;gap:12px;flex-wrap:wrap;}
+    .due-info .due-label{font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:2px;}
+    .due-info .due-val{font-size:14px;font-weight:600;color:#fff;}
+    .due-countdown{text-align:right;}
+    .due-days{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--gold);line-height:1;}
+    .due-days-label{font-size:10px;color:rgba(255,255,255,0.35);}
+    .btn-pay-now{padding:10px 22px;border:none;border-radius:50px;background:var(--gold);color:var(--green-deep);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+    .btn-pay-now:hover{background:var(--gold-soft);transform:translateY(-1px);}
+    .btn-pay-now:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+    .paid-badge{padding:10px 22px;border:1px solid rgba(76,175,125,0.4);border-radius:50px;background:rgba(76,175,125,0.15);color:#4caf7d;font-size:13px;font-weight:600;white-space:nowrap;}
 
-    /* ── HERO GROUP CARD ── */
-    .group-hero {
-      background: var(--green-deep);
-      border-radius: var(--radius);
-      padding: 28px;
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 0;
-    }
-    .group-hero::before {
-      content: '';
-      position: absolute; top: -40px; right: -40px;
-      width: 200px; height: 200px;
-      background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
-      border-radius: 50%;
-    }
-    .group-hero::after {
-      content: '';
-      position: absolute; bottom: -60px; left: 30%;
-      width: 300px; height: 300px;
-      background: radial-gradient(circle, rgba(26,102,55,0.3) 0%, transparent 70%);
-      border-radius: 50%;
-    }
+    /* MEMBERS */
+    .member-row{display:flex;align-items:center;gap:14px;padding:13px 22px;border-bottom:1px solid var(--surface-3);transition:background 0.15s;}
+    .member-row:last-child{border-bottom:none;}
+    .member-row:hover{background:var(--surface-2);}
+    .m-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;flex-shrink:0;font-family:'Playfair Display',serif;}
+    .m-info{flex:1;min-width:0;}
+    .m-name{font-size:13px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .m-meta{font-size:11px;color:var(--text-soft);margin-top:1px;}
+    .m-turn{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+    .turn-current{background:rgba(201,168,76,0.15);color:#a07820;}
+    .turn-next{background:rgba(59,125,216,0.1);color:var(--blue);}
+    .turn-done{background:var(--surface-3);color:var(--text-soft);}
+    .m-status{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;flex-shrink:0;}
+    .m-status .sdot{width:7px;height:7px;border-radius:50%;}
+    .st-paid{color:#1a8a4a;}.st-paid .sdot{background:#1a8a4a;}
+    .st-unpaid{color:var(--red);}.st-unpaid .sdot{background:var(--red);}
+    .st-pending{color:var(--gold);}.st-pending .sdot{background:var(--gold);}
 
-    .hero-top {
-      display: flex; align-items: flex-start; justify-content: space-between;
-      margin-bottom: 22px; position: relative; z-index: 1;
-    }
-    .hero-badge {
-      background: rgba(201,168,76,0.15);
-      border: 1px solid rgba(201,168,76,0.3);
-      color: var(--gold); font-size: 11px;
-      letter-spacing: 1px; text-transform: uppercase;
-      padding: 4px 12px; border-radius: 20px;
-      margin-bottom: 10px; display: inline-block;
-    }
-    .hero-group-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 24px; font-weight: 800;
-      color: #ffffff; margin-bottom: 4px;
-    }
-    .hero-meta { font-size: 13px; color: rgba(255,255,255,0.45); }
+    /* HISTORY */
+    .history-item{display:flex;align-items:center;gap:14px;padding:14px 22px;border-bottom:1px solid var(--surface-3);}
+    .history-item:last-child{border-bottom:none;}
+    .h-icon{width:38px;height:38px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+    .h-icon.received{background:rgba(26,102,55,0.1);}
+    .h-icon.contrib{background:rgba(59,125,216,0.08);}
+    .h-info{flex:1;min-width:0;}
+    .h-title{font-size:13px;font-weight:600;color:var(--text-primary);}
+    .h-detail{font-size:11px;color:var(--text-soft);margin-top:2px;}
+    .h-amount{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;flex-shrink:0;}
+    .h-amount.in{color:var(--green-light);}
+    .h-amount.out{color:var(--text-mid);}
 
-    .hero-status {
-      background: rgba(76,175,125,0.2);
-      border: 1px solid rgba(76,175,125,0.4);
-      color: #4caf7d; font-size: 11px; font-weight: 600;
-      padding: 5px 12px; border-radius: 20px;
-      display: flex; align-items: center; gap: 5px;
-    }
-    .status-pulse {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: #4caf7d;
-      animation: pulse 1.8s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%,100% { opacity: 1; transform: scale(1); }
-      50%      { opacity: 0.5; transform: scale(1.3); }
-    }
+    /* MINI GROUP */
+    .mini-group{border-radius:var(--radius);padding:20px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;transition:all 0.2s;}
+    .mini-group:hover{border-color:var(--green-light);box-shadow:0 4px 20px rgba(10,46,26,0.08);}
+    .mini-group-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:3px;}
+    .mini-group-meta{font-size:12px;color:var(--text-soft);margin-bottom:14px;}
+    .mini-progress-track{height:5px;background:var(--surface-3);border-radius:3px;overflow:hidden;margin-bottom:10px;}
+    .mini-progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--green-light),var(--gold-soft));}
+    .mini-footer{display:flex;align-items:center;justify-content:space-between;font-size:12px;}
+    .mini-amount{font-weight:600;color:var(--text-primary);}
+    .mini-due{color:var(--text-soft);}
 
-    /* Circular progress */
-    .hero-body {
-      display: grid; grid-template-columns: auto 1fr;
-      gap: 28px; align-items: center;
-      position: relative; z-index: 1;
-    }
+    /* DISCOVER */
+    .discover-item{display:flex;align-items:center;gap:14px;padding:14px 22px;border-bottom:1px solid var(--surface-3);transition:background 0.15s;}
+    .discover-item:last-child{border-bottom:none;}
+    .discover-item:hover{background:var(--surface-2);}
+    .d-icon{width:40px;height:40px;border-radius:var(--radius-sm);background:var(--surface-3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+    .d-info{flex:1;min-width:0;}
+    .d-name{font-size:13px;font-weight:600;color:var(--text-primary);}
+    .d-detail{font-size:11px;color:var(--text-soft);margin-top:2px;}
+    .d-tags{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap;}
+    .d-tag{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;}
+    .tag-open{background:rgba(26,102,55,0.08);color:var(--green-light);}
+    .tag-full{background:rgba(224,92,75,0.1);color:var(--red);}
+    .tag-cat{background:rgba(201,168,76,0.12);color:#a07820;}
+    .btn-join{padding:7px 14px;border:1.5px solid var(--green-deep);border-radius:20px;background:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--green-deep);cursor:pointer;transition:all 0.15s;white-space:nowrap;}
+    .btn-join:hover{background:var(--green-deep);color:var(--gold);}
+    .btn-join:disabled{border-color:var(--border);color:var(--text-soft);cursor:not-allowed;background:none;}
 
-    .ring-wrap { position: relative; width: 110px; height: 110px; flex-shrink: 0; }
-    .ring-wrap svg { transform: rotate(-90deg); }
-    .ring-bg    { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 8; }
-    .ring-fill  {
-      fill: none; stroke: var(--gold); stroke-width: 8;
-      stroke-linecap: round;
-      stroke-dasharray: 283;
-      stroke-dashoffset: 108; /* 62% filled: 283*(1-0.62)=107.5 */
-      transition: stroke-dashoffset 1s ease;
-    }
-    .ring-label {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      color: white;
-    }
-    .ring-pct   { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; line-height:1; }
-    .ring-sub   { font-size:10px; color: rgba(255,255,255,0.45); margin-top:2px; }
+    /* EMPTY STATE */
+    .empty-state{text-align:center;padding:40px 24px;display:flex;flex-direction:column;align-items:center;gap:12px;}
+    .empty-icon{font-size:36px;}
+    .empty-state h4{font-size:15px;font-weight:600;color:var(--text-primary);}
+    .empty-state p{font-size:13px;color:var(--text-soft);max-width:260px;line-height:1.6;}
+    .btn-start{padding:10px 22px;background:var(--green-deep);color:var(--gold);border:none;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;margin-top:4px;}
+    .btn-start:hover{background:var(--green-light);}
 
-    .hero-stats { display: flex; flex-direction: column; gap: 14px; }
-    .hero-stat-row { display: flex; gap: 24px; }
-    .hero-stat { }
-    .hstat-label { font-size:10px; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.35); margin-bottom:3px; }
-    .hstat-value { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:#fff; }
-    .hstat-value .sm { font-size: 13px; vertical-align: super; }
+    /* MODALS */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,46,26,0.55);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:16px;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--surface);border-radius:20px;padding:32px;width:500px;max-width:100%;max-height:90vh;overflow-y:auto;animation:modalIn 0.25s cubic-bezier(.34,1.56,.64,1);}
+    @keyframes modalIn{from{transform:scale(0.92) translateY(10px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
+    .modal-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;margin-bottom:5px;}
+    .modal-sub{font-size:13px;color:var(--text-soft);margin-bottom:24px;}
+    .form-group{margin-bottom:18px;}
+    .form-label{font-size:11px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--text-mid);display:block;margin-bottom:7px;}
+    .form-input,.form-select{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text-primary);background:var(--surface);outline:none;transition:border-color 0.15s;}
+    .form-input:focus,.form-select:focus{border-color:var(--green-light);}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .form-note{background:var(--gold-pale);border:1px solid rgba(201,168,76,0.3);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:18px;font-size:12px;color:#7a5c10;line-height:1.5;display:flex;gap:10px;}
+    .modal-actions{display:flex;gap:10px;margin-top:4px;}
+    .btn-cancel{flex:1;padding:13px;border:1.5px solid var(--border);border-radius:50px;background:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--text-mid);cursor:pointer;transition:all 0.15s;}
+    .btn-cancel:hover{border-color:var(--text-mid);}
+    .btn-confirm{flex:2;padding:13px;border:none;border-radius:50px;background:var(--green-deep);color:var(--gold);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+    .btn-confirm:hover{background:var(--green-light);}
+    .btn-confirm:disabled{opacity:0.5;cursor:not-allowed;}
 
-    .hero-progress-bar {
-      height: 6px; background: rgba(255,255,255,0.1);
-      border-radius: 3px; overflow: hidden; margin-top: 6px;
-    }
-    .hero-progress-fill {
-      height: 100%; width: 62%;
-      background: linear-gradient(90deg, var(--gold), var(--gold-soft));
-      border-radius: 3px;
-    }
+    /* NOTIFICATION LIST MODAL */
+    .notif-item{display:flex;gap:12px;padding:14px 22px;border-bottom:1px solid var(--surface-3);cursor:pointer;transition:background 0.15s;}
+    .notif-item:last-child{border-bottom:none;}
+    .notif-item:hover{background:var(--surface-2);}
+    .notif-item.unread{background:rgba(201,168,76,0.04);border-left:3px solid var(--gold);}
+    .notif-icon{width:38px;height:38px;border-radius:50%;background:var(--surface-3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+    .notif-content{flex:1;min-width:0;}
+    .notif-title{font-size:13px;font-weight:600;color:var(--text-primary);}
+    .notif-body{font-size:12px;color:var(--text-soft);margin-top:2px;line-height:1.5;}
+    .notif-time{font-size:11px;color:var(--text-soft);margin-top:4px;}
+    .notif-accept-btn{margin-top:8px;padding:6px 14px;background:var(--green-deep);color:var(--gold);border:none;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
+    .notif-accept-btn:hover{background:var(--green-light);}
 
-    .next-due-strip {
-      display: flex; align-items: center; justify-content: space-between;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: var(--radius-sm);
-      padding: 12px 16px; margin-top: 20px;
-      position: relative; z-index: 1;
-    }
-    .due-info .due-label { font-size:11px; color:rgba(255,255,255,0.35); margin-bottom:2px; }
-    .due-info .due-val   { font-size:14px; font-weight:600; color:#fff; }
-    .due-countdown { text-align:right; }
-    .due-days       { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--gold); line-height:1; }
-    .due-days-label { font-size:10px; color:rgba(255,255,255,0.35); }
+    /* SANDBOX PAYMENT MODAL */
+    .sandbox-modal{background:var(--surface);border-radius:20px;padding:32px;width:440px;max-width:100%;animation:modalIn 0.25s cubic-bezier(.34,1.56,.64,1);}
+    .sandbox-header{text-align:center;margin-bottom:24px;}
+    .sandbox-logo{font-size:32px;margin-bottom:8px;}
+    .sandbox-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:800;margin-bottom:4px;}
+    .sandbox-amount{font-family:'Playfair Display',serif;font-size:32px;font-weight:800;color:var(--green-deep);margin:12px 0;}
+    .sandbox-note{background:rgba(26,102,55,0.05);border:1px solid rgba(26,102,55,0.15);border-radius:var(--radius-sm);padding:12px;font-size:11px;color:var(--text-soft);line-height:1.6;margin-bottom:20px;text-align:left;}
+    .sandbox-note strong{color:var(--text-mid);}
 
-    .btn-pay-now {
-      padding: 10px 22px; border: none;
-      border-radius: 50px;
-      background: var(--gold); color: var(--green-deep);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px; font-weight: 700;
-      cursor: pointer; transition: all 0.2s;
-    }
-    .btn-pay-now:hover { background: var(--gold-soft); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(201,168,76,0.35); }
+    /* LOADING SKELETON */
+    .skeleton{background:linear-gradient(90deg,var(--surface-3) 25%,var(--surface-2) 50%,var(--surface-3) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px;height:16px;margin-bottom:8px;}
+    @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
 
-    /* ── MEMBER PAYMENT STATUS ── */
-    .members-grid { padding: 6px 0; }
+    /* LOADER */
+    #page-loader{position:fixed;inset:0;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:16px;}
+    .loader-logo{font-family:'Playfair Display',serif;font-size:36px;color:var(--green-deep);letter-spacing:4px;}
+    .loader-bar{width:120px;height:3px;background:var(--surface-3);border-radius:2px;overflow:hidden;}
+    .loader-fill{width:0%;height:100%;background:var(--gold);border-radius:2px;animation:loadFill 1.2s ease forwards;}
+    @keyframes loadFill{to{width:100%;}}
 
-    .member-row {
-      display: flex; align-items: center; gap: 14px;
-      padding: 13px 22px;
-      border-bottom: 1px solid var(--surface-3);
-      transition: background 0.15s;
-    }
-    .member-row:last-child { border-bottom: none; }
-    .member-row:hover { background: var(--surface-2); }
+    .fade-up{opacity:0;transform:translateY(16px);animation:fadeUp 0.4s ease forwards;}
+    @keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+    .fade-up:nth-child(1){animation-delay:0.05s;}
+    .fade-up:nth-child(2){animation-delay:0.1s;}
+    .fade-up:nth-child(3){animation-delay:0.15s;}
 
-    .m-avatar {
-      width: 38px; height: 38px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 700; color: white;
-      flex-shrink: 0; font-family: 'Playfair Display', serif;
-    }
-    .m-info { flex: 1; }
-    .m-name   { font-size: 13px; font-weight: 600; color: var(--text-primary); }
-    .m-market { font-size: 11px; color: var(--text-soft); margin-top: 1px; }
+    /* BOTTOM NAV */
+    .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--green-deep);border-top:1px solid rgba(255,255,255,0.08);z-index:200;box-shadow:0 -4px 20px rgba(0,0,0,0.2);}
+    .bottom-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 4px;color:rgba(255,255,255,0.5);cursor:pointer;transition:color 0.15s;text-decoration:none;font-family:'DM Sans',sans-serif;border:none;background:none;}
+    .bottom-nav-item.active{color:var(--gold);}
+    .bottom-nav-item:hover{color:rgba(255,255,255,0.85);}
+    .bn-icon{font-size:20px;}
+    .bn-label{font-size:9px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;}
 
-    .m-turn {
-      font-size: 11px; font-weight: 600;
-      padding: 3px 9px; border-radius: 20px; margin-right: 4px;
+    /* RESPONSIVE */
+    @media(max-width:1100px){.ajo-grid{grid-template-columns:1fr;}}
+    @media(max-width:768px){
+      .sidebar{transform:translateX(-100%);z-index:300;}
+      .sidebar.open{transform:translateX(0);}
+      .main{margin-left:0;padding:16px 14px 90px;}
+      .ajo-grid{grid-template-columns:1fr;}
+      .bottom-nav{display:flex;}
+      #hamburger-btn{display:flex;}
+      .form-row{grid-template-columns:1fr;}
+      .next-due-strip{flex-direction:column;align-items:flex-start;}
+      .btn-pay-now{width:100%;}
     }
-    .turn-current { background: rgba(201,168,76,0.15); color: #a07820; }
-    .turn-next    { background: rgba(59,125,216,0.1); color: var(--blue); }
-    .turn-done    { background: var(--surface-3); color: var(--text-soft); }
-
-    .m-status {
-      display: flex; align-items: center; gap: 5px;
-      font-size: 12px; font-weight: 600;
-    }
-    .m-status .dot { width: 7px; height: 7px; border-radius: 50%; }
-    .paid   { color: #1a8a4a; }
-    .paid   .dot { background: #1a8a4a; }
-    .unpaid { color: var(--red); }
-    .unpaid .dot { background: var(--red); }
-    .pending{ color: var(--gold); }
-    .pending .dot{ background: var(--gold); }
-
-    /* ── PAYOUT HISTORY ── */
-    .history-list { padding: 6px 0; }
-
-    .history-item {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px 22px;
-      border-bottom: 1px solid var(--surface-3);
-    }
-    .history-item:last-child { border-bottom: none; }
-
-    .h-icon {
-      width: 38px; height: 38px; border-radius: var(--radius-sm);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px; flex-shrink: 0;
-    }
-    .h-icon.received  { background: rgba(26,102,55,0.1); }
-    .h-icon.paid-out  { background: rgba(201,168,76,0.1); }
-    .h-icon.contrib   { background: rgba(59,125,216,0.08); }
-
-    .h-info { flex: 1; }
-    .h-title  { font-size: 13px; font-weight: 600; color: var(--text-primary); }
-    .h-detail { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
-
-    .h-amount { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; }
-    .h-amount.in  { color: var(--green-light); }
-    .h-amount.out { color: var(--text-mid); }
-
-    /* ── SECOND GROUP (smaller card) ── */
-    .mini-group {
-      border-radius: var(--radius);
-      padding: 20px;
-      border: 1.5px solid var(--border);
-      background: var(--surface);
-      position: relative; overflow: hidden;
-      cursor: pointer; transition: all 0.2s;
-    }
-    .mini-group:hover { border-color: var(--green-light); box-shadow: 0 4px 20px rgba(10,46,26,0.08); }
-    .mini-group-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 16px; font-weight: 700;
-      color: var(--text-primary); margin-bottom: 3px;
-    }
-    .mini-group-meta { font-size: 12px; color: var(--text-soft); margin-bottom: 14px; }
-    .mini-progress-track {
-      height: 5px; background: var(--surface-3);
-      border-radius: 3px; overflow: hidden; margin-bottom: 10px;
-    }
-    .mini-progress-fill {
-      height: 100%; border-radius: 3px;
-      background: linear-gradient(90deg, var(--green-light), var(--gold-soft));
-    }
-    .mini-footer {
-      display: flex; align-items: center; justify-content: space-between;
-      font-size: 12px;
-    }
-    .mini-amount { font-weight: 600; color: var(--text-primary); }
-    .mini-due    { color: var(--text-soft); }
-
-    /* ── JOIN GROUPS ── */
-    .discover-grid {
-      display: flex; flex-direction: column; gap: 0;
-    }
-    .discover-item {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px 22px;
-      border-bottom: 1px solid var(--surface-3);
-      transition: background 0.15s; cursor: pointer;
-    }
-    .discover-item:last-child { border-bottom: none; }
-    .discover-item:hover { background: var(--surface-2); }
-
-    .d-icon {
-      width: 40px; height: 40px; border-radius: var(--radius-sm);
-      background: var(--surface-3);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; flex-shrink: 0;
-    }
-    .d-info { flex: 1; }
-    .d-name   { font-size: 13px; font-weight: 600; color: var(--text-primary); }
-    .d-detail { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
-
-    .d-tags { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
-    .d-tag {
-      font-size: 10px; padding: 2px 7px;
-      border-radius: 20px; font-weight: 500;
-    }
-    .tag-open    { background: rgba(26,102,55,0.08); color: var(--green-light); }
-    .tag-food    { background: rgba(201,168,76,0.12); color: #a07820; }
-    .tag-fabric  { background: rgba(59,125,216,0.1); color: var(--blue); }
-    .tag-general { background: var(--surface-3); color: var(--text-soft); }
-    .tag-full    { background: rgba(224,92,75,0.1); color: var(--red); }
-
-    .btn-join {
-      padding: 7px 14px; border: 1.5px solid var(--green-deep);
-      border-radius: 20px; background: none;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12px; font-weight: 600;
-      color: var(--green-deep); cursor: pointer;
-      transition: all 0.15s; white-space: nowrap;
-    }
-    .btn-join:hover { background: var(--green-deep); color: var(--gold); }
-    .btn-join.full { border-color: var(--border); color: var(--text-soft); cursor: not-allowed; }
-
-    /* ── CREATE GROUP MODAL ── */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(10,46,26,0.55); z-index: 200;
-      align-items: center; justify-content: center;
-      backdrop-filter: blur(4px);
-    }
-    .modal-overlay.open { display: flex; }
-
-    .modal {
-      background: var(--surface); border-radius: 20px;
-      padding: 32px; width: 480px; max-width: 94vw;
-      max-height: 90vh; overflow-y: auto;
-      animation: modalIn 0.25s cubic-bezier(.34,1.56,.64,1);
-    }
-    @keyframes modalIn {
-      from { transform: scale(0.92) translateY(10px); opacity: 0; }
-      to   { transform: scale(1) translateY(0); opacity: 1; }
-    }
-
-    .modal-header { margin-bottom: 24px; }
-    .modal-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 22px; font-weight: 800; margin-bottom: 5px;
-    }
-    .modal-sub { font-size: 13px; color: var(--text-soft); }
-
-    .form-group  { margin-bottom: 18px; }
-    .form-label  {
-      font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
-      text-transform: uppercase; color: var(--text-mid);
-      display: block; margin-bottom: 7px;
-    }
-    .form-input, .form-select {
-      width: 100%; padding: 12px 14px;
-      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-      font-family: 'DM Sans', sans-serif; font-size: 14px;
-      color: var(--text-primary); background: var(--surface);
-      outline: none; transition: border-color 0.15s;
-    }
-    .form-input:focus, .form-select:focus { border-color: var(--green-light); }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
-    .interswitch-note {
-      display: flex; align-items: center; gap: 10px;
-      background: var(--gold-pale); border: 1px solid rgba(201,168,76,0.3);
-      border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 22px;
-      font-size: 12px; color: #7a5c10; line-height: 1.5;
-    }
-    .interswitch-note .lock { font-size: 18px; flex-shrink: 0; }
-
-    .modal-actions { display: flex; gap: 10px; }
-    .btn-cancel {
-      flex: 1; padding: 13px;
-      border: 1.5px solid var(--border); border-radius: 50px;
-      background: none; font-family: 'DM Sans', sans-serif;
-      font-size: 14px; font-weight: 600; color: var(--text-mid);
-      cursor: pointer; transition: all 0.15s;
-    }
-    .btn-cancel:hover { border-color: var(--text-mid); }
-    .btn-confirm {
-      flex: 2; padding: 13px; border: none; border-radius: 50px;
-      background: var(--green-deep); color: var(--gold);
-      font-family: 'DM Sans', sans-serif; font-size: 14px;
-      font-weight: 600; cursor: pointer; transition: all 0.2s;
-    }
-    .btn-confirm:hover { background: var(--green-light); transform: translateY(-1px); }
-
-    /* ── FADE UP ── */
-    .fade-up {
-      opacity: 0; transform: translateY(16px);
-      animation: fadeUp 0.4s ease forwards;
-    }
-    @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
-    .fade-up:nth-child(1) { animation-delay: 0.05s; }
-    .fade-up:nth-child(2) { animation-delay: 0.1s; }
-    .fade-up:nth-child(3) { animation-delay: 0.15s; }
-    .fade-up:nth-child(4) { animation-delay: 0.2s; }
-
-    @media (max-width: 1100px) { .ajo-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 768px)  { .sidebar { display: none; } .main { margin-left: 0; padding: 20px 16px; } }
   </style>
 </head>
 <body>
 
-  <!-- ── SIDEBAR ── -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">SUWE<span>Built for the market</span></div>
-    <div class="nav-section">
-      <div class="nav-label">Main</div>
-      <div class="nav-item"><span class="icon">⊞</span> Dashboard</div>
-      <div class="nav-item"><span class="icon">📊</span> Sales</div>
-      <div class="nav-item"><span class="icon">📦</span> Inventory</div>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Community</div>
-      <div class="nav-item active"><span class="icon">🔄</span> My Ajo</div>
-      <div class="nav-item"><span class="icon">🤝</span> Traders</div>
-      <div class="nav-item"><span class="icon">📢</span> Feed</div>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Account</div>
-      <div class="nav-item"><span class="icon">⚙️</span> Settings</div>
-    </div>
-    <div class="sidebar-footer">
-      <div class="user-pill">
-        <div class="user-avatar">AM</div>
-        <div>
-          <div class="user-name">Adaeze M.</div>
-          <div class="user-market">Balogun Market</div>
-        </div>
+<div id="page-loader">
+  <div class="loader-logo">SUWE</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+
+<div id="sidebar-backdrop"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="main-sidebar">
+  <div class="sidebar-logo">SUWE<span>Built for the market</span></div>
+  <div class="nav-section">
+    <div class="nav-label">Main</div>
+    <div class="nav-item" data-route="/frontend/pages/dashboard.html"><span class="icon">⊞</span> Dashboard</div>
+    <div class="nav-item" data-route="/frontend/pages/sales_and_inventory.html"><span class="icon">📦</span> Sales & Inventory</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Community</div>
+    <div class="nav-item active"><span class="icon">🔄</span> My Ajo</div>
+    <div class="nav-item" data-route="/frontend/pages/community.html"><span class="icon">🤝</span> Traders</div>
+    <div class="nav-item" data-route="/frontend/pages/community.html"><span class="icon">📢</span> Feed</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Account</div>
+    <div class="nav-item"><span class="icon">⚙️</span> Settings</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="user-avatar" id="sidebar-avatar">…</div>
+      <div>
+        <div class="user-name"  id="sidebar-name">Loading…</div>
+        <div class="user-market" id="sidebar-market"></div>
       </div>
     </div>
-  </aside>
+    <button class="sign-out-btn" id="sign-out-btn">Sign out</button>
+  </div>
+</aside>
 
-  <!-- ── MAIN ── -->
-  <main class="main">
-
-    <!-- Page Header -->
-    <div class="page-header">
+<!-- MAIN -->
+<main class="main">
+  <div class="page-header">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div id="hamburger-btn">☰</div>
       <div>
         <h1>My Ajo Groups</h1>
-        <p>You are active in 2 groups · Total saved this year: ₦89,400</p>
-      </div>
-      <div class="header-actions">
-        <button class="btn-outline" id="open-join">🔍 Find a Group</button>
-        <button class="btn-primary" id="open-create">＋ Create Group</button>
+        <p id="header-sub">Loading your savings groups…</p>
       </div>
     </div>
+    <div class="header-actions">
+      <button class="btn-outline" id="btn-notifs">
+        🔔 Notifications
+        <span class="notif-badge" id="notif-badge" style="display:none">0</span>
+      </button>
+      <button class="btn-outline" id="open-find">🔍 Find a Group</button>
+      <button class="btn-primary" id="open-create">＋ Create Group</button>
+    </div>
+  </div>
 
-    <!-- Group Tabs -->
-    <div class="group-tabs">
-      <div class="group-tab active" data-group="1">
-        <span class="dot dot-gold"></span> Balogun Strong Women
-      </div>
-      <div class="group-tab" data-group="2">
-        <span class="dot dot-green"></span> Oshodi Traders Ajo
-      </div>
-      <div class="group-tab" style="color:var(--text-soft); cursor:pointer; border-style:dashed;" id="open-join-tab">
-        <span style="font-size:16px; line-height:1;">＋</span> Join Group
+  <!-- BVN gate -->
+  <div id="bvn-gate" style="display:none">
+    <div class="card" style="margin-bottom:20px;">
+      <div class="empty-state">
+        <div class="empty-icon">🔐</div>
+        <h4>BVN Verification Required</h4>
+        <p>Verify your BVN on the dashboard before joining or creating ajo groups.</p>
+        <button class="btn-start" onclick="window.location.href='dashboard.html'">Go to Dashboard</button>
       </div>
     </div>
+  </div>
 
-    <!-- AJO GRID -->
+  <!-- Main Ajo content -->
+  <div id="ajo-main" style="display:none">
+    <div class="group-tabs" id="group-tabs"></div>
     <div class="ajo-grid">
-
-      <!-- LEFT COLUMN -->
       <div class="left-col">
 
-        <!-- Hero Group Card -->
-        <div class="group-hero fade-up" id="group-hero-card">
-          <div class="hero-top">
-            <div>
-              <div class="hero-badge" id="hero-badge">Rotating · Cycle 5 of 8</div>
-              <div class="hero-group-name" id="hero-name">Balogun Strong Women</div>
-              <div class="hero-meta" id="hero-meta">8 members · ₦15,000/month · Protected by Interswitch</div>
-            </div>
-            <div class="hero-status">
-              <div class="status-pulse"></div> Active
-            </div>
+        <!-- Hero card -->
+        <div class="group-hero fade-up" id="group-hero">
+          <div id="hero-loading">
+            <div class="skeleton" style="width:40%;height:12px;margin-bottom:16px;background:rgba(255,255,255,0.1);"></div>
+            <div class="skeleton" style="width:70%;height:24px;margin-bottom:8px;background:rgba(255,255,255,0.1);"></div>
+            <div class="skeleton" style="width:50%;height:12px;background:rgba(255,255,255,0.1);"></div>
           </div>
-
-          <div class="hero-body">
-            <div class="ring-wrap">
-              <svg width="110" height="110" viewBox="0 0 110 110">
-                <circle class="ring-bg"   cx="55" cy="55" r="45"/>
-                <circle class="ring-fill" cx="55" cy="55" r="45" id="ring-fill"/>
-              </svg>
-              <div class="ring-label">
-                <div class="ring-pct" id="ring-pct">62%</div>
-                <div class="ring-sub">funded</div>
-              </div>
-            </div>
-
-            <div class="hero-stats">
-              <div class="hero-stat-row">
-                <div class="hero-stat">
-                  <div class="hstat-label">Pot Size</div>
-                  <div class="hstat-value" id="hero-pot"><span class="sm">₦</span>120,000</div>
-                </div>
-                <div class="hero-stat">
-                  <div class="hstat-label">Collected</div>
-                  <div class="hstat-value" id="hero-collected"><span class="sm">₦</span>74,400</div>
-                </div>
-              </div>
+          <div id="hero-content" style="display:none">
+            <div class="hero-top">
               <div>
-                <div class="hstat-label" style="color:rgba(255,255,255,0.35); font-size:10px; margin-bottom:6px">Cycle progress</div>
-                <div class="hero-progress-bar"><div class="hero-progress-fill" id="hero-bar"></div></div>
+                <div class="hero-badge" id="hero-badge">—</div>
+                <div class="hero-group-name" id="hero-name">—</div>
+                <div class="hero-meta" id="hero-meta">—</div>
               </div>
-              <div class="hero-stat-row">
-                <div class="hero-stat">
-                  <div class="hstat-label">This cycle payout</div>
-                  <div class="hstat-value" style="color:var(--gold-soft)" id="hero-payout"><span class="sm">₦</span>120,000</div>
+              <div class="hero-status"><div class="status-pulse"></div><span id="hero-status-text">Active</span></div>
+            </div>
+            <div class="hero-body">
+              <div class="ring-wrap">
+                <svg width="110" height="110" viewBox="0 0 110 110">
+                  <circle class="ring-bg"   cx="55" cy="55" r="45"/>
+                  <circle class="ring-fill" cx="55" cy="55" r="45" id="ring-fill"/>
+                </svg>
+                <div class="ring-label">
+                  <div class="ring-pct" id="ring-pct">0%</div>
+                  <div class="ring-sub" id="ring-sub">paid</div>
                 </div>
-                <div class="hero-stat">
-                  <div class="hstat-label">Recipient</div>
-                  <div class="hstat-value" style="font-size:14px; margin-top:2px" id="hero-recipient">Chioma O.</div>
+              </div>
+              <div class="hero-stats">
+                <div class="hero-stat-row">
+                  <div>
+                    <div class="hstat-label">Pot Size</div>
+                    <div class="hstat-value" id="hero-pot"><span class="sm">₦</span>0</div>
+                  </div>
+                  <div>
+                    <div class="hstat-label">Collected</div>
+                    <div class="hstat-value" id="hero-collected"><span class="sm">₦</span>0</div>
+                  </div>
+                </div>
+                <div>
+                  <div class="hstat-label" style="color:rgba(255,255,255,0.35);font-size:10px;margin-bottom:6px;">Payout cycle progress</div>
+                  <div class="hero-progress-bar"><div class="hero-progress-fill" id="hero-bar"></div></div>
+                </div>
+                <div class="hero-stat-row">
+                  <div>
+                    <div class="hstat-label">This cycle payout</div>
+                    <div class="hstat-value" style="color:var(--gold-soft)" id="hero-payout"><span class="sm">₦</span>0</div>
+                  </div>
+                  <div>
+                    <div class="hstat-label">Current recipient</div>
+                    <div class="hstat-value" style="font-size:14px;margin-top:2px" id="hero-recipient">—</div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-
-          <div class="next-due-strip">
-            <div class="due-info">
-              <div class="due-label">Your next contribution</div>
-              <div class="due-val">April 1, 2026 · ₦15,000</div>
+            <div class="next-due-strip">
+              <div class="due-info">
+                <div class="due-label">Your next contribution</div>
+                <div class="due-val" id="due-val">—</div>
+              </div>
+              <div class="due-countdown">
+                <div class="due-days" id="days-left">—</div>
+                <div class="due-days-label">days away</div>
+              </div>
+              <div id="pay-btn-wrap"></div>
             </div>
-            <div class="due-countdown">
-              <div class="due-days" id="days-left">7</div>
-              <div class="due-days-label">days left</div>
-            </div>
-            <button class="btn-pay-now">Pay Now via Interswitch</button>
           </div>
         </div>
 
         <!-- Member Payment Status -->
         <div class="card fade-up">
           <div class="card-header">
-            <div class="card-title">👥 Member Payment Status
-              <span style="font-size:11px; padding:2px 8px; border-radius:20px; background:rgba(26,102,55,0.1); color:var(--green-light);">Cycle 5</span>
-            </div>
-            <div class="card-action">Message all</div>
+            <div class="card-title">👥 Member Payment Status <span id="cycle-badge" style="font-size:11px;padding:2px 8px;border-radius:20px;background:rgba(26,102,55,0.1);color:var(--green-light);"></span></div>
+            <div class="card-action" id="btn-refresh-members">↻ Refresh</div>
           </div>
-          <div class="members-grid" id="members-grid">
-            <!-- injected by JS -->
+          <div id="members-grid">
+            <div class="skeleton" style="margin:16px 22px;"></div>
+            <div class="skeleton" style="margin:8px 22px;width:60%;"></div>
           </div>
         </div>
 
-      </div><!-- /left-col -->
+      </div>
 
-      <!-- RIGHT COLUMN -->
       <div class="right-col">
 
-        <!-- Second active group -->
-        <div class="fade-up">
-          <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text-soft); margin-bottom:10px; font-weight:600;">Your Other Group</div>
-          <div class="mini-group" data-group="2" id="mini-group">
-            <div class="mini-group-name">Oshodi Traders Ajo</div>
-            <div class="mini-group-meta">6 members · ₦10,000/month · Cycle 3 of 6</div>
-            <div class="mini-progress-track">
-              <div class="mini-progress-fill" style="width:50%"></div>
-            </div>
-            <div class="mini-footer">
-              <span class="mini-amount">₦30,000 / ₦60,000</span>
-              <span class="mini-due">Next due: Apr 5</span>
-            </div>
-          </div>
+        <!-- Second group card (shown if in 2 groups) -->
+        <div id="second-group-wrap" style="display:none">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-soft);margin-bottom:10px;font-weight:600;">Your Other Group</div>
+          <div class="mini-group" id="mini-group-card"></div>
         </div>
 
         <!-- Payout History -->
@@ -711,345 +440,1038 @@
             <div class="card-title">🏦 Payout History</div>
             <div class="card-action">All records</div>
           </div>
-          <div class="history-list">
-            <div class="history-item">
-              <div class="h-icon received">💰</div>
-              <div class="h-info">
-                <div class="h-title">You received the pot</div>
-                <div class="h-detail">Balogun Strong Women · Cycle 2 · Jan 1, 2026</div>
-              </div>
-              <div class="h-amount in">+₦120,000</div>
-            </div>
-            <div class="history-item">
-              <div class="h-icon contrib">💳</div>
-              <div class="h-info">
-                <div class="h-title">Monthly contribution</div>
-                <div class="h-detail">Balogun Strong Women · Mar 1, 2026</div>
-              </div>
-              <div class="h-amount out">−₦15,000</div>
-            </div>
-            <div class="history-item">
-              <div class="h-icon contrib">💳</div>
-              <div class="h-info">
-                <div class="h-title">Monthly contribution</div>
-                <div class="h-detail">Oshodi Traders Ajo · Mar 5, 2026</div>
-              </div>
-              <div class="h-amount out">−₦10,000</div>
-            </div>
-            <div class="history-item">
-              <div class="h-icon contrib">💳</div>
-              <div class="h-info">
-                <div class="h-title">Monthly contribution</div>
-                <div class="h-detail">Balogun Strong Women · Feb 1, 2026</div>
-              </div>
-              <div class="h-amount out">−₦15,000</div>
-            </div>
-            <div class="history-item">
-              <div class="h-icon contrib">💳</div>
-              <div class="h-info">
-                <div class="h-title">Monthly contribution</div>
-                <div class="h-detail">Balogun Strong Women · Jan 1, 2026</div>
-              </div>
-              <div class="h-amount out">−₦15,000</div>
-            </div>
+          <div id="payout-history">
+            <div class="skeleton" style="margin:16px 22px;"></div>
+            <div class="skeleton" style="margin:8px 22px;width:70%;"></div>
           </div>
         </div>
 
-        <!-- Groups to discover -->
+        <!-- Open Groups Near You -->
         <div class="card fade-up">
           <div class="card-header">
             <div class="card-title">🔍 Open Groups Near You</div>
-            <div class="card-action">Browse all</div>
+            <div class="card-action" id="browse-all-btn">Browse all</div>
           </div>
-          <div class="discover-grid">
-            <div class="discover-item">
-              <div class="d-icon">🍅</div>
-              <div class="d-info">
-                <div class="d-name">Mile 12 Food Traders</div>
-                <div class="d-detail">₦20,000/month · 12 members · 2 spots left</div>
-                <div class="d-tags">
-                  <span class="d-tag tag-open">Open</span>
-                  <span class="d-tag tag-food">Food</span>
-                </div>
-              </div>
-              <button class="btn-join">Join</button>
-            </div>
-            <div class="discover-item">
-              <div class="d-icon">🧵</div>
-              <div class="d-info">
-                <div class="d-name">Tejuosho Fabric Savers</div>
-                <div class="d-detail">₦10,000/month · 10 members · 3 spots left</div>
-                <div class="d-tags">
-                  <span class="d-tag tag-open">Open</span>
-                  <span class="d-tag tag-fabric">Fabric</span>
-                </div>
-              </div>
-              <button class="btn-join">Join</button>
-            </div>
-            <div class="discover-item">
-              <div class="d-icon">🏪</div>
-              <div class="d-info">
-                <div class="d-name">Lagos General Market Women</div>
-                <div class="d-detail">₦5,000/month · 15 members · Full</div>
-                <div class="d-tags">
-                  <span class="d-tag tag-full">Full</span>
-                  <span class="d-tag tag-general">General</span>
-                </div>
-              </div>
-              <button class="btn-join full" disabled>Full</button>
-            </div>
+          <div id="nearby-groups">
+            <div class="skeleton" style="margin:16px 22px;"></div>
           </div>
         </div>
 
-      </div><!-- /right-col -->
-    </div>
-
-  </main>
-
-  <!-- ── CREATE GROUP MODAL ── -->
-  <div class="modal-overlay" id="modal-create">
-    <div class="modal">
-      <div class="modal-header">
-        <div class="modal-title">Create an Ajo Group</div>
-        <div class="modal-sub">Set up your rules. Interswitch handles all payments automatically.</div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Group Name</label>
-        <input class="form-input" type="text" placeholder="e.g. Balogun Strong Women"/>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Monthly Contribution (₦)</label>
-          <input class="form-input" type="number" placeholder="10,000"/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Max Members</label>
-          <input class="form-input" type="number" placeholder="8" min="3" max="20"/>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Payout Order</label>
-          <select class="form-select">
-            <option>Random draw</option>
-            <option>Admin decides</option>
-            <option>Rotation by join date</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Contribution Day</label>
-          <select class="form-select">
-            <option>1st of month</option>
-            <option>5th of month</option>
-            <option>15th of month</option>
-            <option>Last day of month</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Who can join?</label>
-        <select class="form-select">
-          <option>Anyone on SUWE (open group)</option>
-          <option>Invite only (private group)</option>
-          <option>Same market only</option>
-        </select>
-      </div>
-
-      <div class="interswitch-note">
-        <span class="lock">🔒</span>
-        <span>All contributions are collected and distributed automatically via <strong>Interswitch</strong>. No member handles money — everything is protected and auditable.</span>
-      </div>
-
-      <div class="modal-actions">
-        <button class="btn-cancel" id="close-create">Cancel</button>
-        <button class="btn-confirm">Create Group →</button>
       </div>
     </div>
   </div>
 
-  <!-- ── JOIN / DISCOVER MODAL ── -->
-  <div class="modal-overlay" id="modal-join">
-    <div class="modal">
-      <div class="modal-header">
-        <div class="modal-title">Find an Ajo Group</div>
-        <div class="modal-sub">Browse groups that match your market and budget.</div>
-      </div>
-      <div class="form-row" style="margin-bottom:14px">
-        <div class="form-group" style="margin-bottom:0">
-          <label class="form-label">Budget (₦/month)</label>
-          <select class="form-select">
-            <option>Any amount</option>
-            <option>Under ₦5,000</option>
-            <option>₦5,000–₦15,000</option>
-            <option>₦15,000–₦30,000</option>
-            <option>Over ₦30,000</option>
-          </select>
-        </div>
-        <div class="form-group" style="margin-bottom:0">
-          <label class="form-label">Category</label>
-          <select class="form-select">
-            <option>All categories</option>
-            <option>Food & Produce</option>
-            <option>Fabric & Fashion</option>
-            <option>Electronics</option>
-            <option>General</option>
-          </select>
+  <!-- No groups state -->
+  <div id="no-groups-state" style="display:none">
+    <div class="card">
+      <div class="empty-state">
+        <div class="empty-icon">🔄</div>
+        <h4>You're not in any ajo group yet</h4>
+        <p>Join an existing group or create your own. All payments are secured by Interswitch.</p>
+        <div style="display:flex;gap:10px;margin-top:4px;flex-wrap:wrap;justify-content:center;">
+          <button class="btn-start" onclick="document.getElementById('open-find').click()">Find a Group</button>
+          <button class="btn-start" style="background:transparent;border:1.5px solid var(--gold);color:var(--gold);" onclick="document.getElementById('open-create').click()">Create One</button>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Your Market</label>
-        <select class="form-select">
-          <option>Balogun Market</option>
-          <option>Mile 12</option>
-          <option>Oshodi</option>
-          <option>Tejuosho</option>
-          <option>Any market</option>
-        </select>
-      </div>
-      <div class="interswitch-note">
-        <span class="lock">🔒</span>
-        <span>All groups on SUWE use <strong>Interswitch</strong> for automatic, protected payments. Your money is never held by another person.</span>
-      </div>
-      <div class="modal-actions">
-        <button class="btn-cancel" id="close-join">Cancel</button>
-        <button class="btn-confirm">Search Groups →</button>
+    </div>
+    <div class="card" style="margin-top:20px;">
+      <div class="card-header"><div class="card-title">🔍 Open Groups Near You</div></div>
+      <div id="nearby-groups-alt">
+        <div class="skeleton" style="margin:16px 22px;"></div>
       </div>
     </div>
   </div>
+</main>
 
-  <script>
-    // ── Member data ──
-    const groups = {
-      1: {
-        name: 'Balogun Strong Women',
-        badge: 'Rotating · Cycle 5 of 8',
-        meta: '8 members · ₦15,000/month · Protected by Interswitch',
-        pot: '120,000', collected: '74,400', pct: 62,
-        payout: '120,000', recipient: 'Chioma O.',
-        members: [
-          { name:'Adaeze M.', market:'Balogun', color:'#c9a84c', textColor:'#0a2e1a', turn:'current', status:'paid',    amount:'₦15,000' },
-          { name:'Fatima B.', market:'Mile 12',  color:'#3b7dd8', textColor:'#fff',    turn:'next',    status:'paid',    amount:'₦15,000' },
-          { name:'Chioma O.', market:'Balogun',  color:'#1a6637', textColor:'#fff',    turn:'done',    status:'paid',    amount:'₦15,000' },
-          { name:'Ngozi E.',  market:'Tejuosho', color:'#5a4a8a', textColor:'#fff',    turn:'done',    status:'paid',    amount:'₦15,000' },
-          { name:'Amaka T.',  market:'Balogun',  color:'#d8753b', textColor:'#fff',    turn:'done',    status:'pending', amount:'Due Apr 1' },
-          { name:'Kemi A.',   market:'Oshodi',   color:'#4a8a6a', textColor:'#fff',    turn:'done',    status:'unpaid',  amount:'Overdue' },
-          { name:'Blessing U.',market:'Balogun', color:'#8a4a5a', textColor:'#fff',    turn:'done',    status:'paid',    amount:'₦15,000' },
-          { name:'Hauwa D.',  market:'Ketu',     color:'#6a7a3a', textColor:'#fff',    turn:'done',    status:'paid',    amount:'₦15,000' },
-        ]
-      },
-      2: {
-        name: 'Oshodi Traders Ajo',
-        badge: 'Rotating · Cycle 3 of 6',
-        meta: '6 members · ₦10,000/month · Protected by Interswitch',
-        pot: '60,000', collected: '30,000', pct: 50,
-        payout: '60,000', recipient: 'Emeka K.',
-        members: [
-          { name:'Adaeze M.',  market:'Balogun', color:'#c9a84c', textColor:'#0a2e1a', turn:'next',    status:'paid',    amount:'₦10,000' },
-          { name:'Emeka K.',   market:'Oshodi',  color:'#3b7dd8', textColor:'#fff',    turn:'current', status:'paid',    amount:'₦10,000' },
-          { name:'Tunde S.',   market:'Oshodi',  color:'#1a6637', textColor:'#fff',    turn:'done',    status:'paid',    amount:'₦10,000' },
-          { name:'Sade O.',    market:'Oshodi',  color:'#d8753b', textColor:'#fff',    turn:'done',    status:'pending', amount:'Due Apr 5' },
-          { name:'Bola A.',    market:'Oshodi',  color:'#4a8a6a', textColor:'#fff',    turn:'done',    status:'unpaid',  amount:'Overdue' },
-          { name:'Remi T.',    market:'Oshodi',  color:'#5a4a8a', textColor:'#fff',    turn:'done',    status:'paid',    amount:'₦10,000' },
-        ]
-      }
-    };
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav" role="navigation">
+  <a class="bottom-nav-item" href="/frontend/pages/dashboard.html"><span class="bn-icon">⊞</span><span class="bn-label">Home</span></a>
+  <a class="bottom-nav-item" href="/frontend/pages/sales_and_inventory.html"><span class="bn-icon">📦</span><span class="bn-label">Sales</span></a>
+  <a class="bottom-nav-item active" href="/frontend/pages/ajo.html"><span class="bn-icon">🔄</span><span class="bn-label">Ajo</span></a>
+  <a class="bottom-nav-item" href="/frontend/pages/community.html"><span class="bn-icon">🤝</span><span class="bn-label">Community</span></a>
+</nav>
 
-    let activeGroup = 1;
+<!-- ═══ CREATE GROUP MODAL ═══ -->
+<div class="modal-overlay" id="modal-create">
+  <div class="modal">
+    <div class="modal-title">Create an Ajo Group</div>
+    <div class="modal-sub">Set your rules. Max 8 members, min 3. Payout is on the 1st of each month, ordered by BCS score.</div>
+    <div class="form-group">
+      <label class="form-label">Group Name</label>
+      <input class="form-input" id="c-name" type="text" placeholder="e.g. Balogun Strong Women"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Monthly Contribution (₦)</label>
+        <input class="form-input" id="c-amount" type="number" placeholder="10000" min="1000"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Max Members (3–8)</label>
+        <input class="form-input" id="c-max" type="number" placeholder="8" min="3" max="8"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Category</label>
+      <select class="form-select" id="c-category">
+        <option>General</option><option>Food &amp; Produce</option>
+        <option>Fabric &amp; Fashion</option><option>Electronics</option>
+        <option>Cosmetics &amp; Beauty</option><option>Household Goods</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Who can join?</label>
+      <select class="form-select" id="c-visibility" onchange="toggleInviteSection()">
+        <option value="public">Open Group — anyone on SUWE</option>
+        <option value="invite">Invite Only — I choose who joins</option>
+      </select>
+    </div>
+    <div id="invite-phones-section" style="display:none">
+      <div class="form-group">
+        <label class="form-label">Phone Numbers to Invite (2–7, one per line)</label>
+        <textarea class="form-input" id="c-phones" rows="4" placeholder="08012345678&#10;08087654321&#10;07099887766" style="resize:vertical;"></textarea>
+        <div style="font-size:11px;color:var(--text-soft);margin-top:4px;">Group activates when ≥ 2 people accept (3 total incl. you). Min 2, max 7 invitees.</div>
+      </div>
+    </div>
+    <div class="form-note"><span>📅</span><span>Contribution &amp; payout: <strong>always 1st of the month</strong>. Payout order: <strong>highest BCS first</strong>. Cycle begins 1st of next month if ≥ 3 members joined.</span></div>
+    <div class="form-note"><span>🔒</span><span>All money collected and disbursed by <strong>Interswitch</strong>. No member handles cash.</span></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="close-create">Cancel</button>
+      <button class="btn-confirm" id="btn-create-group">Create Group →</button>
+    </div>
+  </div>
+</div>
 
-    function renderGroup(id) {
-      const g = groups[id];
+<!-- ═══ FIND GROUP MODAL ═══ -->
+<div class="modal-overlay" id="modal-find">
+  <div class="modal">
+    <div class="modal-title">Find an Ajo Group</div>
+    <div class="modal-sub">Browse open groups that match your budget.</div>
+    <div class="form-row" style="margin-bottom:14px">
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Min Contribution (₦)</label>
+        <input class="form-input" id="f-min" type="number" placeholder="0"/>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Max Contribution (₦)</label>
+        <input class="form-input" id="f-max" type="number" placeholder="Any"/>
+      </div>
+    </div>
+    <div class="form-note"><span>🔒</span><span>All groups on SUWE use <strong>Interswitch</strong> for protected payments.</span></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="close-find">Cancel</button>
+      <button class="btn-confirm" id="btn-search-groups">Search →</button>
+    </div>
+    <div id="search-results" style="margin-top:20px;"></div>
+  </div>
+</div>
 
-      document.getElementById('hero-badge').textContent     = g.badge;
-      document.getElementById('hero-name').textContent      = g.name;
-      document.getElementById('hero-meta').textContent      = g.meta;
-      document.getElementById('hero-pot').innerHTML         = `<span class="sm">₦</span>${g.pot}`;
-      document.getElementById('hero-collected').innerHTML   = `<span class="sm">₦</span>${g.collected}`;
-      document.getElementById('hero-payout').innerHTML      = `<span class="sm">₦</span>${g.payout}`;
-      document.getElementById('hero-recipient').textContent = g.recipient;
-      document.getElementById('ring-pct').textContent       = g.pct + '%';
+<!-- ═══ JOIN CONFIRM MODAL ═══ -->
+<div class="modal-overlay" id="modal-join-confirm">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-title">Join this Group?</div>
+    <div id="join-group-preview" style="margin-bottom:20px;"></div>
+    <div class="form-note"><span>⚠️</span><span>Once the cycle starts you <strong>cannot leave</strong>. Missed payments drop your BCS and ban you from groups for 1 year.</span></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="close-join-confirm">Cancel</button>
+      <button class="btn-confirm" id="btn-confirm-join">Confirm &amp; Join</button>
+    </div>
+  </div>
+</div>
 
-      // Ring: circumference = 2π×45 ≈ 283
-      const offset = Math.round(283 * (1 - g.pct / 100));
-      document.getElementById('ring-fill').style.strokeDashoffset = offset;
-      document.getElementById('hero-bar').style.width = g.pct + '%';
+<!-- ═══ NOTIFICATIONS MODAL ═══ -->
+<div class="modal-overlay" id="modal-notifs">
+  <div class="modal" style="padding:0;max-width:480px;">
+    <div style="padding:20px 22px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:800;">Notifications</div>
+      <button class="btn-cancel" style="flex:0;padding:8px 14px;font-size:12px;" id="close-notifs">Close</button>
+    </div>
+    <div id="notifs-list" style="max-height:65vh;overflow-y:auto;"></div>
+  </div>
+</div>
 
-      // Members
-      const grid = document.getElementById('members-grid');
-      grid.innerHTML = '';
-      g.members.forEach(m => {
-        const initials = m.name.split(' ').map(w => w[0]).join('').slice(0,2);
-        const turnLabel = m.turn === 'current' ? 'Receiving now' : m.turn === 'next' ? 'Next' : 'Waiting';
-        const turnClass = m.turn === 'current' ? 'turn-current' : m.turn === 'next' ? 'turn-next' : 'turn-done';
-        const statusClass = m.status;
-        const statusIcon  = m.status === 'paid' ? '✓ Paid' : m.status === 'pending' ? '⏳ Pending' : '✗ Overdue';
+<!-- ═══ SANDBOX PAYMENT MODAL ═══ -->
+<div class="modal-overlay" id="modal-sandbox-pay">
+  <div class="sandbox-modal">
+    <div class="sandbox-header">
+      <div class="sandbox-logo">🔐</div>
+      <div class="sandbox-title">Secure Payment</div>
+      <div style="font-size:12px;color:var(--text-soft);margin-top:4px;">Powered by Interswitch QuickTeller</div>
+      <div class="sandbox-amount" id="sandbox-amount">₦0</div>
+      <div style="font-size:13px;color:var(--text-soft);" id="sandbox-group-label">Ajo contribution</div>
+    </div>
 
-        grid.innerHTML += `
-          <div class="member-row">
-            <div class="m-avatar" style="background:${m.color}; color:${m.textColor}">${initials}</div>
-            <div class="m-info">
-              <div class="m-name">${m.name}</div>
-              <div class="m-market">${m.market}</div>
-            </div>
-            <span class="m-turn ${turnClass}">${turnLabel}</span>
-            <div class="m-status ${statusClass}">
-              <div class="dot"></div>${statusIcon}
-            </div>
-          </div>`;
+    <div class="sandbox-note">
+      <strong>🛡️ Your details are safe.</strong> SUWE and Interswitch never store your card or bank details.
+      This form is a <strong>sandbox simulation</strong> — in production, you would be redirected to Interswitch's
+      secure hosted checkout page. Enter any test details below to complete the sandbox payment.
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Card Number (test)</label>
+      <input class="form-input" id="sb-card" type="text" placeholder="5061 0600 0000 0000 000" maxlength="19"
+        oninput="this.value=this.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim()"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Expiry (MM/YY)</label>
+        <input class="form-input" id="sb-expiry" type="text" placeholder="12/27" maxlength="5"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">CVV</label>
+        <input class="form-input" id="sb-cvv" type="text" placeholder="123" maxlength="3"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Card PIN (test — enter any 4 digits)</label>
+      <input class="form-input" id="sb-pin" type="password" placeholder="••••" maxlength="4"/>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" id="close-sandbox-pay">Cancel</button>
+      <button class="btn-confirm" id="btn-sandbox-confirm">Pay ₦<span id="sb-btn-amount">0</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ SCRIPT ════════════ -->
+<script type="module">
+import {
+  supabase,
+  getCurrentUser,
+  getVendorProfile,
+  signOut,
+  computeBCS,
+  getAjoGroupsForUser,
+  getGroupMembers,
+  getUserAjoGroupCount,
+  getAjoPayments,
+  getGroupsNearUser,
+  getOpenAjoGroups,
+  createAjoGroup,
+  joinAjoGroup,
+  getNotifications,
+  getUnreadCount,
+  markAllRead,
+  markNotificationRead,
+  getContributionDueInfo
+} from '../js/supabase.js';
+
+const BACKEND = 'http://localhost:3000';
+const AVATAR_COLORS = ['#c9a84c','#3b7dd8','#1a6637','#e05c4b','#5a4a8a','#d8753b','#4a8a6a','#8a4a5a'];
+const CAT_EMOJIS = {
+  'Food & Produce':'🍅','Fabric & Fashion':'🧵','Electronics':'📱',
+  'Cosmetics & Beauty':'💄','Household Goods':'🏠','Building Materials':'🧱','General':'🏪'
+};
+
+let currentUser    = null;
+let vendorProfile  = null;
+let userGroups     = [];
+let activeGroupIdx = 0;
+let userBCS        = 0;
+let pendingJoinGroupId = null;
+let sandboxPayData = null; // { groupId, userId, amount, groupName, cycleNumber }
+
+// ── BOOT ─────────────────────────────────────────────────────
+async function boot() {
+  currentUser   = await getCurrentUser();
+  if (!currentUser) { window.location.href = '/frontend/index.html'; return; }
+  vendorProfile = await getVendorProfile(currentUser.id);
+  if (!vendorProfile?.phone) { window.location.href = '/frontend/pages/onboarding.html'; return; }
+
+  renderSidebar();
+  setupSidebarNav();
+
+  const { score } = await computeBCS(currentUser.id, vendorProfile.bvn_verified || false);
+  userBCS = score;
+
+  if (!vendorProfile.bvn_verified) {
+    document.getElementById('bvn-gate').style.display = 'block';
+    loadNearbyGroups('nearby-groups-alt');
+    hideLoader();
+    return;
+  }
+
+  userGroups = await getAjoGroupsForUser(currentUser.id);
+  updateHeaderSub();
+  updateNotifBadge();
+  checkPendingInvitations();
+
+  if (!userGroups.length) {
+    document.getElementById('no-groups-state').style.display = 'block';
+    loadNearbyGroups('nearby-groups-alt');
+    hideLoader();
+    return;
+  }
+
+  document.getElementById('ajo-main').style.display = 'block';
+  buildTabs();
+  await renderActiveGroup();
+  loadNearbyGroups('nearby-groups');
+  loadPayoutHistory();
+  hideLoader();
+}
+
+function renderSidebar() {
+  const name     = vendorProfile.full_name || 'Vendor';
+  const market   = vendorProfile.market_location || '';
+  const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  document.getElementById('sidebar-avatar').textContent = initials;
+  document.getElementById('sidebar-name').textContent   = name;
+  document.getElementById('sidebar-market').textContent = market;
+}
+
+function setupSidebarNav() {
+  document.querySelectorAll('.sidebar .nav-item[data-route]').forEach(item => {
+    item.addEventListener('click', () => window.location.href = item.dataset.route);
+  });
+  document.getElementById('sign-out-btn').addEventListener('click', () => signOut());
+
+  const sidebar = document.getElementById('main-sidebar');
+  const back    = document.getElementById('sidebar-backdrop');
+  document.getElementById('hamburger-btn').addEventListener('click', () => {
+    sidebar.classList.add('open'); back.classList.add('show');
+  });
+  back.addEventListener('click', () => {
+    sidebar.classList.remove('open'); back.classList.remove('show');
+  });
+}
+
+function updateHeaderSub() {
+  const count = userGroups.length;
+  document.getElementById('header-sub').textContent =
+    count > 0
+      ? `Active in ${count} group${count > 1 ? 's' : ''} · BCS Score: ${userBCS}`
+      : `BCS Score: ${userBCS} · Ready to join a group`;
+}
+
+// ── NOTIFICATION BADGE ────────────────────────────────────────
+async function updateNotifBadge() {
+  const count = await getUnreadCount(currentUser.id);
+  const badge = document.getElementById('notif-badge');
+  if (count > 0) { badge.textContent = count; badge.style.display = ''; }
+  else           { badge.style.display = 'none'; }
+}
+
+// ── PENDING INVITATIONS ───────────────────────────────────────
+async function checkPendingInvitations() {
+  try {
+    const res = await fetch(`${BACKEND}/api/my-invitations/${currentUser.id}`);
+    const data = await res.json();
+    if (data.invitations?.length > 0) {
+      // Trigger a notification badge update — invitations show in notifs modal
+      updateNotifBadge();
+    }
+  } catch {}
+}
+
+// ── TABS ──────────────────────────────────────────────────────
+function buildTabs() {
+  const container = document.getElementById('group-tabs');
+  container.innerHTML = '';
+  userGroups.forEach((g, i) => {
+    const tab = document.createElement('div');
+    tab.className     = `group-tab${i === 0 ? ' active' : ''}`;
+    tab.dataset.idx   = i;
+    tab.innerHTML     = `<span class="tab-dot ${i === 0 ? 'dot-gold' : 'dot-green'}"></span>${g.group_name}`;
+    tab.addEventListener('click', async () => {
+      document.querySelectorAll('.group-tab[data-idx]').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeGroupIdx = i;
+      await renderActiveGroup();
+    });
+    container.appendChild(tab);
+  });
+
+  if (userGroups.length < 2) {
+    const addTab = document.createElement('div');
+    addTab.className = 'group-tab';
+    addTab.style.cssText = 'color:var(--text-soft);border-style:dashed;';
+    addTab.innerHTML = '<span style="font-size:16px">＋</span> Join Group';
+    addTab.addEventListener('click', () => document.getElementById('modal-find').classList.add('open'));
+    container.appendChild(addTab);
+  }
+}
+
+// ── RENDER ACTIVE GROUP ───────────────────────────────────────
+async function renderActiveGroup() {
+  const g = userGroups[activeGroupIdx];
+  if (!g) return;
+
+  document.getElementById('hero-loading').style.display  = 'block';
+  document.getElementById('hero-content').style.display  = 'none';
+  document.getElementById('members-grid').innerHTML =
+    '<div class="skeleton" style="margin:16px 22px;"></div>';
+
+  // Fetch members (uses backend service role for cross-user data)
+  const members = await getGroupMembers(g.id, BACKEND);
+
+  // ── RING: % of members who have PAID this cycle ────────────
+  const totalMembers = members.length || g.current_members || 1;
+  const paidCount    = members.filter(m => m.payment_status === 'paid' || m.paid_this_cycle).length;
+  const payPct       = totalMembers > 0 ? Math.round((paidCount / totalMembers) * 100) : 0;
+
+  // ── PROGRESS BAR: cycle progress (how many have received payout out of total) ──
+  const totalCycles    = g.total_cycles || g.max_members || totalMembers;
+  const currentCycle   = g.cycle_number || 0;
+  const cycleProgressPct = totalCycles > 0
+    ? Math.round((currentCycle / totalCycles) * 100)
+    : 0;
+
+  // ── POT ────────────────────────────────────────────────────
+  const potSize    = g.contribution_amount * g.max_members;
+  const collected  = g.contribution_amount * paidCount;
+
+  // ── RECIPIENT: member with current payout_position == current_cycle ──
+  const sortedByPos = [...members].sort((a,b) => (a.payout_position||99) - (b.payout_position||99));
+  const currentRecipient = sortedByPos.find(m => m.payout_position === currentCycle)
+    || (currentCycle > 0 ? sortedByPos[0] : null);
+  const recipientName = currentRecipient?.profile?.full_name?.split(' ')[0] || '—';
+
+  // ── DUE DATE (per user's actual payments) ─────────────────
+  const userPayments = await getAjoPayments(currentUser.id, g.id);
+  const dueInfo      = getContributionDueInfo(g, userPayments);
+
+  // ── POPULATE HERO ──────────────────────────────────────────
+  document.getElementById('hero-badge').textContent    =
+    g.status === 'forming' ? 'Forming · Waiting for members'
+    : `${g.category || 'General'} · Cycle ${currentCycle} of ${totalCycles}`;
+  document.getElementById('hero-name').textContent     = g.group_name;
+  document.getElementById('hero-meta').textContent     =
+    `${totalMembers} of ${g.max_members} members · ₦${Number(g.contribution_amount).toLocaleString()}/month · ${g.category || 'General'}`;
+  document.getElementById('hero-status-text').textContent =
+    g.status === 'forming' ? 'Forming' : g.status === 'active' ? 'Active' : g.status;
+  document.getElementById('hero-pot').innerHTML        = `<span class="sm">₦</span>${potSize.toLocaleString()}`;
+  document.getElementById('hero-collected').innerHTML  = `<span class="sm">₦</span>${collected.toLocaleString()}`;
+  document.getElementById('hero-payout').innerHTML     = `<span class="sm">₦</span>${potSize.toLocaleString()}`;
+  document.getElementById('hero-recipient').textContent= recipientName;
+  document.getElementById('ring-pct').textContent      = payPct + '%';
+  document.getElementById('ring-sub').textContent      = 'paid';
+  document.getElementById('ring-fill').style.strokeDashoffset = Math.round(283 * (1 - payPct / 100));
+  document.getElementById('hero-bar').style.width      = cycleProgressPct + '%';
+  document.getElementById('days-left').textContent     = dueInfo.daysLeft;
+  document.getElementById('due-val').textContent       =
+    `${dueInfo.label} · ₦${Number(g.contribution_amount).toLocaleString()}`;
+  document.getElementById('cycle-badge').textContent   =
+    currentCycle > 0 ? `Cycle ${currentCycle}` : 'Not started';
+
+  // ── PAY BUTTON ─────────────────────────────────────────────
+  const payWrap = document.getElementById('pay-btn-wrap');
+  if (dueInfo.paidAlready) {
+    payWrap.innerHTML = '<div class="paid-badge">✓ Paid this month</div>';
+  } else if (!vendorProfile.bvn_verified) {
+    payWrap.innerHTML = '<div class="paid-badge" style="border-color:rgba(224,92,75,0.4);background:rgba(224,92,75,0.1);color:var(--red);">Verify BVN first</div>';
+  } else {
+    payWrap.innerHTML = `<button class="btn-pay-now" id="hero-pay-btn">Pay Now via Interswitch</button>`;
+    document.getElementById('hero-pay-btn').addEventListener('click', () => initiatePayment(g));
+  }
+
+  document.getElementById('hero-loading').style.display = 'none';
+  document.getElementById('hero-content').style.display = 'block';
+
+  // ── MEMBER GRID ────────────────────────────────────────────
+  renderMembersGrid(members, g);
+
+  // ── SECOND GROUP MINI CARD ─────────────────────────────────
+  renderOtherGroupCard();
+}
+
+// ── MEMBERS GRID ──────────────────────────────────────────────
+function renderMembersGrid(members, group) {
+  const grid = document.getElementById('members-grid');
+  if (!members.length) {
+    grid.innerHTML = '<div class="empty-state" style="padding:24px;"><div class="empty-icon">👥</div><h4>No members yet</h4><p>Invite people to join this group.</p></div>';
+    return;
+  }
+
+  // Sort by payout_position ascending (1 = highest BCS = first to receive)
+  const sorted = [...members].sort((a,b) => {
+    if (a.payout_position === null && b.payout_position === null) return (b.bcs_at_join||0) - (a.bcs_at_join||0);
+    if (a.payout_position === null) return 1;
+    if (b.payout_position === null) return -1;
+    return a.payout_position - b.payout_position;
+  });
+
+  const currentCycle = group.cycle_number || 0;
+
+  grid.innerHTML = sorted.map((m, i) => {
+    const name     = m.profile?.full_name || 'Member';
+    const market   = m.profile?.market_location || '—';
+    const bcs      = m.bcs_at_join || m.profile?.bcs_score || 0;
+    const bcsLabel = m.profile?.bcs_tier || 'Bronze';
+    const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+    const color    = AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length];
+    const isMe     = m.user_id === currentUser.id;
+    const pos      = m.payout_position;
+
+    // Turn label
+    let turnLabel, turnClass;
+    if (pos === currentCycle && currentCycle > 0)    { turnLabel = 'Receiving Now'; turnClass = 'turn-current'; }
+    else if (pos === currentCycle + 1 && pos !== null){ turnLabel = 'Next';          turnClass = 'turn-next'; }
+    else if (pos < currentCycle && pos !== null)      { turnLabel = 'Received';      turnClass = 'turn-done'; }
+    else                                               { turnLabel = 'Waiting';       turnClass = 'turn-done'; }
+
+    // Payment status
+    const paid    = m.payment_status === 'paid' || m.paid_this_cycle;
+    const stClass = paid ? 'st-paid' : group.status === 'forming' ? 'st-pending' : 'st-unpaid';
+    const stLabel = paid ? '✓ Paid'   : group.status === 'forming' ? '⏳ Pending'  : '✗ Overdue';
+
+    return `
+      <div class="member-row">
+        <div class="m-avatar" style="background:${color}">${initials}</div>
+        <div class="m-info">
+          <div class="m-name">${name}${isMe ? ' <span style="font-size:10px;background:rgba(201,168,76,0.15);color:var(--gold);padding:1px 6px;border-radius:8px;">You</span>' : ''}</div>
+          <div class="m-meta">${market} · BCS ${bcs} ${bcsLabel}${pos !== null ? ` · Pos #${pos}` : ''}</div>
+        </div>
+        <span class="m-turn ${turnClass}">${turnLabel}</span>
+        <div class="m-status ${stClass}"><div class="sdot"></div>${stLabel}</div>
+      </div>`;
+  }).join('');
+}
+
+// ── OTHER GROUP MINI CARD ─────────────────────────────────────
+function renderOtherGroupCard() {
+  const otherSection = document.getElementById('second-group-wrap');
+  const others = userGroups.filter((_, i) => i !== activeGroupIdx);
+  if (!others.length) { otherSection.style.display = 'none'; return; }
+
+  otherSection.style.display = '';
+  const g       = others[0];
+  const otherIdx= userGroups.indexOf(g);
+  const potTotal = g.contribution_amount * g.max_members;
+  const pct      = potTotal > 0 ? Math.round(((g.cycle_number || 0) / (g.total_cycles || g.max_members)) * 100) : 0;
+
+  document.getElementById('mini-group-card').innerHTML = `
+    <div class="mini-group-name">${g.group_name}</div>
+    <div class="mini-group-meta">${g.current_members || 1} of ${g.max_members} members · ₦${Number(g.contribution_amount).toLocaleString()}/month · Cycle ${g.cycle_number||0} of ${g.total_cycles||g.max_members}</div>
+    <div class="mini-progress-track"><div class="mini-progress-fill" style="width:${pct}%"></div></div>
+    <div class="mini-footer">
+      <span class="mini-amount">₦${((g.contribution_amount||0)*(g.current_members||1)).toLocaleString()} / ₦${potTotal.toLocaleString()}</span>
+      <span class="mini-due">Next: 1st of next month</span>
+    </div>`;
+  document.getElementById('mini-group-card').onclick = async () => {
+    activeGroupIdx = otherIdx;
+    document.querySelectorAll('.group-tab[data-idx]').forEach(t => {
+      t.classList.toggle('active', parseInt(t.dataset.idx) === otherIdx);
+    });
+    await renderActiveGroup();
+  };
+}
+
+// ── PAYOUT HISTORY ────────────────────────────────────────────
+async function loadPayoutHistory() {
+  const container = document.getElementById('payout-history');
+  const payments  = await getAjoPayments(currentUser.id);
+
+  if (!payments.length) {
+    container.innerHTML = `
+      <div class="empty-state" style="padding:28px;">
+        <div class="empty-icon">🏦</div>
+        <h4>No transactions yet</h4>
+        <p>Your contributions and payouts will appear here once your cycle begins.</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = payments.slice(0, 10).map(p => {
+    const isContrib = p.payment_type === 'contribution';
+    const emoji     = CAT_EMOJIS[p.ajo_groups?.category] || (isContrib ? '💳' : '💰');
+    const date      = new Date(p.paid_at || p.created_at).toLocaleDateString('en-GB', {
+      day:'numeric', month:'short', year:'numeric'
+    });
+    return `
+      <div class="history-item">
+        <div class="h-icon ${isContrib ? 'contrib' : 'received'}">${emoji}</div>
+        <div class="h-info">
+          <div class="h-title">${isContrib ? 'Monthly contribution' : 'Pot payout received'}${p.sandbox ? ' <span style="font-size:10px;color:var(--text-soft);">[sandbox]</span>' : ''}</div>
+          <div class="h-detail">${p.ajo_groups?.group_name || '—'} · Cycle ${p.cycle_number||1} · ${date} · ${p.status}</div>
+        </div>
+        <div class="h-amount ${isContrib ? 'out' : 'in'}">${isContrib ? '−' : '+'}₦${Number(p.amount||0).toLocaleString()}</div>
+      </div>`;
+  }).join('');
+}
+
+// ── NEARBY GROUPS ─────────────────────────────────────────────
+async function loadNearbyGroups(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const state  = vendorProfile?.market_location || '';
+  const groups = await getGroupsNearUser(state, 5);
+  const myCount= userGroups.length;
+  const atLimit= myCount >= 2;
+
+  if (!groups.length) {
+    container.innerHTML = `
+      <div class="empty-state" style="padding:28px;">
+        <div class="empty-icon">🔍</div>
+        <h4>No open groups near you</h4>
+        <p>Be the first to create one!</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = groups.map(g => {
+    const slots = g.max_members - (g.current_members || 0);
+    const full  = slots <= 0;
+    const emoji = CAT_EMOJIS[g.category] || '🏪';
+    return `
+      <div class="discover-item">
+        <div class="d-icon">${emoji}</div>
+        <div class="d-info">
+          <div class="d-name">${g.group_name}</div>
+          <div class="d-detail">₦${Number(g.contribution_amount).toLocaleString()}/month · ${g.current_members||0} of ${g.max_members} members · ${full?'Full':`${slots} spot${slots>1?'s':''} left`}</div>
+          <div class="d-tags">
+            <span class="d-tag ${full?'tag-full':'tag-open'}">${full?'Full':'Open'}</span>
+            ${g.category ? `<span class="d-tag tag-cat">${g.category}</span>` : ''}
+          </div>
+        </div>
+        <button class="btn-join" data-gid="${g.id}" data-gname="${g.group_name}" data-amount="${g.contribution_amount}" ${full||atLimit?'disabled':''}>
+          ${full?'Full':atLimit?'Limit':'Join'}
+        </button>
+      </div>`;
+  }).join('');
+
+  container.querySelectorAll('.btn-join:not([disabled])').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      pendingJoinGroupId = btn.dataset.gid;
+      showJoinConfirm({ id: btn.dataset.gid, group_name: btn.dataset.gname, contribution_amount: btn.dataset.amount });
+    });
+  });
+}
+
+// ── JOIN CONFIRM ──────────────────────────────────────────────
+function showJoinConfirm(group) {
+  const emoji = CAT_EMOJIS[group.category] || '🏪';
+  document.getElementById('join-group-preview').innerHTML = `
+    <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:16px;">
+      <div style="font-size:20px;margin-bottom:8px;">${emoji}</div>
+      <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">${group.group_name}</div>
+      <div style="font-size:13px;color:var(--text-soft);">₦${Number(group.contribution_amount).toLocaleString()}/month · ${group.current_members||0} of ${group.max_members||'?'} members · ${group.category||'General'}</div>
+      <div style="font-size:12px;color:var(--text-soft);margin-top:8px;">Your BCS: <strong style="color:var(--text-primary)">${userBCS}</strong></div>
+    </div>`;
+  document.getElementById('modal-join-confirm').classList.add('open');
+}
+
+document.getElementById('close-join-confirm').addEventListener('click', () => {
+  document.getElementById('modal-join-confirm').classList.remove('open');
+  pendingJoinGroupId = null;
+});
+
+document.getElementById('btn-confirm-join').addEventListener('click', async () => {
+  if (!pendingJoinGroupId) return;
+  const btn = document.getElementById('btn-confirm-join');
+  btn.disabled = true; btn.textContent = 'Joining…';
+  try {
+    await joinAjoGroup(currentUser.id, pendingJoinGroupId);
+    document.getElementById('modal-join-confirm').classList.remove('open');
+
+    // Notify all existing members via backend
+    try {
+      await fetch(`${BACKEND}/api/notify-new-group-member`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ groupId: pendingJoinGroupId, userId: currentUser.id, userName: vendorProfile.full_name, userBCS })
       });
+    } catch {}
+
+    userGroups = await getAjoGroupsForUser(currentUser.id);
+    if (userGroups.length > 0) {
+      document.getElementById('no-groups-state').style.display = 'none';
+      document.getElementById('ajo-main').style.display = 'block';
+      activeGroupIdx = 0;
+      buildTabs();
+      await renderActiveGroup();
+      loadNearbyGroups('nearby-groups');
+      loadPayoutHistory();
+    }
+    updateHeaderSub();
+  } catch (err) {
+    alert('Could not join group: ' + err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Confirm & Join';
+    pendingJoinGroupId = null;
+  }
+});
+
+// ── PAYMENT FLOW ──────────────────────────────────────────────
+async function initiatePayment(group) {
+  const btn = document.getElementById('hero-pay-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Initiating…'; }
+  try {
+    const res = await fetch(`${BACKEND}/api/initiate-ajo-payment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        groupId:     group.id,
+        userId:      currentUser.id,
+        amount:      group.contribution_amount,
+        groupName:   group.group_name,
+        userEmail:   vendorProfile.email || currentUser.email || '',
+        userName:    vendorProfile.full_name || '',
+        cycleNumber: group.cycle_number || 1
+      })
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Payment failed');
+
+    if (data.paymentUrl) {
+      // Live QTB — redirect to Interswitch hosted checkout
+      window.location.href = data.paymentUrl;
+    } else if (data.sandbox) {
+      // Show our sandbox payment form
+      sandboxPayData = {
+        groupId:     group.id,
+        userId:      currentUser.id,
+        amount:      group.contribution_amount,
+        groupName:   group.group_name,
+        cycleNumber: group.cycle_number || 1
+      };
+      document.getElementById('sandbox-amount').textContent = `₦${Number(group.contribution_amount).toLocaleString()}`;
+      document.getElementById('sandbox-group-label').textContent = `Ajo contribution — ${group.group_name}`;
+      document.getElementById('sb-btn-amount').textContent = Number(group.contribution_amount).toLocaleString();
+      document.getElementById('modal-sandbox-pay').classList.add('open');
+    }
+  } catch (err) {
+    alert('Payment error: ' + err.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Pay Now via Interswitch'; }
+  }
+}
+
+// Sandbox payment confirm
+document.getElementById('btn-sandbox-confirm').addEventListener('click', async () => {
+  if (!sandboxPayData) return;
+  const card  = document.getElementById('sb-card').value.replace(/\s/g,'');
+  const expiry= document.getElementById('sb-expiry').value;
+  const cvv   = document.getElementById('sb-cvv').value;
+  const pin   = document.getElementById('sb-pin').value;
+
+  if (card.length < 10 || !expiry || cvv.length < 3 || pin.length < 4) {
+    alert('Please fill in all payment fields.'); return;
+  }
+
+  const btn = document.getElementById('btn-sandbox-confirm');
+  btn.disabled = true; btn.textContent = 'Processing…';
+
+  try {
+    const res = await fetch(`${BACKEND}/api/sandbox-confirm-payment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(sandboxPayData)
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error);
+
+    document.getElementById('modal-sandbox-pay').classList.remove('open');
+    // Clear form
+    ['sb-card','sb-expiry','sb-cvv','sb-pin'].forEach(id => document.getElementById(id).value = '');
+
+    // Refresh the active group display
+    userGroups = await getAjoGroupsForUser(currentUser.id);
+    await renderActiveGroup();
+    await loadPayoutHistory();
+    updateNotifBadge();
+
+    alert(`✅ Payment confirmed!\n\n₦${Number(sandboxPayData.amount).toLocaleString()} recorded for "${sandboxPayData.groupName}".\nYour BCS increased by +2 for paying on time.`);
+    sandboxPayData = null;
+  } catch (err) {
+    alert('Payment failed: ' + err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = `Pay ₦${Number(sandboxPayData?.amount || 0).toLocaleString()}`;
+  }
+});
+
+document.getElementById('close-sandbox-pay').addEventListener('click', () => {
+  document.getElementById('modal-sandbox-pay').classList.remove('open');
+  sandboxPayData = null;
+});
+
+// ── NOTIFICATIONS MODAL ───────────────────────────────────────
+document.getElementById('btn-notifs').addEventListener('click', async () => {
+  document.getElementById('modal-notifs').classList.add('open');
+  await markAllRead(currentUser.id);
+  updateNotifBadge();
+
+  // Also check invitations
+  let invitations = [];
+  try {
+    const invRes = await fetch(`${BACKEND}/api/my-invitations/${currentUser.id}`);
+    const invData = await invRes.json();
+    invitations = invData.invitations || [];
+  } catch {}
+
+  const notifs  = await getNotifications(currentUser.id);
+  const list    = document.getElementById('notifs-list');
+
+  const icons = {
+    ajo_invitation: '📨', ajo_accepted: '🎉', new_group: '🔄',
+    payment_confirmed: '✅', payment_due: '⏰', payout_sent: '💰',
+    member_joined: '👥', new_post: '🤝', general: '🔔'
+  };
+
+  // Pending invitations shown at top
+  const inviteHtml = invitations.map(inv => `
+    <div class="notif-item unread">
+      <div class="notif-icon">📨</div>
+      <div class="notif-content">
+        <div class="notif-title">Ajo Group Invitation</div>
+        <div class="notif-body">${inv.sender?.full_name || 'Someone'} (BCS: ${inv.sender?.bcs_score||0}) invited you to join "${inv.ajo_groups?.group_name}".<br>Contribution: ₦${Number(inv.ajo_groups?.contribution_amount||0).toLocaleString()}/month · ${inv.ajo_groups?.current_members||0} of ${inv.ajo_groups?.max_members||'?'} members</div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button class="notif-accept-btn" data-inv-id="${inv.id}" data-group-id="${inv.group_id}">Accept ✓</button>
+          <button class="notif-accept-btn" style="background:none;border:1px solid var(--border);color:var(--text-mid);" data-inv-id="${inv.id}" data-decline="1">Decline</button>
+        </div>
+        <div class="notif-time">${timeSince(new Date(inv.created_at))}</div>
+      </div>
+    </div>`).join('');
+
+  const notifHtml = notifs.map(n => `
+    <div class="notif-item ${n.read ? '' : 'unread'}">
+      <div class="notif-icon">${icons[n.type] || '🔔'}</div>
+      <div class="notif-content">
+        <div class="notif-title">${n.title}</div>
+        <div class="notif-body">${n.message}</div>
+        <div class="notif-time">${timeSince(new Date(n.created_at))}</div>
+      </div>
+    </div>`).join('');
+
+  if (!inviteHtml && !notifHtml) {
+    list.innerHTML = '<div class="empty-state" style="padding:30px 24px;"><div class="empty-icon">🔔</div><h4>All caught up!</h4><p>No new notifications.</p></div>';
+    return;
+  }
+
+  list.innerHTML = inviteHtml + notifHtml;
+
+  // Wire accept/decline buttons
+  list.querySelectorAll('[data-inv-id]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const invId   = btn.dataset.invId;
+      const groupId = btn.dataset.groupId;
+      const decline = btn.dataset.decline;
+
+      if (decline) {
+        await supabase.from('ajo_invitations').update({ status: 'declined' }).eq('id', invId);
+        btn.closest('.notif-item').remove();
+        return;
+      }
+
+      btn.textContent = 'Accepting…'; btn.disabled = true;
+      try {
+        const res = await fetch(`${BACKEND}/api/accept-invitation`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: currentUser.id, groupId, invitationId: invId })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error);
+
+        btn.textContent = '✓ Accepted!';
+        document.getElementById('modal-notifs').classList.remove('open');
+
+        userGroups = await getAjoGroupsForUser(currentUser.id);
+        if (userGroups.length > 0) {
+          document.getElementById('no-groups-state').style.display = 'none';
+          document.getElementById('ajo-main').style.display = 'block';
+          activeGroupIdx = 0;
+          buildTabs();
+          await renderActiveGroup();
+          loadNearbyGroups('nearby-groups');
+          loadPayoutHistory();
+        }
+        updateHeaderSub();
+      } catch (err) {
+        alert('Could not accept: ' + err.message);
+        btn.textContent = 'Accept ✓'; btn.disabled = false;
+      }
+    });
+  });
+});
+
+document.getElementById('close-notifs').addEventListener('click', () => {
+  document.getElementById('modal-notifs').classList.remove('open');
+});
+
+// ── CREATE GROUP ──────────────────────────────────────────────
+window.toggleInviteSection = function() {
+  const type = document.getElementById('c-visibility').value;
+  document.getElementById('invite-phones-section').style.display = type === 'invite' ? 'block' : 'none';
+};
+
+document.getElementById('btn-create-group').addEventListener('click', async () => {
+  const myCount = await getUserAjoGroupCount(currentUser.id);
+  if (myCount >= 2) { alert('You are already in 2 ajo groups.'); return; }
+
+  const name       = document.getElementById('c-name').value.trim();
+  const amount     = parseFloat(document.getElementById('c-amount').value) || 0;
+  const max        = parseInt(document.getElementById('c-max').value) || 8;
+  const category   = document.getElementById('c-category').value;
+  const visibility = document.getElementById('c-visibility').value;
+
+  if (!name)           { alert('Please enter a group name.'); return; }
+  if (amount < 1000)   { alert('Minimum contribution is ₦1,000.'); return; }
+  if (max < 3||max > 8){ alert('Members must be between 3 and 8.'); return; }
+  if (!vendorProfile.bvn_verified) { alert('Please verify your BVN first.'); return; }
+
+  let phoneNumbers = [];
+  if (visibility === 'invite') {
+    phoneNumbers = (document.getElementById('c-phones').value || '')
+      .split('\n').map(p => p.trim()).filter(Boolean);
+    if (phoneNumbers.length < 2) { alert('Please add at least 2 phone numbers to invite.'); return; }
+    if (phoneNumbers.length > 7) { alert('Maximum 7 invitees.'); return; }
+  }
+
+  const btn = document.getElementById('btn-create-group');
+  btn.disabled = true; btn.textContent = 'Creating…';
+
+  try {
+    const state = vendorProfile.state || vendorProfile.market_location || '';
+    const group = await createAjoGroup(currentUser.id, { groupName: name, contributionAmount: amount, maxMembers: max, visibility, category, state });
+
+    // Send invitations if invite-only
+    if (visibility === 'invite' && phoneNumbers.length) {
+      await fetch(`${BACKEND}/api/send-invitations`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          groupId:     group.id,
+          groupName:   name,
+          senderId:    currentUser.id,
+          senderName:  vendorProfile.full_name || 'Someone',
+          senderBCS:   userBCS,
+          phoneNumbers
+        })
+      }).catch(() => {});
     }
 
-    // Tab switching
-    document.querySelectorAll('.group-tab[data-group]').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.group-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        activeGroup = parseInt(tab.dataset.group);
-        renderGroup(activeGroup);
-      });
+    // Notify all users if public
+    if (visibility === 'public') {
+      fetch(`${BACKEND}/api/notify-new-group`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          groupId:            group.id,
+          groupName:          name,
+          creatorId:          currentUser.id,
+          creatorBCS:         userBCS,
+          contributionAmount: amount
+        })
+      }).catch(() => {});
+    }
+
+    document.getElementById('modal-create').classList.remove('open');
+    // Reset form
+    ['c-name','c-amount','c-max','c-phones'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+
+    userGroups = await getAjoGroupsForUser(currentUser.id);
+    document.getElementById('no-groups-state').style.display = 'none';
+    document.getElementById('ajo-main').style.display = 'block';
+    activeGroupIdx = 0;
+    buildTabs();
+    await renderActiveGroup();
+    loadNearbyGroups('nearby-groups');
+    updateHeaderSub();
+
+    alert(visibility === 'invite'
+      ? `✓ Group "${name}" created! Invitations sent to ${phoneNumbers.length} people.`
+      : `✓ Open group "${name}" created! All SUWE users have been notified.`);
+  } catch (err) {
+    alert('Could not create group: ' + err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Create Group →';
+  }
+});
+
+// ── FIND GROUP SEARCH ─────────────────────────────────────────
+document.getElementById('btn-search-groups').addEventListener('click', async () => {
+  const min = parseFloat(document.getElementById('f-min').value) || 0;
+  const max = parseFloat(document.getElementById('f-max').value) || Infinity;
+  const container = document.getElementById('search-results');
+  container.innerHTML = '<div style="font-size:13px;color:var(--text-soft);padding:12px 0;">Searching…</div>';
+
+  const groups  = await getOpenAjoGroups({ minContribution: min > 0 ? min : undefined, maxContribution: isFinite(max) ? max : undefined });
+  const myCount = userGroups.length;
+  const atLimit = myCount >= 2;
+
+  if (!groups.length) {
+    container.innerHTML = '<div style="font-size:13px;color:var(--text-soft);padding:12px 0;">No groups match your filters. Try wider criteria or create your own.</div>';
+    return;
+  }
+
+  container.innerHTML = groups.slice(0,8).map(g => {
+    const slots = g.max_members - (g.current_members||0);
+    const emoji = CAT_EMOJIS[g.category] || '🏪';
+    return `
+      <div class="discover-item" style="padding:12px 0;border-bottom:1px solid var(--surface-3);">
+        <div class="d-icon">${emoji}</div>
+        <div class="d-info">
+          <div class="d-name">${g.group_name}</div>
+          <div class="d-detail">₦${Number(g.contribution_amount).toLocaleString()}/month · ${slots} spot${slots!==1?'s':''} left · ${g.category||'General'}</div>
+          <div class="d-tags"><span class="d-tag tag-open">Open</span>${g.category?`<span class="d-tag tag-cat">${g.category}</span>`:''}</div>
+        </div>
+        <button class="btn-join" data-gid="${g.id}" data-gname="${g.group_name}" data-amount="${g.contribution_amount}" ${atLimit?'disabled':''}>
+          ${atLimit?'Limit':'Join'}
+        </button>
+      </div>`;
+  }).join('');
+
+  container.querySelectorAll('.btn-join:not([disabled])').forEach(btn => {
+    btn.addEventListener('click', () => {
+      pendingJoinGroupId = btn.dataset.gid;
+      document.getElementById('modal-find').classList.remove('open');
+      showJoinConfirm({ id: btn.dataset.gid, group_name: btn.dataset.gname, contribution_amount: btn.dataset.amount });
     });
+  });
+});
 
-    // Mini group click swaps to that group
-    document.getElementById('mini-group').addEventListener('click', () => {
-      document.querySelectorAll('.group-tab[data-group]').forEach(t => {
-        t.classList.toggle('active', t.dataset.group === '2');
-      });
-      activeGroup = 2;
-      renderGroup(2);
-    });
+// ── REFRESH MEMBERS ───────────────────────────────────────────
+document.getElementById('btn-refresh-members').addEventListener('click', async () => {
+  const g = userGroups[activeGroupIdx];
+  if (!g) return;
+  document.getElementById('members-grid').innerHTML = '<div class="skeleton" style="margin:16px 22px;"></div>';
+  const members = await getGroupMembers(g.id, BACKEND);
+  renderMembersGrid(members, g);
+});
 
-    // Days left calculation
-    const due = new Date('2026-04-01');
-    const today = new Date();
-    const diff  = Math.ceil((due - today) / (1000*60*60*24));
-    document.getElementById('days-left').textContent = Math.max(diff, 0);
+// ── BROWSE ALL GROUPS ─────────────────────────────────────────
+document.getElementById('browse-all-btn').addEventListener('click', () => {
+  document.getElementById('modal-find').classList.add('open');
+});
 
-    // Modals
-    const createModal = document.getElementById('modal-create');
-    const joinModal   = document.getElementById('modal-join');
+// ── MODAL WIRES ───────────────────────────────────────────────
+document.getElementById('open-create').addEventListener('click', async () => {
+  const count = await getUserAjoGroupCount(currentUser.id);
+  if (count >= 2) { alert('You are already in 2 ajo groups. You cannot create or join another.'); return; }
+  document.getElementById('modal-create').classList.add('open');
+});
+document.getElementById('close-create').addEventListener('click', () => document.getElementById('modal-create').classList.remove('open'));
+document.getElementById('open-find').addEventListener('click', () => document.getElementById('modal-find').classList.add('open'));
+document.getElementById('close-find').addEventListener('click', () => document.getElementById('modal-find').classList.remove('open'));
 
-    document.getElementById('open-create').addEventListener('click', () => createModal.classList.add('open'));
-    document.getElementById('close-create').addEventListener('click', () => createModal.classList.remove('open'));
-    document.getElementById('open-join').addEventListener('click', () => joinModal.classList.add('open'));
-    document.getElementById('open-join-tab').addEventListener('click', () => joinModal.classList.add('open'));
-    document.getElementById('close-join').addEventListener('click', () => joinModal.classList.remove('open'));
-    createModal.addEventListener('click', e => { if (e.target === createModal) createModal.classList.remove('open'); });
-    joinModal.addEventListener('click',   e => { if (e.target === joinModal)   joinModal.classList.remove('open'); });
+['modal-create','modal-find','modal-join-confirm','modal-notifs','modal-sandbox-pay'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => {
+    if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+  });
+});
 
-    // Join buttons in discover
-    document.querySelectorAll('.btn-join:not(.full)').forEach(btn => {
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        joinModal.classList.add('open');
-      });
-    });
+// ── UTIL ──────────────────────────────────────────────────────
+function timeSince(date) {
+  const s = Math.floor((new Date() - date) / 1000);
+  if (s < 60)    return 'just now';
+  if (s < 3600)  return Math.floor(s/60) + 'm ago';
+  if (s < 86400) return Math.floor(s/3600) + 'h ago';
+  return Math.floor(s/86400) + 'd ago';
+}
 
-    // Initial render
-    renderGroup(1);
-  </script>
+function hideLoader() {
+  const el = document.getElementById('page-loader');
+  if (!el) return;
+  el.style.transition = 'opacity 0.3s';
+  el.style.opacity    = '0';
+  setTimeout(() => el.style.display = 'none', 350);
+}
 
+// ── GO ────────────────────────────────────────────────────────
+boot();
+</script>
 </body>
 </html>
