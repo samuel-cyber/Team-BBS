@@ -346,23 +346,22 @@
     <div class="card">
       <div class="error-box" id="error-box"></div>
 
-      <!-- ── STEP 1: Contact Info ── -->
-      <div class="step active" id="step-1">
-        <h2>Let's set up your profile</h2>
+      <!-- ── ONBOARDING FORM (single page) ── -->
+      <div class="step active" id="onboarding-form">
+        <h2>Complete your vendor profile</h2>
         <p class="card-sub">
-          Tell us a bit about yourself. This helps SUWE personalise
-          your business insights and match you with the right ajo groups.
+          Fill all required fields below so SUWE can personalize your dashboard and enable savings features.
         </p>
 
         <div class="form-group">
           <label>Full name</label>
-          <input type="text" id="full-name" placeholder="Amaka Okonkwo"/>
+          <input type="text" id="full-name" placeholder="Amaka Okonkwo" />
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label>Phone number</label>
-            <input type="tel" id="phone" placeholder="08012345678"/>
+            <input type="tel" id="phone" placeholder="08012345678" />
           </div>
           <div class="form-group">
             <label>State</label>
@@ -385,21 +384,8 @@
 
         <div class="form-group">
           <label>Market / Business location</label>
-          <input type="text" id="market-location" placeholder="e.g. Oshodi Market, Lagos"/>
+          <input type="text" id="market-location" placeholder="e.g. Oshodi Market, Lagos" />
         </div>
-
-        <div class="btn-row">
-          <button class="btn-next" id="next-1">Continue →</button>
-        </div>
-      </div>
-
-      <!-- ── STEP 2: Business Info ── -->
-      <div class="step" id="step-2">
-        <h2>About your business</h2>
-        <p class="card-sub">
-          What do you sell? Select all categories that apply.
-          This helps the AI give you accurate market price predictions.
-        </p>
 
         <div class="form-group">
           <label>What do you sell?</label>
@@ -414,9 +400,13 @@
             <div class="cat-option" data-value="Farm Produce">🌽 Farm Produce</div>
             <div class="cat-option" data-value="Other">📦 Other</div>
           </div>
+          <div class="form-group" id="other-category-group" style="display:none; margin-top: 10px;">
+            <label>Please specify if Other</label>
+            <input type="text" id="other-category" placeholder="e.g. Fashion Accessories" />
+          </div>
         </div>
 
-        <div class="form-group" style="margin-top:20px;">
+        <div class="form-group" style="margin-top: 20px;">
           <label>How long have you been trading?</label>
           <select id="trading-years">
             <option value="">Select</option>
@@ -428,62 +418,18 @@
           </select>
         </div>
 
-        <div class="btn-row">
-          <button class="btn-back" id="back-2">← Back</button>
-          <button class="btn-next" id="next-2">Continue →</button>
-        </div>
-      </div>
-
-      <!-- ── STEP 3: BVN Verification ── -->
-      <div class="step" id="step-3">
-        <h2>Identity verification</h2>
-        <p class="card-sub">
-          Your BVN (Bank Verification Number) is required to
-          participate in SUWE's ajo savings system. It is used
-          only to verify your identity through Interswitch —
-          we never store your full BVN or share it with anyone.
-        </p>
-
         <div class="form-group">
           <label>Bank Verification Number (BVN)</label>
-          <input
-            type="text"
-            id="bvn"
-            placeholder="11-digit BVN"
-            maxlength="11"
-            inputmode="numeric"
-          />
-          <div class="field-note">
-            Your BVN is an 11-digit number. Dial *565*0# on any
-            Nigerian network to find yours. Verification is powered
-            by Interswitch and takes a few seconds.
-          </div>
+          <input type="text" id="bvn" placeholder="11-digit BVN" maxlength="11" inputmode="numeric" />
         </div>
 
         <div class="form-group">
           <label>Referral code <span style="color:var(--text-dim)">(optional)</span></label>
-          <input type="text" id="referral" placeholder="Enter code if you have one"/>
+          <input type="text" id="referral" placeholder="Enter code if you have one" />
         </div>
 
         <div class="btn-row">
-          <button class="btn-back" id="back-3">← Back</button>
-          <button class="btn-next" id="finish-btn">Complete setup →</button>
-        </div>
-      </div>
-
-      <!-- ── SUCCESS ── -->
-      <div class="step" id="step-success">
-        <div class="success-wrap">
-          <div class="success-icon">🎉</div>
-          <h2>You're all set!</h2>
-          <p>
-            Welcome to SUWE. Your vendor profile has been saved.
-            Your Business Credit Score journey starts now —
-            the more you track, the stronger your score grows.
-          </p>
-          <button class="btn-next" id="go-dashboard" style="max-width:280px;margin:0 auto;display:block;">
-            Go to my dashboard →
-          </button>
+          <button class="btn-next" id="proceed-btn">Proceed to dashboard</button>
         </div>
       </div>
 
@@ -493,8 +439,8 @@
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    const SUPABASE_URL      = 'YOUR_SUPABASE_URL_HERE';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+    const SUPABASE_URL      = 'https://jqfmybadioqbmrkrsvbl.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpxZm15YmFkaW9xYm1ya3JzdmJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNjczMTIsImV4cCI6MjA4OTg0MzMxMn0.R58UVPxWfNoyOwKB3qIelhp35zcmNcVMhgWwSEpDkE4';
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // ── Helpers ──────────────────────────────────────
@@ -506,45 +452,6 @@
     const hideError = () => $('error-box').classList.remove('show');
     const showLoading = () => $('loading').classList.add('show');
     const hideLoading = () => $('loading').classList.remove('show');
-
-    // ── Step tracking ────────────────────────────────
-    let currentStep = 1;
-    const TOTAL_STEPS = 3;
-
-    function goToStep(n) {
-      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-      $('step-' + (n === 'success' ? 'success' : n)).classList.add('active');
-
-      if (n !== 'success') {
-        currentStep = n;
-        const pct = Math.round((n / TOTAL_STEPS) * 100);
-        $('step-label').textContent = `Step ${n} of ${TOTAL_STEPS}`;
-        $('step-pct').textContent = pct + '%';
-        $('progress-fill').style.width = pct + '%';
-      } else {
-        $('step-label').textContent = 'All done!';
-        $('step-pct').textContent = '100%';
-        $('progress-fill').style.width = '100%';
-      }
-
-      hideError();
-    }
-
-    // ── Category checkbox logic ───────────────────────
-    const selectedCategories = new Set();
-
-    document.querySelectorAll('.cat-option').forEach(opt => {
-      opt.addEventListener('click', () => {
-        const val = opt.dataset.value;
-        if (selectedCategories.has(val)) {
-          selectedCategories.delete(val);
-          opt.classList.remove('checked');
-        } else {
-          selectedCategories.add(val);
-          opt.classList.add('checked');
-        }
-      });
-    });
 
     // ── Gate: check session on page load ─────────────
     // Checks if user is logged in and redirects only if profile is complete.
@@ -567,17 +474,26 @@
       const { data: profile, error: profileError } = await supabase
         .from('users')
         .select('*')
-        .eq('id', user.id)
+        .or(`id.eq.${user.id},email.eq.${user.email}`)
         .single();
 
       if (profileError) {
         console.warn('Profile lookup error:', profileError.message);
       }
 
-      if (profile && profile.phone) {
-        // Profile is already complete — skip onboarding
+      if (profile) {
+        // Profile exists — skip onboarding
         window.location.href = '/frontend/pages/dashboard.html';
         return;
+      }
+
+      // If user logged in and no profile row exists yet, create one early.
+      if (user.id) {
+        await supabase.from('users').upsert({
+          id: user.id,
+          email: user.email,
+          full_name: user.user_metadata?.full_name || null
+        }, { onConflict: 'id' });
       }
 
       // Pre-fill whatever Supabase already knows
@@ -592,108 +508,114 @@
 
     checkAndPrefill();
 
-    // ── STEP 1 → STEP 2 ──────────────────────────────
-    $('next-1').addEventListener('click', (event) => {
+    // ── Category checkbox logic ───────────────────────
+    const selectedCategories = new Set();
+    const otherCategoryGroup = $('other-category-group');
+    const otherCategoryInput = $('other-category');
+
+    document.querySelectorAll('.cat-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        const val = opt.dataset.value;
+
+        if (selectedCategories.has(val)) {
+          selectedCategories.delete(val);
+          opt.classList.remove('checked');
+          if (val === 'Other') {
+            otherCategoryGroup.style.display = 'none';
+            otherCategoryInput.value = '';
+          }
+        } else {
+          selectedCategories.add(val);
+          opt.classList.add('checked');
+          if (val === 'Other') {
+            otherCategoryGroup.style.display = 'block';
+            otherCategoryInput.focus();
+          }
+        }
+      });
+    });
+
+    // ── ONBOARDING FORM SUBMIT ────────────────────────
+    document.getElementById('proceed-btn').addEventListener('click', async (event) => {
       event.preventDefault();
       hideError();
-      console.log('next-1 clicked');
 
       const name     = $('full-name').value.trim();
       const phoneRaw = $('phone').value.trim();
       const state    = $('state').value;
       const location = $('market-location').value.trim();
+      const tradingYears = $('trading-years').value;
+      const bvn      = $('bvn').value.trim();
+      const referral = $('referral').value.trim();
 
-      // Normalise phone formats: "08012345678", "2348012345678", "+2348012345678"
+      if (!name || !phoneRaw || !state || !location || !tradingYears || !bvn) {
+        showError('Please fill in all required fields to continue.');
+        return;
+      }
+
       let normalizedPhone = phoneRaw.replace(/[^0-9+]/g, '');
       if (normalizedPhone.startsWith('+234')) {
         normalizedPhone = '0' + normalizedPhone.slice(4);
       } else if (normalizedPhone.startsWith('234')) {
         normalizedPhone = '0' + normalizedPhone.slice(3);
       }
-      // Convert any 11-digit number starting with 0 to pure 10-digit format.
       normalizedPhone = normalizedPhone.replace(/\D/g, '');
-      if (normalizedPhone.startsWith('0') && normalizedPhone.length === 11) {
-        normalizedPhone = normalizedPhone.slice(1);
-      }
-      if (normalizedPhone.startsWith('0') && normalizedPhone.length === 10) {
-        // OK
-      } else if (normalizedPhone.length === 10 && !normalizedPhone.startsWith('0')) {
-        // allow 10-digit local form e.g. 8012345678
+
+      if (normalizedPhone.length === 10 && !normalizedPhone.startsWith('0')) {
+        // Allow bare 10-digit numbers (e.g. 8012345678)
         normalizedPhone = '0' + normalizedPhone;
       }
 
-      console.log({ name, phoneRaw, normalizedPhone, state, location });
-
-      if (!name || !normalizedPhone || !state || !location) {
-        showError('Please complete all fields before continuing.');
+      // Valid Nigerian 11-digit format starts with 0 and 11 digits total
+      if (!/^0[0-9]{10}$/.test(normalizedPhone)) {
+        showError('Please enter a valid Nigerian phone number (e.g. 08012345678 or +2348012345678).');
         return;
       }
 
-      if (!/^0[0-9]{9}$/.test(normalizedPhone)) {
-        showError('Please enter a valid 10-digit Nigerian phone number (e.g. 08012345678 or +2348012345678).');
+      if (bvn.length !== 11 || !/^\d+$/.test(bvn)) {
+        showError('Please enter a valid 11-digit BVN.');
         return;
       }
-
-      // Save normalized value back to the input so the final profile uses correct format
-      $('phone').value = normalizedPhone;
-
-      goToStep(2);
-    });
-
-    // ── STEP 2 → STEP 3 ──────────────────────────────
-    $('next-2').addEventListener('click', (event) => {
-      event.preventDefault();
-      hideError();
-      console.log('next-2 clicked, selectedCategories:', Array.from(selectedCategories));
 
       if (selectedCategories.size === 0) {
-        // Avoid hard-blocking if category selection fails due to UI issue.
-        if (!confirm('You have not selected a product category. Continue anyway?')) {
-          showError('Please select at least one product category to get tailored recommendations.');
+        if (!confirm('No product category selected. Continue with this anyway?')) {
+          showError('Please select at least one product category.');
           return;
         }
       }
 
-      if (!$('trading-years').value) {
-        showError('Please tell us how long you have been trading.');
-        return;
-      }
-      goToStep(3);
-    });
-
-    // ── Back buttons ──────────────────────────────────
-    $('back-2').addEventListener('click', () => goToStep(1));
-    $('back-3').addEventListener('click', () => goToStep(2));
-
-    // ── STEP 3 → Save everything to Supabase ─────────
-    $('finish-btn').addEventListener('click', async () => {
-      const bvn = $('bvn').value.trim();
-
-      if (!bvn || bvn.length !== 11 || !/^\d+$/.test(bvn)) {
-        showError('Please enter a valid 11-digit BVN.');
-        return;
+      if (selectedCategories.has('Other')) {
+        const other = otherCategoryInput.value.trim();
+        if (!other) {
+          showError('Please enter what you sell for "Other" category.');
+          return;
+        }
       }
 
       showLoading();
 
       try {
-        // Collect all the form data from every step
+        const chosenCategories = Array.from(selectedCategories);
+        if (selectedCategories.has('Other')) {
+          const other = otherCategoryInput.value.trim();
+          if (other) {
+            chosenCategories[chosenCategories.indexOf('Other')] = other;
+          }
+        }
+
         const profileData = {
-          id:                  window._userId,
-          email:               window._userEmail || '',
-          full_name:           $('full-name').value.trim(),
-          phone:               $('phone').value.trim(),
-          market_location:     $('market-location').value.trim() + ', ' + $('state').value,
-          product_categories:  Array.from(selectedCategories).join(', '),
-          identity_verified:   false,
-          // We store only that BVN was submitted — not the BVN itself
-          // Actual verification happens via Interswitch on Day 3
-          bvn_submitted:       true
+          id: window._userId,
+          email: window._userEmail || '',
+          full_name: name,
+          phone: normalizedPhone,
+          market_location: `${location}, ${state}`,
+          product_categories: chosenCategories.join(', '),
+          trading_years: tradingYears,
+          bvn_submitted: true,
+          identity_verified: false,
+          referral_code: referral || null
         };
 
-        // Save to Supabase users table
-        // upsert prevents duplicates — if this user already has a row
-        // it updates it, otherwise it creates one
         const { error } = await supabase
           .from('users')
           .upsert(profileData, { onConflict: 'id' });
@@ -701,26 +623,18 @@
         hideLoading();
 
         if (error) {
-          showError('Something went wrong saving your profile. Please try again.');
           console.error('Supabase upsert error:', error);
+          showError('Failed to save profile, please retry.');
           return;
         }
 
-        // All good — show success state
-        goToStep('success');
-
+        window.location.href = '/frontend/pages/dashboard.html';
       } catch (err) {
         hideLoading();
-        showError('An unexpected error occurred. Please try again.');
         console.error(err);
+        showError('An unexpected error occurred. Please try again.');
       }
     });
-
-    // ── Go to dashboard from success screen ──────────
-    $('go-dashboard').addEventListener('click', () => {
-      window.location.href = '/frontend/pages/dashboard.html';
-    });
-
   </script>
 </body>
 </html> 
