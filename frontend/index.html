@@ -1405,8 +1405,16 @@
     </button>
     <!-- Mobile Menu Dropdown -->
     <div class="nav-actions mobile-menu" id="mobile-menu">
-      <button class="btn-nav-login" id="mobile-login-btn">Log in</button>
-      <button class="btn-nav-signup" id="mobile-signup-btn">Sign up free</button>
+      <button class="btn-nav-login" id="mobile-login-btn"
+        onclick="event.stopPropagation();
+                 document.getElementById('mobile-menu').classList.remove('show');
+                 document.getElementById('hamburger-toggle').classList.remove('active');
+                 document.getElementById('login-modal').classList.add('show');">Log in</button>
+      <button class="btn-nav-signup" id="mobile-signup-btn"
+        onclick="event.stopPropagation();
+                 document.getElementById('mobile-menu').classList.remove('show');
+                 document.getElementById('hamburger-toggle').classList.remove('active');
+                 document.getElementById('signup-modal').classList.add('show');">Sign up free</button>
     </div>
   </nav>
 
