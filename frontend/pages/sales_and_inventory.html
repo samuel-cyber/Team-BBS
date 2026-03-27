@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SUWE — Sales & Inventory</title>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet"/>
+
+<style>
+:root {
+  --green-deep:  #0a2e1a;
+  --green-mid:   #134d2c;
+  --green-light: #1a6637;
+  --gold:        #c9a84c;
+  --gold-soft:   #e8c96a;
+  --gold-pale:   #fdf6e3;
+  --cream:       #f5f0e8;
+  --surface:     #ffffff;
+  --surface-2:   #f7f8f5;
+  --surface-3:   #eef0eb;
+  --text-primary:#111a14;
+  --text-mid:    #3d5244;
+  --text-soft:   #7a9485;
+  --border:      #dde5df;
+  --red:         #e05c4b;
+  --red-pale:    #fdf1ef;
+  --blue:        #3b7dd8;
+  --radius:      16px;
+  --radius-sm:   10px;
+  --radius-xs:   6px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--surface-2);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  position: fixed; top:0; left:0;
+  width: 220px; height: 100vh;
+  background: var(--green-deep);
+  display: flex; flex-direction: column;
+  padding: 28px 0; z-index: 100;
+}
+.sidebar-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; color: var(--gold);
+  letter-spacing: 2px;
+  padding: 0 24px 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.sidebar-logo span {
+  display: block; font-family: 'DM Sans', sans-serif;
+  font-size: 10px; letter-spacing: 1.5px;
+  color: rgba(255,255,255,0.3); font-weight: 400;
+  text-transform: uppercase; margin-top: 2px;
+}
+.nav-section { padding: 20px 14px 6px; }
+.nav-label {
+  font-size: 10px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: rgba(255,255,255,0.25);
+  padding: 0 10px; margin-bottom: 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: var(--radius-sm);
+  color: rgba(255,255,255,0.55); font-size: 14px;
+  font-weight: 500; cursor: pointer;
+  transition: all 0.15s; margin-bottom: 2px;
+}
+.nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+.nav-item.active { background: rgba(201,168,76,0.15); color: var(--gold); }
+.nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+.sidebar-footer {
+  margin-top: auto; padding: 16px 14px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.user-pill {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.05);
+}
+.user-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--green-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; color: var(--gold); flex-shrink: 0;
+}
+.user-name  { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.8); }
+.user-market{ font-size: 11px; color: rgba(255,255,255,0.3); }
+
+/* ── MAIN ── */
+.main {
+  margin-left: 220px;
+  padding: 32px 36px;
+  min-height: 100vh;
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 28px;
+}
+.page-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px; font-weight: 800;
+  color: var(--text-primary); margin-bottom: 4px;
+}
+.page-header p { font-size: 13px; color: var(--text-soft); }
+
+.header-actions { display: flex; gap: 10px; align-items: center; }
+
+.btn-outline {
+  padding: 10px 18px; border: 1.5px solid var(--border);
+  border-radius: 50px; background: var(--surface);
+  font-family: 'DM Sans', sans-serif; font-size: 13px;
+  font-weight: 600; color: var(--text-mid); cursor: pointer;
+  transition: all 0.15s; display: flex; align-items: center; gap: 6px;
+}
+.btn-outline:hover { border-color: var(--green-deep); color: var(--green-deep); }
+
+.btn-primary {
+  padding: 10px 20px; border: none;
+  border-radius: 50px; background: var(--green-deep);
+  font-family: 'DM Sans', sans-serif; font-size: 13px;
+  font-weight: 600; color: var(--gold); cursor: pointer;
+  transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+}
+.btn-primary:hover { 
+  background: var(--green-light); 
+  transform: translateY(-1px); 
+  box-shadow: 0 6px 20px rgba(10,46,26,0.2); 
+}
+
+/* ── GRID ── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 20px;
+}
+.left-col { display: flex; flex-direction: column; gap: 20px; }
+.right-col { display: flex; flex-direction: column; gap: 20px; }
+
+/* ── CARD ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 22px; border-bottom: 1px solid var(--border);
+}
+.card-title {
+  font-size: 14px; font-weight: 600; color: var(--text-primary);
+  display: flex; align-items: center; gap: 8px;
+}
+.card-action {
+  font-size: 12px; color: var(--text-soft); cursor: pointer;
+  padding: 5px 10px; border-radius: 6px;
+  border: 1px solid var(--border); transition: all 0.15s;
+}
+.card-action:hover { color: var(--green-deep); border-color: var(--green-deep); }
+
+/* ── HERO STATS CARD ── */
+.hero-stats {
+  background: var(--green-deep);
+  border-radius: var(--radius);
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 0;
+}
+.hero-stats::before {
+  content: '';
+  position: absolute; top: -40px; right: -40px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero-stats::after {
+  content: '';
+  position: absolute; bottom: -60px; left: 30%;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(26,102,55,0.3) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.hero-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px; position: relative; z-index: 1;
+}
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-weight: 800;
+  color: #ffffff; margin-bottom: 3px;
+}
+.hero-subtitle { font-size: 13px; color: rgba(255,255,255,0.5); }
+
+.hero-badge {
+  background: rgba(76,175,125,0.2);
+  border: 1px solid rgba(76,175,125,0.4);
+  color: #4caf7d; font-size: 11px; font-weight: 600;
+  padding: 5px 12px; border-radius: 20px;
+  display: flex; align-items: center; gap: 5px;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  position: relative; z-index: 1;
+}
+
+.hero-stat {
+  text-align: center;
+}
+.hero-stat-label {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+  color: rgba(255,255,255,0.4); margin-bottom: 8px;
+}
+.hero-stat-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px; font-weight: 700;
+  color: #ffffff; line-height: 1;
+}
+.hero-stat-value .sm { font-size: 14px; vertical-align: super; }
+.hero-stat-sub {
+  font-size: 12px; color: rgba(255,255,255,0.45);
+  margin-top: 4px;
+}
+
+/* ── FORMS ── */
+.form-area {
+  padding: 20px 22px;
+}
+.form-group { margin-bottom: 16px; }
+.form-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+  text-transform: uppercase; color: var(--text-mid);
+  display: block; margin-bottom: 7px;
+}
+.input, .form-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--surface);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.input:focus, .form-input:focus { border-color: var(--green-light); }
+.input::placeholder { color: var(--text-soft); }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.btn {
+  width: 100%;
+  background: var(--green-deep);
+  color: var(--gold);
+  border: none;
+  padding: 13px;
+  border-radius: 50px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn:hover { 
+  background: var(--green-light); 
+  transform: translateY(-1px);
+}
+
+/* ── AI CHAT ── */
+.chat-area {
+  padding: 20px 22px;
+}
+.chat-messages {
+  min-height: 120px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 14px;
+  padding: 12px;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+}
+.chat-message {
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-xs);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.chat-message.user {
+  background: var(--gold-pale);
+  color: var(--text-primary);
+  margin-left: 20px;
+}
+.chat-message.ai {
+  background: rgba(26,102,55,0.08);
+  color: var(--text-mid);
+  margin-right: 20px;
+}
+.chat-input-box {
+  display: flex;
+  gap: 10px;
+}
+.chat-input-box input {
+  flex: 1;
+}
+
+/* ── INVENTORY LIST ── */
+.inventory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 22px;
+  background: var(--surface-3);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-soft);
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--surface-3);
+  transition: background 0.15s;
+}
+.item:hover { background: var(--surface-2); }
+.item:last-child { border-bottom: none; }
+
+.item-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.item-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.item-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.item-qty {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.item-qty-low {
+  color: var(--red);
+}
+
+/* ── SALES LIST ── */
+.sale {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--surface-3);
+  transition: background 0.15s;
+}
+.sale:hover { background: var(--surface-2); }
+.sale:last-child { border-bottom: none; }
+
+.sale-info {
+  flex: 1;
+}
+.sale-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+.sale-meta {
+  font-size: 11px;
+  color: var(--text-soft);
+}
+.sale-amount {
+  text-align: right;
+}
+.sale-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--green-light);
+  margin-bottom: 2px;
+}
+.sale-profit {
+  font-size: 11px;
+  color: var(--text-soft);
+}
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center;
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.empty-state-icon { font-size: 36px; }
+.empty-state h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.empty-state p {
+  font-size: 12px;
+  color: var(--text-soft);
+  max-width: 260px;
+  line-height: 1.5;
+}
+
+/* ── MARKET INSIGHTS ── */
+.insight-card {
+  padding: 20px 22px;
+}
+.insight-icon {
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+.insight-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+.insight-text {
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.6;
+}
+.insight-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+  margin-top: 8px;
+}
+.badge-up {
+  background: rgba(26,102,55,0.1);
+  color: var(--green-light);
+}
+.badge-down {
+  background: rgba(224,92,75,0.1);
+  color: var(--red);
+}
+
+/* ── FADE UP ── */
+.fade-up {
+  opacity: 0; transform: translateY(16px);
+  animation: fadeUp 0.4s ease forwards;
+}
+@keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+.fade-up:nth-child(1) { animation-delay: 0.05s; }
+.fade-up:nth-child(2) { animation-delay: 0.1s; }
+.fade-up:nth-child(3) { animation-delay: 0.15s; }
+.fade-up:nth-child(4) { animation-delay: 0.2s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1100px) {
+  .grid { grid-template-columns: 1fr; }
+  .hero-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── MOBILE LAYOUT ── */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(.4,0,.2,1);
+    z-index: 300;
+  }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; padding: 16px 14px 90px; }
+  .hero-grid { grid-template-columns: 1fr; }
+  .page-header { flex-direction: column; gap: 14px; }
+  .page-header h1 { font-size: 22px; }
+  .form-row { grid-template-columns: 1fr; }
+}
+
+/* ── SIDEBAR BACKDROP (mobile) ── */
+#sidebar-backdrop {
+  display: none; position: fixed; inset: 0;
+  background: rgba(10,46,26,0.5); z-index: 299;
+  backdrop-filter: blur(2px);
+}
+#sidebar-backdrop.show { display: block; }
+
+/* ── HAMBURGER BUTTON ── */
+#hamburger-btn {
+  display: none; align-items: center; justify-content: center;
+  width: 38px; height: 38px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  cursor: pointer; font-size: 18px; flex-shrink: 0;
+}
+@media (max-width: 768px) { #hamburger-btn { display: flex; } }
+
+/* ── BOTTOM NAV BAR (mobile) ── */
+.bottom-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--green-deep);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  z-index: 200; padding: 0;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+}
+@media (max-width: 768px) { .bottom-nav { display: flex; } }
+.bottom-nav-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 3px; padding: 10px 4px;
+  color: rgba(255,255,255,0.5); cursor: pointer; transition: color 0.15s;
+  text-decoration: none; font-family: 'DM Sans', sans-serif;
+  border: none; background: none;
+}
+.bottom-nav-item.active { color: var(--gold); }
+.bottom-nav-item:hover { color: rgba(255,255,255,0.85); }
+.bottom-nav-item .bn-icon { font-size: 20px; }
+.bottom-nav-item .bn-label { font-size: 9px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+
+/* ── HISTORY MODAL ── */
+#history-modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(10,46,26,0.6); z-index: 500;
+  align-items: flex-start; justify-content: center;
+  backdrop-filter: blur(4px); padding: 20px;
+  overflow-y: auto;
+}
+#history-modal-overlay.open { display: flex; }
+.history-modal {
+  background: var(--surface); border-radius: 20px;
+  width: 600px; max-width: 96vw; margin: auto;
+  animation: histModalIn 0.25s cubic-bezier(.34,1.56,.64,1);
+  overflow: hidden;
+}
+@keyframes histModalIn {
+  from { transform: scale(0.93) translateY(12px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+.history-modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 24px; border-bottom: 1px solid var(--border);
+}
+.history-modal-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; font-weight: 700; color: var(--text-primary);
+}
+.history-close-btn {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--surface-3); border: none; cursor: pointer;
+  font-size: 18px; display: flex; align-items: center; justify-content: center;
+  color: var(--text-soft); transition: background 0.15s;
+}
+.history-close-btn:hover { background: var(--border); color: var(--text-primary); }
+.history-tabs {
+  display: flex; border-bottom: 1px solid var(--border);
+}
+.htab {
+  flex: 1; padding: 12px; text-align: center;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  color: var(--text-soft); border-bottom: 2px solid transparent;
+  transition: all 0.15s; background: none; border-top: none;
+  border-left: none; border-right: none;
+  font-family: 'DM Sans', sans-serif;
+}
+.htab.active { color: var(--green-deep); border-bottom-color: var(--green-light); }
+.history-list { max-height: 60vh; overflow-y: auto; }
+.h-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 24px; border-bottom: 1px solid var(--surface-3);
+  gap: 12px;
+}
+.h-row:last-child { border-bottom: none; }
+.h-row:hover { background: var(--surface-2); }
+.h-row-info .h-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.h-row-info .h-date { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+.h-row-amount { text-align: right; flex-shrink: 0; }
+.h-row-amount .h-price { font-size: 14px; font-weight: 700; color: var(--green-light); }
+.h-row-amount .h-profit { font-size: 11px; color: var(--text-soft); }
+.history-empty { text-align: center; padding: 40px 24px; color: var(--text-soft); font-size: 13px; }
+
+/* ── INLINE INVENTORY GATE BANNER ── */
+#inv-gate-banner {
+  display: none;
+  background: linear-gradient(135deg, rgba(224,92,75,0.08), rgba(224,92,75,0.03));
+  border: 1.5px solid rgba(224,92,75,0.3);
+  border-radius: var(--radius-sm); padding: 14px 18px;
+  margin-bottom: 14px;
+  font-size: 13px; color: var(--text-mid); line-height: 1.5;
+  display: none; align-items: center; gap: 12px;
+}
+#inv-gate-banner.show { display: flex; }
+#inv-gate-banner a {
+  color: var(--green-deep); font-weight: 600; text-decoration: underline; white-space: nowrap;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Sidebar backdrop for mobile -->
+<div id="sidebar-backdrop"></div>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar" id="main-sidebar">
+  <div class="sidebar-logo">SUWE<span>Built for the market</span></div>
+  <div class="nav-section">
+    <div class="nav-label">Main</div>
+    <div class="nav-item" data-route="/frontend/pages/dashboard.html"><span class="icon">⊞</span> Dashboard</div>
+    <div class="nav-item active" data-route="/frontend/pages/sales_and_inventory.html"><span class="icon">📦</span> Sales and Inventory</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Community</div>
+    <div class="nav-item" data-route="/frontend/pages/ajo.html"><span class="icon">🔄</span> My Ajo</div>
+    <div class="nav-item" data-route="/frontend/pages/community.html"><span class="icon">🤝</span> Traders</div>
+    <div class="nav-item" data-route="/frontend/pages/community.html"><span class="icon">📢</span> Feed</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Account</div>
+    <div class="nav-item quick-tour-btn" id="quick-tour-btn"><span class="icon">🎯</span> Quick Tour</div>
+    <div class="nav-item"><span class="icon">⚙️</span> Settings</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="user-avatar">AM</div>
+      <div>
+        <div class="user-name">Adaeze M.</div>
+        <div class="user-market">Balogun Market</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div id="hamburger-btn" aria-label="Open menu">☰</div>
+      <div>
+        <h1>Sales &amp; Inventory</h1>
+        <p>Track your sales, manage inventory, and grow your business</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="grid">
+
+    <!-- LEFT COLUMN -->
+    <div class="left-col">
+
+      <!-- Hero Stats -->
+      <div class="hero-stats fade-up">
+        <div class="hero-top">
+          <div>
+            <div class="hero-title">Today's Performance</div>
+            <div class="hero-subtitle">Real-time sales tracking & profit analysis</div>
+          </div>
+          <div class="hero-badge">
+            <div style="width:6px;height:6px;border-radius:50%;background:#4caf7d;"></div>
+            Live
+          </div>
+        </div>
+        <div class="hero-grid">
+          <div class="hero-stat">
+            <div class="hero-stat-label">Revenue</div>
+            <div class="hero-stat-value"><span class="sm">₦</span><span id="revenue">0</span></div>
+            <div class="hero-stat-sub" id="revenue-sub">No sales yet</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-label">Items Sold</div>
+            <div class="hero-stat-value" id="itemsSold">0</div>
+            <div class="hero-stat-sub" id="items-sub">Start logging sales</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-label">Profit</div>
+            <div class="hero-stat-value"><span class="sm">₦</span><span id="profit">0</span></div>
+            <div class="hero-stat-sub" id="profit-sub">0% margin</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Manual Sale Entry -->
+      <div class="card fade-up" id="log-sale-card">
+        <div class="card-header">
+          <div class="card-title">💰 Log Sale (Manual)</div>
+          <div class="card-action" id="history-btn">History</div>
+        </div>
+        <!-- Inventory gate banner -->
+        <div id="inv-gate-banner" role="alert">
+          📦 <span>You need to <a href="#inventory">add inventory items</a> before logging sales. This ensures accurate stock tracking.</span>
+        </div>
+        <div class="form-area">
+          <div class="form-group">
+            <label class="form-label">Product Name</label>
+            <input class="input" id="product" placeholder="e.g. Tomatoes, Rice, Onions"/>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Price (₦)</label>
+              <input class="input" id="price" type="number" placeholder="0"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Quantity</label>
+              <input class="input" id="qty" type="number" placeholder="1" value="1"/>
+            </div>
+          </div>
+          <button class="btn" onclick="addSale()">Add Sale →</button>
+        </div>
+      </div>
+
+      <!-- AI Sales Assistant -->
+      <div class="card fade-up">
+        <div class="card-header">
+          <div class="card-title">🧠 AI Sales Assistant</div>
+          <div class="card-action">Clear chat</div>
+        </div>
+        <div class="chat-area">
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-message ai">
+              👋 Hi! I can help you log sales and inventory quickly. Just tell me what you sold, like "sold 3 tomatoes for 500"
+            </div>
+          </div>
+          <div class="chat-input-box">
+            <input class="input" id="aiInput" placeholder="e.g. sold 3 tomatoes for 500"/>
+            <button class="btn" onclick="aiAdd()" style="width:auto;padding:0 24px;">Send</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inventory Management -->
+      <div class="card fade-up" id="inventory">
+        <div class="card-header">
+          <div class="card-title">📦 Inventory Management</div>
+          <div class="card-action">Import CSV</div>
+        </div>
+        <div class="form-area">
+          <div class="form-row">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Item Name</label>
+              <input class="input" id="invName" placeholder="Item name"/>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Quantity</label>
+              <input class="input" id="invQty" type="number" placeholder="0"/>
+            </div>
+          </div>
+          <button class="btn" onclick="addStock()" style="margin-top:14px;">Add to Stock →</button>
+        </div>
+
+        <div class="inventory-header">
+          <span>Item</span>
+          <span>In Stock</span>
+        </div>
+        <div id="inventoryList">
+          <div class="empty-state">
+            <div class="empty-state-icon">📦</div>
+            <h4>No inventory yet</h4>
+            <p>Add items above to start tracking your stock</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="right-col">
+
+      <!-- AI Market Insights -->
+      <div class="card fade-up">
+        <div class="card-header">
+          <div class="card-title">💡 AI Market Insights</div>
+          <div class="card-action">More</div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">🍅</div>
+          <div class="insight-title">Tomato Price Surge Expected</div>
+          <div class="insight-text">
+            Demand for tomatoes expected to rise this week due to supply shortage in Mile 12. Prices may increase by 8–12%.
+          </div>
+          <span class="insight-badge badge-up">↑ Price increase</span>
+        </div>
+      </div>
+
+      <div class="card fade-up">
+        <div class="insight-card">
+          <div class="insight-icon">🌾</div>
+          <div class="insight-title">Rice Stock Alert</div>
+          <div class="insight-text">
+            Your rice sales are 40% higher than last week. Consider restocking before weekend demand peaks.
+          </div>
+          <span class="insight-badge badge-up">↑ High demand</span>
+        </div>
+      </div>
+
+      <!-- Recent Sales -->
+      <div class="card fade-up">
+        <div class="card-header">
+          <div class="card-title">📋 Recent Sales</div>
+          <div class="card-action">View all</div>
+        </div>
+        <div id="salesList">
+          <div class="empty-state">
+            <div class="empty-state-icon">💰</div>
+            <h4>No sales yet</h4>
+            <p>Your recent sales will appear here</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</main>
+
+<!-- ── BOTTOM NAV (mobile) ── -->
+<nav class="bottom-nav" role="navigation" aria-label="Main navigation">
+  <a class="bottom-nav-item" href="/frontend/pages/dashboard.html">
+    <span class="bn-icon">⊞</span>
+    <span class="bn-label">Home</span>
+  </a>
+  <a class="bottom-nav-item active" href="/frontend/pages/sales_and_inventory.html">
+    <span class="bn-icon">📦</span>
+    <span class="bn-label">Sales</span>
+  </a>
+  <a class="bottom-nav-item" href="/frontend/pages/ajo.html">
+    <span class="bn-icon">🔄</span>
+    <span class="bn-label">Ajo</span>
+  </a>
+  <a class="bottom-nav-item" href="/frontend/pages/community.html">
+    <span class="bn-icon">🤝</span>
+    <span class="bn-label">Community</span>
+  </a>
+  <button class="bottom-nav-item quick-tour-btn" aria-label="Quick Tour">
+    <span class="bn-icon">🎯</span>
+    <span class="bn-label">Tour</span>
+  </button>
+</nav>
+
+<!-- ── HISTORY MODAL ── -->
+<div id="history-modal-overlay">
+  <div class="history-modal">
+    <div class="history-modal-header">
+      <h2>📋 All-Time Sales &amp; Inventory Log</h2>
+      <button class="history-close-btn" id="history-close">&times;</button>
+    </div>
+    <div class="history-tabs">
+      <button class="htab active" data-tab="sales">Sales History</button>
+      <button class="htab" data-tab="inventory">Inventory Added</button>
+    </div>
+    <div class="history-list" id="history-list">
+      <div class="history-empty">Loading…</div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import {
+  supabase,
+  getCurrentUser,
+  getVendorProfile,
+  signOut,
+  logSale,
+  getTodaySales,
+  getInventory,
+  upsertInventoryItem,
+  reduceInventory,
+  getLowStockItems,
+  hasInventory,
+  getAllSales
+} from '../js/supabase.js';
+import { initTour } from '../js/tour.js';
+ 
+const BACKEND = 'http://localhost:3000';
+ 
+let currentUser   = null;
+let vendorProfile = null;
+let todaySales    = [];
+let inventoryMap  = {};
+ 
+// ── BOOT ─────────────────────────────────────────────────────
+async function boot() {
+  currentUser = await getCurrentUser();
+  if (!currentUser) { window.location.href = '/frontend/index.html'; return; }
+ 
+  vendorProfile = await getVendorProfile(currentUser.id);
+  if (!vendorProfile || !vendorProfile.phone) {
+    window.location.href = '/frontend/pages/onboarding.html'; return;
+  }
+ 
+  // Fill in sidebar user info
+  const name     = vendorProfile.full_name    || 'Vendor';
+  const market   = vendorProfile.market_location || '';
+  const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  document.querySelectorAll('.user-name').forEach(el => el.textContent = name);
+  document.querySelectorAll('.user-market').forEach(el => el.textContent = market);
+  document.querySelectorAll('.user-avatar').forEach(el => el.textContent = initials);
+ 
+  // Wire up sidebar navigation
+  document.querySelectorAll('.sidebar .nav-item[data-route]').forEach(item => {
+    item.addEventListener('click', () => window.location.href = item.dataset.route);
+  });
+  document.querySelector('.sign-out-btn')?.addEventListener('click', () => signOut());
+ 
+  await reloadAll();
+  loadMarketInsights();
+}
+ 
+// ── RELOAD ALL DATA FROM DB ───────────────────────────────────
+async function reloadAll() {
+  todaySales = await getTodaySales(currentUser.id);
+  const inventoryItems = await getInventory(currentUser.id);
+ 
+  inventoryMap = {};
+  inventoryItems.forEach(item => { inventoryMap[item.item_name] = item; });
+ 
+  updateHeroStats();
+  renderRecentSales();
+  renderInventoryList();
+}
+ 
+// ── HERO STATS (Today only, resets at midnight) ───────────────
+function updateHeroStats() {
+  const totalRevenue = todaySales.reduce((s, r) => s + (r.selling_price || 0), 0);
+  const totalProfit  = todaySales.reduce((s, r) => s + (r.profit        || 0), 0);
+  const totalItems   = todaySales.reduce((s, r) => s + (r.quantity      || 0), 0);
+  const margin       = totalRevenue > 0 ? Math.round((totalProfit / totalRevenue) * 100) : 0;
+ 
+  setText('revenue', totalRevenue.toLocaleString());
+  setText('itemsSold', totalItems.toString());
+  setText('profit', totalProfit.toLocaleString());
+  setText('revenue-sub', todaySales.length
+    ? `${todaySales.length} transaction${todaySales.length > 1 ? 's' : ''} today`
+    : 'No transactions yet');
+  setText('items-sub', Object.keys(inventoryMap).length
+    ? `Across ${Object.keys(inventoryMap).length} product${Object.keys(inventoryMap).length > 1 ? 's' : ''}`
+    : 'Add inventory to get started');
+  setText('profit-sub', `${margin}% profit margin`);
+}
+ 
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+ 
+// ── RENDER RECENT SALES ───────────────────────────────────────
+function renderRecentSales() {
+  const list = document.getElementById('salesList');
+  if (!list) return;
+ 
+  if (!todaySales.length) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">💰</div>
+        <h4>No sales yet today</h4>
+        <p>Log your first sale above to see it here.</p>
+      </div>`;
+    return;
+  }
+ 
+  list.innerHTML = todaySales.slice(0, 8).map(sale => {
+    const time   = new Date(sale.created_at).toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+    const profit = sale.profit || 0;
+    const profitColour = profit >= 0 ? 'var(--green-light)' : 'var(--red)';
+    return `
+      <div class="sale">
+        <div class="sale-info">
+          <div class="sale-name">${sale.item_name}</div>
+          <div class="sale-meta">${sale.quantity} ${sale.unit || 'units'} · ${time}</div>
+        </div>
+        <div class="sale-amount">
+          <div class="sale-price">₦${(sale.selling_price || 0).toLocaleString()}</div>
+          <div class="sale-profit" style="color:${profitColour}">₦${profit.toLocaleString()} profit</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+ 
+// ── RENDER INVENTORY ──────────────────────────────────────────
+function renderInventoryList() {
+  const list = document.getElementById('inventoryList');
+  if (!list) return;
+ 
+  const items = Object.values(inventoryMap);
+  if (!items.length) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">📦</div>
+        <h4>No inventory tracked yet</h4>
+        <p>Add items below to start monitoring your stock levels.</p>
+      </div>`;
+    return;
+  }
+ 
+  list.innerHTML = items.map(item => {
+    const isLow    = item.quantity <= item.reorder_level;
+    const qtyColor = isLow ? 'item-qty-low' : '';
+    return `
+      <div class="item">
+        <div class="item-info">
+          <div class="item-icon">📦</div>
+          <span class="item-name">${item.item_name}</span>
+          ${item.unit ? `<span style="font-size:11px;color:var(--text-soft);margin-left:6px">(${item.unit})</span>` : ''}
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          ${isLow ? `<span style="font-size:11px;color:var(--red);font-weight:600">Low</span>` : ''}
+          <span class="item-qty ${qtyColor}">${item.quantity}</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+ 
+// ── MANUAL SALE ENTRY ─────────────────────────────────────────
+window.addSale = async function() {
+  const nameEl  = document.getElementById('product');
+  const priceEl = document.getElementById('price');
+  const qtyEl   = document.getElementById('qty');
+ 
+  const name  = nameEl?.value.trim();
+  const price = parseFloat(priceEl?.value) || 0;
+  const qty   = parseInt(qtyEl?.value)     || 1;
+ 
+  if (!name || price === 0) {
+    alert('Please enter product name and price.'); return;
+  }
+ 
+  // Check stock if tracked
+  if (inventoryMap[name] && inventoryMap[name].quantity < qty) {
+    const go = confirm(`You only have ${inventoryMap[name].quantity} ${name} in stock. Log sale anyway?`);
+    if (!go) return;
+  }
+ 
+  try {
+    // Estimate cost as 70% of selling price if we have no better data
+    const cost = inventoryMap[name]?.cost_price || price * 0.7;
+ 
+    await logSale(currentUser.id, {
+      itemName:  name,
+      quantity:  qty,
+      unit:      'units',
+      costPrice: cost / qty,
+      sellPrice: price / qty
+    });
+ 
+    // Reduce inventory
+    try { await reduceInventory(currentUser.id, name, qty); } catch (_) {}
+ 
+    // Clear form
+    if (nameEl)  nameEl.value  = '';
+    if (priceEl) priceEl.value = '';
+    if (qtyEl)   qtyEl.value   = '1';
+ 
+    addChatMsg('ai', `✓ Logged ${qty} ${name} for ₦${price.toLocaleString()}`);
+    await reloadAll();
+    // if history modal is open, refresh it
+    if (document.getElementById('history-modal-overlay').classList.contains('open')) {
+      loadHistory();
+    }
+ 
+  } catch (err) {
+    console.error('addSale error:', err);
+    alert('Could not log sale: ' + err.message);
+  }
+};
+ 
+// ── MANUAL INVENTORY ENTRY ────────────────────────────────────
+window.addStock = async function() {
+  const nameEl = document.getElementById('invName');
+  const qtyEl  = document.getElementById('invQty');
+ 
+  const name = nameEl?.value.trim();
+  const qty  = parseInt(qtyEl?.value) || 0;
+ 
+  if (!name || qty === 0) { alert('Please enter item name and quantity.'); return; }
+ 
+  try {
+    const current = inventoryMap[name]?.quantity || 0;
+    await upsertInventoryItem(currentUser.id, name, current + qty);
+ 
+    if (nameEl) nameEl.value = '';
+    if (qtyEl)  qtyEl.value  = '';
+ 
+    addChatMsg('ai', `✓ Added ${qty} ${name} to your stock inventory`);
+    await reloadAll();
+ 
+  } catch (err) {
+    console.error('addStock error:', err);
+    alert('Could not update inventory: ' + err.message);
+  }
+};
+ 
+// ── AI CHAT ASSISTANT ─────────────────────────────────────────
+function addChatMsg(role, text) {
+  const box = document.getElementById('chatMessages');
+  if (!box) return;
+  const div = document.createElement('div');
+  div.className   = `chat-message ${role}`;
+  div.textContent = text;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+ 
+window.aiAdd = async function() {
+  const input = document.getElementById('aiInput');
+  const text  = (input?.value || '').trim();
+  if (!text) return;
+ 
+  addChatMsg('user', text);
+  if (input) input.value = '';
+  addChatMsg('ai', '…');
+ 
+  try {
+    const res = await fetch(`${BACKEND}/api/parse-sale`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        input: text,
+        productCategories: vendorProfile.product_categories,
+        marketLocation:    vendorProfile.market_location
+      })
+    });
+ 
+    const result = await res.json();
+    const msgs   = document.getElementById('chatMessages');
+    if (msgs?.lastChild?.textContent === '…') msgs.removeChild(msgs.lastChild);
+ 
+    if (!result.success) { addChatMsg('ai', 'Could not understand that. Try again.'); return; }
+ 
+    const p = result.parsed;
+ 
+    if (p.confidence === 'low') {
+      addChatMsg('ai', `I'm not sure I understood. Try: "sold 3 bags tomatoes for 4500" or "added 10 crates pepper to stock"`);
+      return;
+    }
+ 
+    if (p.type === 'sale') {
+      // Log sale to DB
+      await logSale(currentUser.id, {
+        itemName:  p.item_name,
+        quantity:  p.quantity,
+        unit:      p.unit,
+        costPrice: p.cost_price  / (p.quantity || 1),
+        sellPrice: p.selling_price / (p.quantity || 1)
+      });
+ 
+      try { await reduceInventory(currentUser.id, p.item_name, p.quantity); } catch (_) {}
+ 
+      addChatMsg('ai', `✓ ${p.summary || `Logged ${p.quantity} ${p.unit} of ${p.item_name} for ₦${p.selling_price.toLocaleString()}`}`);
+ 
+    } else {
+      // Inventory addition
+      const current = inventoryMap[p.item_name]?.quantity || 0;
+      await upsertInventoryItem(currentUser.id, p.item_name, current + p.quantity, p.unit);
+ 
+      addChatMsg('ai', `✓ ${p.summary || `Added ${p.quantity} ${p.unit} of ${p.item_name} to stock`}`);
+    }
+ 
+    await reloadAll();
+ 
+  } catch (err) {
+    const msgs = document.getElementById('chatMessages');
+    if (msgs?.lastChild?.textContent === '…') msgs.removeChild(msgs.lastChild);
+    console.error('AI chat error:', err);
+    addChatMsg('ai', 'Sorry, something went wrong. Is the backend running?');
+  }
+};
+ 
+// Enter key for AI input
+document.getElementById('aiInput')?.addEventListener('keypress', e => {
+  if (e.key === 'Enter') window.aiAdd();
+});
+ 
+// Clear chat
+document.querySelectorAll('.card-action').forEach(btn => {
+  if (btn.textContent.trim() === 'Clear chat') {
+    btn.addEventListener('click', () => {
+      const box = document.getElementById('chatMessages');
+      if (box) box.innerHTML = `
+        <div class="chat-message ai">
+          👋 Hi! Tell me what you sold or what stock you received. For example: "sold 5 bags rice for 42000" or "added 20 crates tomatoes"
+        </div>`;
+    });
+  }
+});
+ 
+// ── AI MARKET INSIGHTS ────────────────────────────────────────
+// Generates product-specific insights using Claude based on the
+// vendor's actual product categories (not generic farm produce).
+async function loadMarketInsights() {
+  // Find all insight card containers
+  const insightCards = document.querySelectorAll('.insight-card');
+  if (!insightCards.length) return;
+ 
+  try {
+    const threeMonthSales = await (async () => {
+      const { getThreeMonthSales } = await import('../js/supabase.js');
+      return getThreeMonthSales(currentUser.id);
+    })();
+ 
+    const res = await fetch(`${BACKEND}/api/market-advice`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        salesData:   threeMonthSales,
+        userProfile: {
+          market_location:    vendorProfile.market_location,
+          product_categories: vendorProfile.product_categories,
+          trading_years:      vendorProfile.trading_years
+        }
+      })
+    });
+ 
+    const result = await res.json();
+    if (!result.success) return;
+ 
+    const adv  = result.advice;
+    const card = insightCards[0];
+ 
+    // Replace the first insight card with AI-generated advice
+    // specific to this vendor's product categories
+    card.innerHTML = `
+      <div class="insight-icon">${adv.emoji || '📊'}</div>
+      <div class="insight-title">${adv.headline}</div>
+      <div class="insight-text">${adv.advice}</div>
+      <span class="insight-badge ${adv.sentiment === 'positive' ? 'badge-up' : 'badge-down'}">
+        ${adv.sentiment === 'positive' ? '↑' : '⚠'} ${adv.strategyTip.split('.')[0]}
+      </span>`;
+ 
+    // Second card with price alert
+    if (insightCards[1]) {
+      insightCards[1].innerHTML = `
+        <div class="insight-icon">💰</div>
+        <div class="insight-title">Price Intelligence</div>
+        <div class="insight-text">${adv.priceAlert}</div>
+        <span class="insight-badge badge-up">Market update</span>`;
+    }
+ 
+  } catch (err) {
+    console.warn('Market insights error:', err.message);
+    // Leave the hardcoded placeholders visible if AI fails — they still look good
+  }
+}
+ 
+// ── HISTORY MODAL ─────────────────────────────────────────────
+const histOverlay = document.getElementById('history-modal-overlay');
+let historySales = [];
+let historyInv   = [];
+
+document.getElementById('history-btn')?.addEventListener('click', () => {
+  histOverlay.classList.add('open');
+  loadHistory();
+});
+document.getElementById('history-close')?.addEventListener('click', () => histOverlay.classList.remove('open'));
+histOverlay?.addEventListener('click', e => { if (e.target === histOverlay) histOverlay.classList.remove('open'); });
+
+document.querySelectorAll('.htab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.htab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    renderHistory(tab.dataset.tab);
+  });
+});
+
+async function loadHistory() {
+  const list = document.getElementById('history-list');
+  list.innerHTML = '<div class="history-empty">Loading history…</div>';
+  
+  try {
+    historySales = await getAllSales(currentUser.id);
+    historyInv   = await getInventory(currentUser.id); // For inventory tab, we just show current state since we don't have an inventory log table yet
+    const activeTab = document.querySelector('.htab.active').dataset.tab;
+    renderHistory(activeTab);
+  } catch (err) {
+    list.innerHTML = `<div class="history-empty">Could not load history: ${err.message}</div>`;
+  }
+}
+
+function renderHistory(tab) {
+  const list = document.getElementById('history-list');
+  if (tab === 'sales') {
+    if (!historySales.length) {
+      list.innerHTML = `<div class="history-empty">No sales recorded yet.</div>`;
+      return;
+    }
+    list.innerHTML = historySales.map(sale => {
+      const date = new Date(sale.created_at).toLocaleString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+      const profitColour = (sale.profit || 0) >= 0 ? 'var(--green-light)' : 'var(--red)';
+      return `
+        <div class="h-row">
+          <div class="h-row-info">
+            <div class="h-name">${sale.item_name} <span style="font-size:11px;color:var(--text-soft);font-weight:400;margin-left:4px">(${sale.quantity} ${sale.unit || 'units'})</span></div>
+            <div class="h-date">${date}</div>
+          </div>
+          <div class="h-row-amount">
+            <div class="h-price">₦${(sale.selling_price || 0).toLocaleString()}</div>
+            <div class="h-profit" style="color:${profitColour}">₦${(sale.profit || 0).toLocaleString()} profit</div>
+          </div>
+        </div>`;
+    }).join('');
+  } else {
+    // Inventory tab
+    if (!historyInv.length) {
+      list.innerHTML = `<div class="history-empty">No inventory added yet.</div>`;
+      return;
+    }
+    list.innerHTML = historyInv.map(inv => {
+      const date = new Date(inv.updated_at).toLocaleString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+      return `
+        <div class="h-row">
+          <div class="h-row-info">
+            <div class="h-name">${inv.item_name}</div>
+            <div class="h-date">Last updated: ${date}</div>
+          </div>
+          <div class="h-row-amount">
+            <div class="h-price" style="color:var(--text-primary)">${inv.quantity} ${inv.unit || 'units'} in stock</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+}
+
+// ── HAMBURGER / MOBILE SIDEBAR ────────────────────────────────
+const sidebar     = document.getElementById('main-sidebar');
+const sidebarBack = document.getElementById('sidebar-backdrop');
+document.getElementById('hamburger-btn')?.addEventListener('click', () => { sidebar.classList.add('open'); sidebarBack.classList.add('show'); });
+sidebarBack?.addEventListener('click', () => { sidebar.classList.remove('open'); sidebarBack.classList.remove('show'); });
+
+// ── QUICK TOUR (Sales Page) ───────────────────────────────────
+const SALES_TOUR = [
+  {
+    icon: '📦', title: 'Sales & Inventory Hub',
+    text: 'Manage your day-to-day operations here. Let\'s quickly go over the key tools on this page.',
+    target: null
+  },
+  {
+    icon: '📊', title: 'Today\'s Summary',
+    text: 'These cards track exclusively today\'s performance. They reset every night so you always have a fresh view of your daily cash position.',
+    target: '.hero-grid'
+  },
+  {
+    icon: '📝', title: 'Step 1: Set Up Inventory',
+    text: 'CRITICAL: Before logging sales, you must add your products to the inventory. This allows SUWE to track what you have left and accurately calculate your profit margins based on cost.',
+    target: '#inventory'
+  },
+  {
+    icon: '💰', title: 'Step 2: Log a Sale',
+    text: 'Once a product is in your inventory, you can log sales manually here. Enter the item name, price, and quantity. SUWE deducts the stock automatically.',
+    target: '#log-sale-card'
+  },
+  {
+    icon: '🤖', title: 'AI Assistant Shortcut',
+    text: 'Too busy to fill forms? Just type naturally to Claude. For example, say "sold 5 bags rice for 42000" and it will log the sale and deduct the stock for you.',
+    target: '.card:has(#chatMessages)'
+  },
+  {
+    icon: '📋', title: 'Full Sales History',
+    text: 'Need to check past transactions? Tap the History button here at any time to see a complete, all-time record of every sale you\'ve ever made.',
+    target: '#history-btn'
+  }
+];
+
+// Check hash on load for "#inventory" jump
+if (window.location.hash === '#inventory') {
+  setTimeout(() => {
+    document.getElementById('inventory')?.scrollIntoView({ behavior: 'smooth' });
+    // Flash the inv gate banner for context
+    const banner = document.getElementById('inv-gate-banner');
+    if (banner) banner.classList.add('show');
+  }, 500);
+}
+
+// ── BOOT ─────────────────────────────────────────────────────
+boot().then(() => {
+  initTour(SALES_TOUR);
+});
+</script>
+ 
+</body>
+</html>
