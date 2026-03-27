@@ -60,6 +60,85 @@ function qtbConfigured() {
 }
 
 // ════════════════════════════════════════════════════════════
+//  HUGGING FACE INFERENCE HELPER
+//  Primary:  mistralai/Mistral-7B-Instruct-v0.3 (free, strong)
+//  Fallback: HuggingFaceH4/zephyr-7b-beta
+//  Fallback: microsoft/Phi-3-mini-4k-instruct
+//  Add HUGGINGFACE_API_KEY to .env for higher rate limits.
+//  Without a key it still works on the public free tier.
+// ════════════════════════════════════════════════════════════
+const HF_API_KEY = process.env.HUGGINGFACE_API_KEY || '';
+const HF_MODELS  = [
+  'mistralai/Mistral-7B-Instruct-v0.3',
+  'HuggingFaceH4/zephyr-7b-beta',
+  'microsoft/Phi-3-mini-4k-instruct'
+];
+
+/**
+ * Call HuggingFace Inference API with automatic model fallback.
+ * @param {string} prompt             Full formatted prompt string
+ * @param {object} opts               { maxTokens, temperature }
+ * @returns {Promise<string>}         Model's text response
+ */
+async function hfInfer(prompt, opts = {}) {
+  const { maxTokens = 800, temperature = 0.7 } = opts;
+
+  for (const model of HF_MODELS) {
+    try {
+      const url     = `https://api-inference.huggingface.co/models/${model}`;
+      const headers = { 'Content-Type': 'application/json' };
+      if (HF_API_KEY) headers['Authorization'] = `Bearer ${HF_API_KEY}`;
+
+      const payload = {
+        inputs: prompt,
+        parameters: {
+          max_new_tokens:   maxTokens,
+          temperature:      temperature,
+          do_sample:        temperature > 0,
+          return_full_text: false,
+          stop:             ['</s>', '[INST]', 'User:', 'Human:']
+        }
+      };
+
+      const res = await axios.post(url, payload, { headers, timeout: 30000 });
+
+      const raw = Array.isArray(res.data)
+        ? res.data[0]?.generated_text
+        : res.data?.generated_text;
+
+      if (!raw) throw new Error('Empty response from model');
+      return raw.trim();
+
+    } catch (err) {
+      const status = err.response?.status;
+      console.warn(`[HF] Model ${model} failed (${status || err.message}), trying next…`);
+      // 503 = model loading, 429 = rate limited → try next model
+      if (status !== 503 && status !== 429) throw err;
+    }
+  }
+  throw new Error('All HuggingFace models unavailable. Please try again in a moment.');
+}
+
+/**
+ * Build a Mistral/Zephyr-compatible [INST] chat prompt from history.
+ * @param {string}                   systemPrompt
+ * @param {Array<{role,content}>}    messages
+ * @returns {string}
+ */
+function buildChatPrompt(systemPrompt, messages) {
+  let prompt = '';
+  messages.forEach((msg, i) => {
+    if (msg.role === 'user') {
+      const sys = i === 0 ? `${systemPrompt}\n\n` : '';
+      prompt += `<s>[INST] ${sys}${msg.content} [/INST]`;
+    } else if (msg.role === 'assistant') {
+      prompt += ` ${msg.content} </s>`;
+    }
+  });
+  return prompt;
+}
+
+// ════════════════════════════════════════════════════════════
 app.get('/', (req, res) => res.json({ message: 'SUWE backend v4', version: '4.0' }));
 
 // ════════════════════════════════════════════════════════════
@@ -93,15 +172,15 @@ app.get('/api/group-members/:groupId', async (req, res) => {
 
     // Shape the data the way the frontend expects
     const shaped = (members || []).map(m => ({
-      id:                 m.member_id,
-      group_id:           m.group_id,
-      user_id:            m.user_id,
-      joined_at:          m.joined_at,
-      payout_position:    m.payout_position,
-      bcs_at_join:        m.bcs_at_join,
-      payment_status:     m.payment_status,
-      paid_this_cycle:    m.paid_this_cycle,
-      has_received_payout:m.has_received_payout,
+      id:                  m.member_id,
+      group_id:            m.group_id,
+      user_id:             m.user_id,
+      joined_at:           m.joined_at,
+      payout_position:     m.payout_position,
+      bcs_at_join:         m.bcs_at_join,
+      payment_status:      m.payment_status,
+      paid_this_cycle:     m.paid_this_cycle,
+      has_received_payout: m.has_received_payout,
       profile: {
         full_name:       m.full_name,
         market_location: m.market_location,
@@ -248,8 +327,8 @@ app.post('/api/sandbox-confirm-payment', async (req, res) => {
   const { groupId, userId, amount, cycleNumber } = req.body;
 
   try {
-    const txRef = `SANDBOX-${Date.now()}`;
-    const today = new Date();
+    const txRef   = `SANDBOX-${Date.now()}`;
+    const today   = new Date();
     const dueDate = new Date(today.getFullYear(), today.getMonth() + 1, 1).toISOString().split('T')[0];
 
     // 1. Record the payment as completed
@@ -327,13 +406,13 @@ app.post('/api/sandbox-confirm-payment', async (req, res) => {
 // ════════════════════════════════════════════════════════════
 app.post('/api/payment-webhook', async (req, res) => {
   try {
-    const body   = req.body;
-    const txRef  = body.transactionReference || body.txnRef || body.merchantReference || '';
-    const isOk   = body.responseCode === '00' || body.responseCode === '000';
+    const body  = req.body;
+    const txRef = body.transactionReference || body.txnRef || body.merchantReference || '';
+    const isOk  = body.responseCode === '00' || body.responseCode === '000';
     console.log('[WEBHOOK]', txRef, body.responseCode);
 
     if (isOk && txRef.startsWith('SUWE-AJO-')) {
-      const parts   = txRef.split('-');
+      const parts     = txRef.split('-');
       // Format: SUWE-AJO-{groupId8}-{userId8}-{ts}
       const groupSnip = parts[2];
       const userSnip  = parts[3];
@@ -478,7 +557,7 @@ app.post('/api/accept-invitation', async (req, res) => {
     // Check group is still forming and has space
     const { data: group } = await supabaseAdmin.from('ajo_groups')
       .select('*').eq('id', groupId).maybeSingle();
-    if (!group)                 throw new Error('Group not found.');
+    if (!group)                     throw new Error('Group not found.');
     if (group.status !== 'forming') throw new Error('Group no longer accepting members.');
     if ((group.current_members || 0) >= group.max_members) throw new Error('Group is full.');
 
@@ -568,7 +647,7 @@ app.get('/api/my-invitations/:userId', async (req, res) => {
 });
 
 // ════════════════════════════════════════════════════════════
-//  AI: PARSE SALE
+//  AI: PARSE SALE  (Anthropic Haiku — fast & precise for parsing)
 // ════════════════════════════════════════════════════════════
 app.post('/api/parse-sale', async (req, res) => {
   try {
@@ -589,7 +668,7 @@ k=1000, ₦=naira. Multiply per-unit by quantity for total.`,
 });
 
 // ════════════════════════════════════════════════════════════
-//  AI: MARKET ADVICE
+//  AI: MARKET ADVICE  (Anthropic Haiku — kept as-is)
 // ════════════════════════════════════════════════════════════
 app.post('/api/market-advice', async (req, res) => {
   try {
@@ -619,6 +698,274 @@ app.post('/api/market-advice', async (req, res) => {
   }
 });
 
+// ════════════════════════════════════════════════════════════
+//  AI: CHATBOT  (HuggingFace Mistral — multi-turn assistant)
+//  POST /api/chat
+//  Body: { userId?, message, history?: [{role, content}] }
+//
+//  Fetches user profile from Supabase to personalise responses.
+//  Frontend should pass the full history array on each call
+//  (slice to last 8 turns is fine — we handle it here too).
+//  Returns: { success, reply, model }
+// ════════════════════════════════════════════════════════════
+app.post('/api/chat', async (req, res) => {
+  const { userId, message, history = [] } = req.body;
+
+  if (!message?.trim()) {
+    return res.status(400).json({ success: false, error: 'Message is required.' });
+  }
+
+  // Optionally fetch user context to personalise replies
+  let userContext = '';
+  if (userId) {
+    try {
+      const { data: u } = await supabaseAdmin
+        .from('users')
+        .select('full_name, market_location, product_categories, bcs_score, bcs_tier')
+        .eq('id', userId)
+        .maybeSingle();
+      if (u) {
+        userContext = `\nUser profile: ${u.full_name || 'Trader'}, sells ${u.product_categories || 'various goods'} in ${u.market_location || 'Nigerian market'}, BCS score ${u.bcs_score || 'N/A'} (${u.bcs_tier || 'N/A'} tier).`;
+      }
+    } catch (_) { /* non-fatal */ }
+  }
+
+  const systemPrompt = `You are SUWE Assistant, a helpful AI built for Nigerian market traders and micro-business owners.
+You help users with:
+- Understanding their BCS (Business Credit Score) and how to improve it
+- Ajo (rotating savings group) questions — joining, payments, cycles, invitations
+- Sales tracking, profit calculations, and pricing strategies
+- General Nigerian market and business advice
+- App navigation and feature explanations
+${userContext}
+
+Keep answers concise, friendly, and practical. Use Naira (₦) for currency.
+If asked something outside your scope, politely redirect to business topics.
+Do not make up specific prices or market data — advise users to check local rates.
+Respond in plain text (no markdown headers or bullets unless listing steps).`;
+
+  const fullHistory = [
+    ...history.slice(-8), // keep last 8 turns to stay within context limits
+    { role: 'user', content: message }
+  ];
+
+  const prompt = buildChatPrompt(systemPrompt, fullHistory);
+
+  try {
+    const reply = await hfInfer(prompt, { maxTokens: 600, temperature: 0.7 });
+    return res.json({ success: true, reply, model: 'mistral-7b-instruct' });
+  } catch (err) {
+    console.error('[chat]', err.message);
+    return res.status(500).json({
+      success: false,
+      error: err.message.includes('loading')
+        ? 'AI model is warming up. Please try again in 20 seconds.'
+        : 'Chat service temporarily unavailable.'
+    });
+  }
+});
+
+// ════════════════════════════════════════════════════════════
+//  AI: BUSINESS INSIGHTS  (HuggingFace Mistral — deep analysis)
+//  POST /api/business-insights
+//  Body: { userId, period?: 'week'|'month'|'all' }
+//
+//  Pulls real sales + ajo data from Supabase, generates a
+//  structured JSON insight report via the HF model.
+//  Returns: { success, insights } where insights has:
+//    summary, topPerformer, weakSpot, pricingAdvice,
+//    cashFlowTip, growthAction, bcsAdvice, sentiment,
+//    scoreOutOf10, weeklyTarget, _meta (raw aggregates for charts)
+// ════════════════════════════════════════════════════════════
+app.post('/api/business-insights', async (req, res) => {
+  const { userId, period = 'month' } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ success: false, error: 'userId is required.' });
+  }
+
+  try {
+    // ── 1. Fetch user profile ────────────────────────────────
+    const { data: user } = await supabaseAdmin
+      .from('users')
+      .select('full_name, market_location, product_categories, bcs_score, bcs_tier')
+      .eq('id', userId)
+      .maybeSingle();
+
+    // ── 2. Fetch sales for the requested period ──────────────
+    let since = new Date();
+    if (period === 'week')  since.setDate(since.getDate() - 7);
+    if (period === 'month') since.setMonth(since.getMonth() - 1);
+    if (period === 'all')   since = new Date('2000-01-01');
+
+    const { data: sales, error: salesErr } = await supabaseAdmin
+      .from('sales')
+      .select('item_name, quantity, selling_price, cost_price, profit, unit, created_at')
+      .eq('user_id', userId)
+      .gte('created_at', since.toISOString())
+      .order('created_at', { ascending: false })
+      .limit(200);
+
+    if (salesErr) throw salesErr;
+
+    if (!sales || sales.length === 0) {
+      return res.json({
+        success:  true,
+        insights: null,
+        message:  `No sales data found for the selected period (${period}). Start recording sales to get insights!`
+      });
+    }
+
+    // ── 3. Aggregate by item ─────────────────────────────────
+    const byItem = {};
+    let totalRevenue = 0, totalProfit = 0;
+    const totalTransactions = sales.length;
+
+    sales.forEach(s => {
+      const name = s.item_name || 'Unknown';
+      if (!byItem[name]) byItem[name] = { qty: 0, revenue: 0, profit: 0, cost: 0, transactions: 0 };
+      byItem[name].qty          += Number(s.quantity)      || 0;
+      byItem[name].revenue      += Number(s.selling_price) || 0;
+      byItem[name].profit       += Number(s.profit)        || 0;
+      byItem[name].cost         += Number(s.cost_price)    || 0;
+      byItem[name].transactions += 1;
+      totalRevenue               += Number(s.selling_price) || 0;
+      totalProfit                += Number(s.profit)        || 0;
+    });
+
+    const topItems = Object.entries(byItem)
+      .sort((a, b) => b[1].revenue - a[1].revenue)
+      .slice(0, 8)
+      .map(([name, d]) => {
+        const margin = d.revenue > 0 ? ((d.profit / d.revenue) * 100).toFixed(1) : '0.0';
+        return `${name}: ${d.qty} units sold, ₦${d.revenue.toLocaleString()} revenue, ₦${d.profit.toLocaleString()} profit, ${margin}% margin`;
+      }).join('\n');
+
+    const worstItems = Object.entries(byItem)
+      .filter(([, d]) => d.profit <= 0)
+      .map(([name]) => name)
+      .join(', ') || 'none';
+
+    // ── 4. Fetch ajo context ─────────────────────────────────
+    const { data: ajoMemberships } = await supabaseAdmin
+      .from('ajo_members')
+      .select('group_id, payment_status, paid_this_cycle, ajo_groups(group_name, contribution_amount)')
+      .eq('user_id', userId);
+
+    const ajoContext = ajoMemberships?.length
+      ? `Ajo memberships: ${ajoMemberships.length}. Monthly ajo obligations: ₦${
+          ajoMemberships.reduce((sum, m) => sum + (Number(m.ajo_groups?.contribution_amount) || 0), 0).toLocaleString()
+        }.`
+      : 'Not currently in any ajo groups.';
+
+    // ── 5. Build prompt ──────────────────────────────────────
+    const systemPrompt = `You are a sharp Nigerian business analyst AI helping market traders grow their businesses.
+Analyze the trader's sales data and return ONLY a valid JSON object — no markdown, no backticks, no extra text.
+
+JSON format:
+{
+  "summary": "2-sentence overall business summary",
+  "topPerformer": "best product and why it is winning",
+  "weakSpot": "lowest performing area and specific fix",
+  "pricingAdvice": "concrete pricing recommendation based on margins",
+  "cashFlowTip": "ajo/savings tip tied to their revenue",
+  "growthAction": "single most impactful action they can take this week",
+  "bcsAdvice": "how their current trading pattern affects their BCS score",
+  "sentiment": "positive | neutral | warning",
+  "scoreOutOf10": number between 1 and 10 rating their business health,
+  "weeklyTarget": "a realistic revenue target for next week in Naira"
+}`;
+
+    const userPrompt = `Trader: ${user?.full_name || 'Unknown'}, ${user?.market_location || 'Nigerian market'}
+Categories: ${user?.product_categories || 'general goods'}
+BCS Score: ${user?.bcs_score || 'N/A'} (${user?.bcs_tier || 'N/A'})
+Period: last ${period}
+Total transactions: ${totalTransactions}
+Total revenue: ₦${totalRevenue.toLocaleString()}
+Total profit: ₦${totalProfit.toLocaleString()}
+Profit margin: ${totalRevenue > 0 ? ((totalProfit / totalRevenue) * 100).toFixed(1) : 0}%
+
+Top products:
+${topItems}
+
+Zero/negative profit items: ${worstItems}
+${ajoContext}
+
+Give deep, specific, actionable insights.`;
+
+    const prompt = buildChatPrompt(systemPrompt, [{ role: 'user', content: userPrompt }]);
+
+    // ── 6. Call HF model ─────────────────────────────────────
+    const raw = await hfInfer(prompt, { maxTokens: 700, temperature: 0.4 });
+
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('Model returned non-JSON response');
+
+    const insights = JSON.parse(jsonMatch[0]);
+
+    // Attach raw aggregates so the frontend can render charts
+    insights._meta = {
+      period,
+      totalRevenue,
+      totalProfit,
+      totalTransactions,
+      topItems: Object.entries(byItem)
+        .sort((a, b) => b[1].revenue - a[1].revenue)
+        .slice(0, 5)
+        .map(([name, d]) => ({ name, revenue: d.revenue, profit: d.profit, qty: d.qty }))
+    };
+
+    return res.json({ success: true, insights });
+
+  } catch (err) {
+    console.error('[business-insights]', err.message);
+    return res.status(500).json({
+      success: false,
+      error: err.message.includes('loading')
+        ? 'AI model is warming up. Please try again in 20 seconds.'
+        : 'Could not generate insights. Please try again.'
+    });
+  }
+});
+
+// ════════════════════════════════════════════════════════════
+//  AI: QUICK ANSWER  (HuggingFace — single Q&A, no history)
+//  POST /api/quick-answer
+//  Body: { question, context?: 'ajo'|'bcs'|'sales'|'general' }
+//
+//  Lightweight endpoint for tooltips, FAQ popups, inline help.
+//  Returns: { success, answer }
+// ════════════════════════════════════════════════════════════
+app.post('/api/quick-answer', async (req, res) => {
+  const { question, context = 'general' } = req.body;
+
+  if (!question?.trim()) {
+    return res.status(400).json({ success: false, error: 'Question is required.' });
+  }
+
+  const contextGuides = {
+    ajo:     'Focus on ajo rotating savings: joining groups, contribution cycles, payouts, invitations, and trust scores.',
+    bcs:     'Focus on BCS (Business Credit Score): what it is (0-100 scale), Bronze/Silver/Gold/Platinum tiers, how to improve it through timely payments and sales activity.',
+    sales:   'Focus on sales tracking, profit margins, pricing strategies, and inventory management for Nigerian market traders.',
+    general: 'Answer broadly about the SUWE platform features: ajo savings, BCS scoring, sales tracking, and community.'
+  };
+
+  const systemPrompt = `You are a helpful assistant for SUWE, a Nigerian fintech platform for market traders.
+${contextGuides[context] || contextGuides.general}
+Answer in 2-4 sentences. Be direct, friendly, and practical. Use ₦ for Naira.`;
+
+  const prompt = buildChatPrompt(systemPrompt, [{ role: 'user', content: question }]);
+
+  try {
+    const answer = await hfInfer(prompt, { maxTokens: 250, temperature: 0.5 });
+    return res.json({ success: true, answer });
+  } catch (err) {
+    console.error('[quick-answer]', err.message);
+    return res.status(500).json({ success: false, error: 'Could not answer. Please try again.' });
+  }
+});
+
+// ════════════════════════════════════════════════════════════
 app.post('/api/send-welcome', (req, res) => {
   console.log('Welcome:', req.body.email);
   res.json({ success: true });
@@ -627,6 +974,7 @@ app.post('/api/send-welcome', (req, res) => {
 // ════════════════════════════════════════════════════════════
 app.listen(PORT, () => {
   console.log(`SUWE backend v4 on http://localhost:${PORT}`);
-  console.log(`ISW keys: ${iswKeysConfigured() ? '✅ configured' : '⚠️  missing → sandbox mode'}`);
-  console.log(`QTB merchant: ${qtbConfigured() ? '✅ configured' : '⚠️  missing → sandbox payments'}`);
+  console.log(`ISW keys:     ${iswKeysConfigured() ? '✅ configured' : '⚠️  missing → sandbox mode'}`);
+  console.log(`QTB merchant: ${qtbConfigured()     ? '✅ configured' : '⚠️  missing → sandbox payments'}`);
+  console.log(`HuggingFace:  ${HF_API_KEY          ? '✅ API key set' : '⚠️  no key → rate limits apply'}`);
 });
