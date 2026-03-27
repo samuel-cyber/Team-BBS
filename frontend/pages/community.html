@@ -526,4 +526,688 @@
     }
     .modal-market-select {
       padding: 8px 14px; border: 1.5px solid var(--border);
-      border-radius: 50px; font-family: 'DM Sans', sans-seri
+      border-radius: 50px; font-family: 'DM Sans', sans-serif;
+      font-size: 13px; color: var(--text-mid); outline: none;
+      background: var(--surface);
+    }
+    .btn-post {
+      padding: 12px 28px; border: none; border-radius: 50px;
+      background: var(--green-deep); color: var(--gold);
+      font-family: 'DM Sans', sans-serif; font-size: 15px;
+      font-weight: 700; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-post:hover { background: var(--green-light); transform: translateY(-1px); }
+
+    /* ── FADE UP ── */
+    .fade-up { opacity:0; transform:translateY(14px); animation: fadeUp 0.35s ease forwards; }
+    @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+    .fade-up:nth-child(1){animation-delay:.04s}
+    .fade-up:nth-child(2){animation-delay:.08s}
+    .fade-up:nth-child(3){animation-delay:.12s}
+    .fade-up:nth-child(4){animation-delay:.16s}
+    .fade-up:nth-child(5){animation-delay:.20s}
+
+    @media(max-width:900px){ .feed-layout{grid-template-columns:1fr;} .side-col{display:none;} }
+    @media(max-width:768px){ .sidebar{display:none;} .main{margin-left:0;} .post-types{display:none;} }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">SUWE<span>Built for the market</span></div>
+  <div class="nav-section">
+    <div class="nav-label">Main</div>
+    <div class="nav-item"><span class="icon">⊞</span> Dashboard</div>
+    <div class="nav-item"><span class="icon">📊</span> Sales</div>
+    <div class="nav-item"><span class="icon">📦</span> Inventory</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Community</div>
+    <div class="nav-item"><span class="icon">🔄</span> My Ajo</div>
+    <div class="nav-item"><span class="icon">🤝</span> Traders</div>
+    <div class="nav-item active"><span class="icon">📢</span> Feed</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Finance</div>
+    <div class="nav-item"><span class="icon">⭐</span> Credit Score</div>
+    <div class="nav-item"><span class="icon">💳</span> Loans</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Account</div>
+    <div class="nav-item"><span class="icon">⚙️</span> Settings</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="user-avatar">AM</div>
+      <div>
+        <div class="user-name">Adaeze M.</div>
+        <div class="user-market">Balogun Market</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>📢 Trader Feed</h2>
+      <p>See what other traders are saying today</p>
+    </div>
+    <div class="post-types">
+      <button class="post-type-btn update" onclick="openModal('update')">
+        <span class="btn-icon">✍️</span> Update
+      </button>
+      <button class="post-type-btn price" onclick="openModal('price')">
+        <span class="btn-icon">🚨</span> Price Alert
+      </button>
+      <button class="post-type-btn bulk" onclick="openModal('bulk')">
+        <span class="btn-icon">🤝</span> Bulk Buy
+      </button>
+      <button class="post-type-btn ajo" onclick="openModal('ajo')">
+        <span class="btn-icon">🔄</span> Ajo Invite
+      </button>
+    </div>
+  </div>
+
+  <div class="feed-layout">
+
+    <!-- FEED COLUMN -->
+    <div class="feed-col">
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <div class="filter-chip active" onclick="setFilter(this,'all')">
+          <span class="chip-icon">🌍</span> All Posts
+        </div>
+        <div class="filter-chip" onclick="setFilter(this,'balogun')">
+          <span class="chip-icon">📍</span> Balogun
+        </div>
+        <div class="filter-chip" onclick="setFilter(this,'mile12')">
+          <span class="chip-icon">📍</span> Mile 12
+        </div>
+        <div class="filter-chip" onclick="setFilter(this,'oshodi')">
+          <span class="chip-icon">📍</span> Oshodi
+        </div>
+        <div class="filter-chip" onclick="setFilter(this,'food')">
+          <span class="chip-icon">🍅</span> Food & Produce
+        </div>
+        <div class="filter-chip" onclick="setFilter(this,'fabric')">
+          <span class="chip-icon">🧵</span> Fabric
+        </div>
+        <div class="filter-chip" onclick="setFilter(this,'following')">
+          <span class="chip-icon">👥</span> Following
+        </div>
+      </div>
+
+      <!-- POSTS -->
+      <div id="feed-container"></div>
+
+    </div><!-- /feed-col -->
+
+    <!-- SIDE COLUMN -->
+    <div class="side-col">
+
+      <!-- Price ticker -->
+      <div class="side-card fade-up">
+        <div class="side-header">📊 Market Prices Today</div>
+        <div class="side-body">
+          <div class="ticker-item">
+            <div class="ticker-name">🌶️ Tatashe</div>
+            <div>
+              <div class="ticker-price" style="color:var(--text-primary)">₦4,200/bag</div>
+              <span class="ticker-change up-change">↑ 28%</span>
+            </div>
+          </div>
+          <div class="ticker-item">
+            <div class="ticker-name">🍅 Tomatoes</div>
+            <div>
+              <div class="ticker-price">₦2,100/crate</div>
+              <span class="ticker-change up-change">↑ 12%</span>
+            </div>
+          </div>
+          <div class="ticker-item">
+            <div class="ticker-name">🧅 Onions</div>
+            <div>
+              <div class="ticker-price">₦18,500/bag</div>
+              <span class="ticker-change down-change">↓ 5%</span>
+            </div>
+          </div>
+          <div class="ticker-item">
+            <div class="ticker-name">🥬 Ugu Leaves</div>
+            <div>
+              <div class="ticker-price">₦800/bundle</div>
+              <span class="ticker-change down-change">↓ 8%</span>
+            </div>
+          </div>
+          <div class="ticker-item">
+            <div class="ticker-name">🌽 Maize</div>
+            <div>
+              <div class="ticker-price">₦42,000/bag</div>
+              <span class="ticker-change up-change">↑ 6%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active traders -->
+      <div class="side-card fade-up">
+        <div class="side-header">🟢 Active Now</div>
+        <div class="side-body">
+          <div class="active-trader">
+            <div class="at-avatar" style="background:#c9a84c; color:#0a2e1a">F<div class="online-dot"></div></div>
+            <div class="at-info">
+              <div class="at-name">Fatima Bello</div>
+              <div class="at-market">Mile 12</div>
+            </div>
+            <button class="follow-btn">Follow</button>
+          </div>
+          <div class="active-trader">
+            <div class="at-avatar" style="background:#3b7dd8">C<div class="online-dot"></div></div>
+            <div class="at-info">
+              <div class="at-name">Chidi Okonkwo</div>
+              <div class="at-market">Oshodi</div>
+            </div>
+            <button class="follow-btn">Follow</button>
+          </div>
+          <div class="active-trader">
+            <div class="at-avatar" style="background:#1a6637">N<div class="online-dot"></div></div>
+            <div class="at-info">
+              <div class="at-name">Ngozi Eze</div>
+              <div class="at-market">Tejuosho</div>
+            </div>
+            <button class="follow-btn">Follow</button>
+          </div>
+          <div class="active-trader">
+            <div class="at-avatar" style="background:#d8753b">M<div class="online-dot"></div></div>
+            <div class="at-info">
+              <div class="at-name">Mama Kike</div>
+              <div class="at-market">Balogun</div>
+            </div>
+            <button class="follow-btn">Follow</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /side-col -->
+  </div>
+
+</main><!-- /main -->
+
+<!-- ── POST MODAL ── -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-handle"></div>
+
+    <div style="margin-bottom:16px">
+      <div style="font-size:18px; font-weight:700; color:var(--text-primary); margin-bottom:4px">What do you want to share?</div>
+      <div style="font-size:13px; color:var(--text-soft)">Choose a type then write your message</div>
+    </div>
+
+    <!-- Type selector -->
+    <div class="modal-type-pills">
+      <div class="modal-pill" id="pill-update" onclick="selectType('update')">✍️ Update</div>
+      <div class="modal-pill" id="pill-price"  onclick="selectType('price')">🚨 Price Alert</div>
+      <div class="modal-pill" id="pill-bulk"   onclick="selectType('bulk')">🤝 Bulk Buy</div>
+      <div class="modal-pill" id="pill-ajo"    onclick="selectType('ajo')">🔄 Ajo Invite</div>
+    </div>
+
+    <!-- Price alert extra fields -->
+    <div class="extra-fields" id="extra-price">
+      <div class="extra-row">
+        <div>
+          <label class="form-label">What item? 🛒</label>
+          <input class="form-input" placeholder="e.g. Tomatoes, Pepper…" id="price-item"/>
+        </div>
+        <div>
+          <label class="form-label">New price per unit 💰</label>
+          <input class="form-input" placeholder="e.g. ₦2,500 per crate" id="price-new"/>
+        </div>
+      </div>
+      <div class="extra-row">
+        <div>
+          <label class="form-label">Up or Down? 📈</label>
+          <select class="form-select" id="price-dir">
+            <option value="up">↑ Price went UP</option>
+            <option value="down">↓ Price went DOWN</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">By how much? %</label>
+          <input class="form-input" type="number" placeholder="e.g. 25" id="price-pct"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bulk buy extra fields -->
+    <div class="extra-fields" id="extra-bulk">
+      <div class="extra-row">
+        <div>
+          <label class="form-label">What to buy together? 📦</label>
+          <input class="form-input" placeholder="e.g. Tomatoes, Rice bags…" id="bulk-item"/>
+        </div>
+        <div>
+          <label class="form-label">Price per unit 💵</label>
+          <input class="form-input" placeholder="e.g. ₦12,000 per crate" id="bulk-price"/>
+        </div>
+      </div>
+      <div class="extra-row">
+        <div>
+          <label class="form-label">Minimum quantity 📊</label>
+          <input class="form-input" placeholder="e.g. 20 crates total" id="bulk-qty"/>
+        </div>
+        <div>
+          <label class="form-label">Spots available 👥</label>
+          <input class="form-input" type="number" placeholder="e.g. 5" id="bulk-spots"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ajo invite extra fields -->
+    <div class="extra-fields" id="extra-ajo">
+      <div class="extra-row">
+        <div>
+          <label class="form-label">Group name 🏷</label>
+          <input class="form-input" placeholder="e.g. Balogun Strong Women" id="ajo-name"/>
+        </div>
+        <div>
+          <label class="form-label">Monthly amount 💰</label>
+          <input class="form-input" placeholder="e.g. ₦10,000" id="ajo-amount"/>
+        </div>
+      </div>
+      <div class="extra-row">
+        <div>
+          <label class="form-label">Spots open 👥</label>
+          <input class="form-input" type="number" placeholder="e.g. 4" id="ajo-spots"/>
+        </div>
+        <div>
+          <label class="form-label">Who can join?</label>
+          <select class="form-select" id="ajo-open">
+            <option>Anyone on SUWE</option>
+            <option>Same market only</option>
+            <option>Invite only</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message box — BIG, readable -->
+    <textarea class="post-textarea" id="post-text"
+      placeholder="Write your message here…&#10;&#10;Use simple words. Other traders will read this."></textarea>
+
+    <div class="modal-footer">
+      <select class="modal-market-select" id="post-market">
+        <option>📍 Balogun Market</option>
+        <option>📍 Mile 12</option>
+        <option>📍 Oshodi</option>
+        <option>📍 Tejuosho</option>
+        <option>🌍 All Lagos</option>
+      </select>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <button style="padding:10px 18px; border:1.5px solid var(--border); border-radius:50px; background:none; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; color:var(--text-mid); cursor:pointer;" onclick="closeModal()">Cancel</button>
+        <button class="btn-post" onclick="submitPost()">Post ✓</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────
+// POST DATA
+// ─────────────────────────────────
+const posts = [
+  {
+    id: 1, type: 'price',
+    author: 'Fatima Bello', market: 'Mile 12',
+    color: '#c9a84c', tc: '#0a2e1a', tag: 'food',
+    time: '1 hour ago',
+    text: 'Tatashe (red pepper) price don go up by 28% since Monday morning. I buy for ₦4,200 per bag today. Last week na ₦3,300. Make una check before you go buy.',
+    priceItem: 'Tatashe (Red Bell Pepper)', priceNew: '₦4,200/bag', priceDir: 'up', pricePct: '28',
+    likes: 34, comments: [
+      { name:'Chioma O.', color:'#1a6637', text:'Ehen! I see am too. Ketu price even worse — ₦4,500. Mile 12 better.' },
+      { name:'Adaeze M.', color:'#c9a84c', tc:'#0a2e1a', text:'Thank you Fatima! I go hold off restocking till Friday.' }
+    ]
+  },
+  {
+    id: 2, type: 'bulk',
+    author: 'Chidi Okonkwo', market: 'Oshodi',
+    color: '#3b7dd8', tc: '#fff', tag: 'food',
+    time: '3 hours ago',
+    text: 'I don talk to a supplier at Oyingbo. If we buy 30 crates together, price go drop. Who wan join? Only serious traders.',
+    bulkItem: 'Roma Tomatoes', bulkPrice: '₦12,000/crate', bulkQty: '30 crates minimum',
+    spotsTotal: 6, spotsFilled: 4,
+    likes: 19, comments: [
+      { name:'Mama Kike', color:'#d8753b', text:'I dey! I need 5 crates. Count me in abeg.' }
+    ]
+  },
+  {
+    id: 3, type: 'update',
+    author: 'Ngozi Eze', market: 'Tejuosho',
+    color: '#5a4a8a', tc: '#fff', tag: 'fabric',
+    time: '5 hours ago',
+    text: 'Good news! The Ankara fabric wey I order from Aba don arrive. Quality is very good. If anybody need lace or ankara at wholesale price, come find me at Shop 14, Tejuosho. No be phone call — come in person.',
+    likes: 41, comments: [
+      { name:'Fatima B.', color:'#c9a84c', tc:'#0a2e1a', text:'Ngozi I dey come tomorrow morning! Keep 10 yards for me.' },
+      { name:'Ngozi Eze', color:'#5a4a8a', text:'No problem Fatima! I go keep am.' }
+    ]
+  },
+  {
+    id: 4, type: 'ajo',
+    author: 'Mama Kike', market: 'Balogun',
+    color: '#d8753b', tc: '#fff', tag: 'general',
+    time: '8 hours ago',
+    text: 'I dey form new Ajo group for food traders in Balogun. ₦8,000 every month. Clean and simple. Interswitch go handle everything — no wahala with cash. I need 4 more serious people.',
+    ajoName: 'Balogun Food Sellers Ajo', ajoAmount: '₦8,000/month',
+    spotsTotal: 8, spotsFilled: 4,
+    likes: 27, comments: []
+  },
+  {
+    id: 5, type: 'update',
+    author: 'Alhaji Musa', market: 'Ketu',
+    color: '#2e7d32', tc: '#fff', tag: 'food',
+    time: '1 day ago',
+    text: 'My onion supply don arrive from Sokoto. 50kg bags available. Price is ₦18,500 per bag if you buy 5 or more. Less than 5 bags na ₦20,000. Come early — stock no go last.',
+    likes: 56, comments: [
+      { name:'Adaeze M.', color:'#c9a84c', tc:'#0a2e1a', text:'Alhaji I go come Wednesday for 8 bags insha Allah.' },
+      { name:'Alhaji Musa', color:'#2e7d32', text:'No problem. I go keep am for you.' },
+      { name:'Chidi O.', color:'#3b7dd8', text:'Alhaji I need 10 bags. Can deliver to Oshodi?' }
+    ]
+  },
+  {
+    id: 6, type: 'price',
+    author: 'Blessing Uche', market: 'Mile 12',
+    color: '#8a4a5a', tc: '#fff', tag: 'food',
+    time: '1 day ago',
+    text: 'Ugu leaves price don drop small small. ₦800 per bundle now. Rain don start to fall so supply is coming in more. Good time to buy for those wey dey sell soup ingredients.',
+    priceItem: 'Ugu Leaves', priceNew: '₦800/bundle', priceDir: 'down', pricePct: '8',
+    likes: 22, comments: []
+  }
+];
+
+let openComments = new Set();
+
+// ─────────────────────────────────
+// RENDER FEED
+// ─────────────────────────────────
+function renderFeed(filter = 'all') {
+  const container = document.getElementById('feed-container');
+  container.innerHTML = '';
+
+  const filtered = posts.filter(p => {
+    if (filter === 'all') return true;
+    if (filter === 'following') return ['Fatima Bello','Chidi Okonkwo'].includes(p.author);
+    if (filter === 'food')    return p.tag === 'food';
+    if (filter === 'fabric')  return p.tag === 'fabric';
+    if (filter === 'balogun') return p.market === 'Balogun';
+    if (filter === 'mile12')  return p.market === 'Mile 12';
+    if (filter === 'oshodi')  return p.market === 'Oshodi';
+    return true;
+  });
+
+  filtered.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = `post-card type-${p.type} fade-up`;
+    card.style.animationDelay = `${i * 0.06}s`;
+
+    const initials = p.author.split(' ').map(w=>w[0]).join('').slice(0,2);
+    const badgeClass = { update:'badge-update', price:'badge-price', bulk:'badge-bulk', ajo:'badge-ajo' }[p.type];
+    const badgeLabel = { update:'Update', price:'🚨 Price Alert', bulk:'🤝 Bulk Buy', ajo:'🔄 Ajo Invite' }[p.type];
+
+    let specialBlock = '';
+
+    if (p.type === 'price') {
+      const arrow = p.priceDir === 'up' ? '↑' : '↓';
+      const cls   = p.priceDir === 'up' ? 'price-up' : 'price-down';
+      specialBlock = `
+        <div class="price-alert-box">
+          <div class="price-alert-icon">${p.priceDir === 'up' ? '🚨' : '📉'}</div>
+          <div class="price-alert-info">
+            <div class="price-alert-item">${p.priceItem}</div>
+            <div class="price-alert-change ${cls}">${arrow} ${p.pricePct}% — now ${p.priceNew}</div>
+            <div class="price-alert-detail">${p.market} · ${p.time}</div>
+          </div>
+        </div>`;
+    }
+
+    if (p.type === 'bulk') {
+      const fillPct = Math.round((p.spotsFilled / p.spotsTotal) * 100);
+      const open = p.spotsTotal - p.spotsFilled;
+      specialBlock = `
+        <div class="bulk-box">
+          <div class="bulk-product">📦 ${p.bulkItem}</div>
+          <div class="bulk-details">
+            <div class="bulk-stat"><span class="bulk-stat-label">Price</span><span class="bulk-stat-val">${p.bulkPrice}</span></div>
+            <div class="bulk-stat"><span class="bulk-stat-label">Minimum</span><span class="bulk-stat-val">${p.bulkQty}</span></div>
+            <div class="bulk-stat"><span class="bulk-stat-label">Spots left</span><span class="bulk-stat-val" style="color:var(--blue)">${open} of ${p.spotsTotal}</span></div>
+          </div>
+          <div class="bulk-spots">
+            <div class="bulk-spots-track"><div class="bulk-spots-fill" style="width:${fillPct}%"></div></div>
+            <div class="bulk-spots-label">${p.spotsFilled} traders joined · ${open} spot${open!==1?'s':''} remaining</div>
+          </div>
+        </div>`;
+    }
+
+    if (p.type === 'ajo') {
+      const open = p.spotsTotal - p.spotsFilled;
+      let spots = '';
+      for(let i=0;i<p.spotsTotal;i++){
+        if(i<p.spotsFilled) spots += `<div class="ajo-spot filled">${String.fromCharCode(65+i)}</div>`;
+        else spots += `<div class="ajo-spot open">?</div>`;
+      }
+      specialBlock = `
+        <div class="ajo-box">
+          <div class="ajo-box-name">🔄 ${p.ajoName}</div>
+          <div class="ajo-box-details">
+            <div class="ajo-box-stat"><span class="ajo-box-label">Monthly</span><span class="ajo-box-val">${p.ajoAmount}</span></div>
+            <div class="ajo-box-stat"><span class="ajo-box-label">Members</span><span class="ajo-box-val">${p.spotsTotal} total</span></div>
+            <div class="ajo-box-stat"><span class="ajo-box-label">Spots left</span><span class="ajo-box-val" style="color:var(--gold)">${open} open</span></div>
+          </div>
+          <div class="ajo-spots-row">${spots}</div>
+        </div>`;
+    }
+
+    const commentsOpen = openComments.has(p.id);
+    const commentsHTML = p.comments.map(c => {
+      const ci = c.name.split(' ').map(w=>w[0]).join('').slice(0,2);
+      return `<div class="comment-item">
+        <div class="c-avatar-sm" style="background:${c.color||'#666'}; color:${c.tc||'#fff'}">${ci}</div>
+        <div class="c-bubble">
+          <div class="c-bubble-name">${c.name}</div>
+          <div class="c-bubble-text">${c.text}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    const joinBtn = p.type === 'bulk'
+      ? `<button class="join-btn bulk-join" onclick="joinBulk(${p.id})">Join Bulk Buy</button>`
+      : p.type === 'ajo'
+      ? `<button class="join-btn ajo-join" onclick="joinAjo(${p.id})">Join Ajo Group</button>`
+      : '';
+
+    card.innerHTML = `
+      <div class="post-inner">
+        <div class="post-header">
+          <div class="post-author">
+            <div class="p-avatar" style="background:${p.color}; color:${p.tc||'#fff'}">${initials}</div>
+            <div>
+              <div class="p-name">${p.author} <span class="p-verified">✓</span></div>
+              <div class="p-meta">📍 ${p.market} <span class="dot">•</span> ${p.time}</div>
+            </div>
+          </div>
+          <div class="post-type-badge ${badgeClass}">${badgeLabel}</div>
+        </div>
+        ${specialBlock}
+        <div class="post-body">${p.text}</div>
+        <div class="post-footer">
+          <button class="reaction-btn" id="like-${p.id}" onclick="toggleLike(${p.id}, this)">
+            <span class="r-icon">👍</span><span class="r-count" id="like-count-${p.id}">${p.likes}</span>
+          </button>
+          <button class="reaction-btn" onclick="toggleComments(${p.id})">
+            <span class="r-icon">💬</span><span class="r-count">${p.comments.length}</span>
+          </button>
+          <div class="spacer"></div>
+          ${joinBtn}
+        </div>
+      </div>
+      <div class="comments-section ${commentsOpen ? 'open' : ''}" id="comments-${p.id}">
+        ${commentsHTML}
+        <div class="comment-input-row">
+          <div class="c-avatar-sm" style="background:var(--green-light); color:var(--gold)">AM</div>
+          <input class="comment-input" placeholder="Write a reply…" id="comment-input-${p.id}"
+            onkeydown="if(event.key==='Enter') sendComment(${p.id})"/>
+          <button class="comment-send" onclick="sendComment(${p.id})">➤</button>
+        </div>
+      </div>`;
+
+    container.appendChild(card);
+  });
+}
+
+// ─────────────────────────────────
+// INTERACTIONS
+// ─────────────────────────────────
+const liked = new Set();
+
+function toggleLike(id, btn) {
+  const post = posts.find(p=>p.id===id);
+  if (liked.has(id)) {
+    liked.delete(id); post.likes--;
+    btn.classList.remove('liked');
+  } else {
+    liked.add(id); post.likes++;
+    btn.classList.add('liked');
+  }
+  document.getElementById(`like-count-${id}`).textContent = post.likes;
+}
+
+function toggleComments(id) {
+  const sec = document.getElementById(`comments-${id}`);
+  if (openComments.has(id)) {
+    openComments.delete(id); sec.classList.remove('open');
+  } else {
+    openComments.add(id); sec.classList.add('open');
+    setTimeout(() => document.getElementById(`comment-input-${id}`)?.focus(), 100);
+  }
+}
+
+function sendComment(id) {
+  const input = document.getElementById(`comment-input-${id}`);
+  const text = input.value.trim();
+  if (!text) return;
+  const post = posts.find(p=>p.id===id);
+  post.comments.push({ name:'Adaeze M.', color:'#c9a84c', tc:'#0a2e1a', text });
+  input.value = '';
+  openComments.add(id);
+  renderFeed(activeFilter);
+}
+
+function joinBulk(id) {
+  const post = posts.find(p=>p.id===id);
+  if (post.spotsFilled < post.spotsTotal) {
+    post.spotsFilled++;
+    alert(`✅ You joined the bulk buy for ${post.bulkItem}!\n\nChidi Okonkwo will contact you with payment details via SUWE.`);
+    renderFeed(activeFilter);
+  }
+}
+
+function joinAjo(id) {
+  const post = posts.find(p=>p.id===id);
+  alert(`✅ Request sent to join "${post.ajoName}"!\n\nThe group admin will review your SUWE credit score and confirm your spot.`);
+}
+
+// Filter
+let activeFilter = 'all';
+function setFilter(el, filter) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  activeFilter = filter;
+  renderFeed(filter);
+}
+
+// ─────────────────────────────────
+// POST MODAL
+// ─────────────────────────────────
+let selectedType = 'update';
+
+function openModal(type) {
+  document.getElementById('modal-overlay').classList.add('open');
+  selectType(type);
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+
+function selectType(type) {
+  selectedType = type;
+  ['update','price','bulk','ajo'].forEach(t => {
+    const pill  = document.getElementById(`pill-${t}`);
+    const extra = document.getElementById(`extra-${t}`);
+    pill.className = `modal-pill${type===t ? ` selected-${t}` : ''}`;
+    if (extra) extra.className = `extra-fields${type===t ? ' show' : ''}`;
+  });
+  const placeholders = {
+    update: 'Write your message here…\n\nUse simple words. Other traders will read this.',
+    price:  'Tell traders about the price change. Where did you see it? Any advice for them?',
+    bulk:   'Tell people why this is a good deal. Who is the supplier? When does it expire?',
+    ajo:    'Tell traders about your group. What kind of traders should join? What are your rules?'
+  };
+  document.getElementById('post-text').placeholder = placeholders[type];
+}
+
+function submitPost() {
+  const text = document.getElementById('post-text').value.trim();
+  if (!text) { document.getElementById('post-text').focus(); return; }
+
+  const market = document.getElementById('post-market').value.replace('📍 ','').replace('🌍 ','');
+
+  const newPost = {
+    id: Date.now(), type: selectedType,
+    author: 'Adaeze M.', market,
+    color: '#c9a84c', tc: '#0a2e1a',
+    tag: 'food', time: 'Just now', text,
+    likes: 0, comments: []
+  };
+
+  if (selectedType === 'price') {
+    newPost.priceItem = document.getElementById('price-item').value || 'Unknown item';
+    newPost.priceNew  = document.getElementById('price-new').value  || '—';
+    newPost.priceDir  = document.getElementById('price-dir').value;
+    newPost.pricePct  = document.getElementById('price-pct').value  || '0';
+  }
+  if (selectedType === 'bulk') {
+    newPost.bulkItem  = document.getElementById('bulk-item').value  || 'Item';
+    newPost.bulkPrice = document.getElementById('bulk-price').value || '—';
+    newPost.bulkQty   = document.getElementById('bulk-qty').value   || '—';
+    newPost.spotsTotal  = parseInt(document.getElementById('bulk-spots').value) || 5;
+    newPost.spotsFilled = 0;
+  }
+  if (selectedType === 'ajo') {
+    newPost.ajoName    = document.getElementById('ajo-name').value   || 'My Ajo Group';
+    newPost.ajoAmount  = document.getElementById('ajo-amount').value || '—';
+    newPost.spotsTotal  = parseInt(document.getElementById('ajo-spots').value) || 5;
+    newPost.spotsFilled = 0;
+  }
+
+  posts.unshift(newPost);
+  closeModal();
+  activeFilter = 'all';
+  document.querySelectorAll('.filter-chip').forEach((c,i) => c.classList.toggle('active', i===0));
+  renderFeed('all');
+
+  document.getElementById('post-text').value = '';
+  document.querySelectorAll('.form-input').forEach(i => i.value = '');
+}
+
+// INIT
+renderFeed('all');
+</script>
+</body>
+</html>
