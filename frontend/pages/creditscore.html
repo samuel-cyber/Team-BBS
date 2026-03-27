@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SUWE — Credit Score</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green-deep:  #0a2e1a;
+      --green-mid:   #134d2c;
+      --green-light: #1a6637;
+      --gold:        #c9a84c;
+      --gold-soft:   #e8c96a;
+      --gold-pale:   #fdf6e3;
+      --surface:     #ffffff;
+      --surface-2:   #f7f8f5;
+      --surface-3:   #eef0eb;
+      --text-primary:#111a14;
+      --text-mid:    #3d5244;
+      --text-soft:   #7a9485;
+      --border:      #dde5df;
+      --red:         #e05c4b;
+      --blue:        #3b7dd8;
+      --radius:      16px;
+      --radius-sm:   10px;
+
+      /* Score tier colours */
+      --score-excellent: #1a8a4a;
+      --score-good:      #4a9e6a;
+      --score-fair:      #c9a84c;
+      --score-poor:      #e05c4b;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--surface-2);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: fixed; top:0; left:0;
+      width: 220px; height: 100vh;
+      background: var(--green-deep);
+      display: flex; flex-direction: column;
+      padding: 28px 0; z-index: 100;
+    }
+    .sidebar-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; color: var(--gold);
+      letter-spacing: 2px; padding: 0 24px 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .sidebar-logo span {
+      display: block; font-family: 'DM Sans', sans-serif;
+      font-size: 10px; letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.3); font-weight: 400;
+      text-transform: uppercase; margin-top: 2px;
+    }
+    .nav-section { padding: 20px 14px 6px; }
+    .nav-label {
+      font-size: 10px; letter-spacing: 1.5px;
+      text-transform: uppercase; color: rgba(255,255,255,0.25);
+      padding: 0 10px; margin-bottom: 6px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: var(--radius-sm);
+      color: rgba(255,255,255,0.55); font-size: 14px;
+      font-weight: 500; cursor: pointer; transition: all 0.15s; margin-bottom: 2px;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+    .nav-item.active { background: rgba(201,168,76,0.15); color: var(--gold); }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+    .sidebar-footer {
+      margin-top: auto; padding: 16px 14px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .user-pill {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.05);
+    }
+    .user-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--green-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; color: var(--gold); flex-shrink: 0;
+    }
+    .user-name  { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.8); }
+    .user-market{ font-size: 11px; color: rgba(255,255,255,0.3); }
+
+    /* ── MAIN ── */
+    .main { margin-left: 220px; padding: 32px 36px; min-height: 100vh; }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px; font-weight: 800; margin-bottom: 4px;
+    }
+    .page-header p { font-size: 13px; color: var(--text-soft); }
+
+    .ai-refresh-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 20px; border: none; border-radius: 50px;
+      background: var(--green-deep); color: var(--gold);
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      font-weight: 600; cursor: pointer; transition: all 0.2s;
+    }
+    .ai-refresh-btn:hover { background: var(--green-light); transform: translateY(-1px); }
+    .ai-refresh-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .spin { display: inline-block; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── SCORE HERO ── */
+    .score-hero {
+      background: var(--green-deep);
+      border-radius: 20px;
+      padding: 36px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 36px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .score-hero::before {
+      content: '';
+      position: absolute; top: -80px; right: -80px;
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 65%);
+      border-radius: 50%;
+    }
+    .score-hero::after {
+      content: '';
+      position: absolute; bottom: -100px; left: 20%;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(26,102,55,0.25) 0%, transparent 60%);
+      border-radius: 50%;
+    }
+
+    /* Gauge */
+    .gauge-wrap {
+      position: relative; width: 160px; height: 160px;
+      flex-shrink: 0; z-index: 1;
+    }
+    .gauge-wrap svg { overflow: visible; }
+    .gauge-bg   { fill: none; stroke: rgba(255,255,255,0.07); stroke-width: 10; stroke-linecap: round; }
+    .gauge-fill {
+      fill: none; stroke-width: 10; stroke-linecap: round;
+      stroke-dasharray: 380;
+      stroke-dashoffset: 380;
+      transition: stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1), stroke 0.5s;
+    }
+    .gauge-center {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .gauge-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 42px; font-weight: 900;
+      color: white; line-height: 1;
+    }
+    .gauge-max { font-size: 13px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+    .gauge-tier {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      margin-top: 4px; padding: 3px 10px; border-radius: 20px;
+    }
+
+    /* Hero middle */
+    .score-hero-mid { z-index: 1; }
+    .score-hero-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; font-weight: 800; color: white; margin-bottom: 4px;
+    }
+    .score-hero-market { font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 20px; }
+
+    .score-unlocks {
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .unlock-item {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: rgba(255,255,255,0.75);
+    }
+    .unlock-icon {
+      width: 28px; height: 28px; border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0;
+    }
+    .unlock-icon.yes { background: rgba(26,138,74,0.25); }
+    .unlock-icon.no  { background: rgba(255,255,255,0.06); }
+    .unlock-item.locked { color: rgba(255,255,255,0.3); }
+
+    /* Hero right */
+    .score-hero-right { z-index: 1; text-align: right; }
+    .score-updated {
+      font-size: 11px; color: rgba(255,255,255,0.3);
+      margin-bottom: 16px;
+    }
+    .score-public-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 6px 12px; border-radius: 20px;
+      font-size: 11px; color: rgba(255,255,255,0.55);
+      margin-bottom: 14px;
+    }
+    .share-score-btn {
+      display: block; padding: 10px 20px;
+      background: rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.35);
+      border-radius: 50px; color: var(--gold);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .share-score-btn:hover { background: rgba(201,168,76,0.25); }
+
+    /* ── MAIN GRID ── */
+    .score-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+    }
+    .left-col  { display: flex; flex-direction: column; gap: 20px; }
+    .right-col { display: flex; flex-direction: column; gap: 20px; }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 22px; border-bottom: 1px solid var(--border);
+    }
+    .card-title {
+      font-size: 14px; font-weight: 600; color: var(--text-primary);
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    /* ── FACTOR BARS ── */
+    .factors-body { padding: 20px 22px; display: flex; flex-direction: column; gap: 18px; }
+
+    .factor-row {}
+    .factor-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .factor-label {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 600; color: var(--text-primary);
+    }
+    .factor-icon { font-size: 16px; }
+    .factor-weight { font-size: 11px; color: var(--text-soft); }
+    .factor-score-val { font-size: 13px; font-weight: 700; }
+
+    .factor-track {
+      height: 8px; background: var(--surface-3);
+      border-radius: 4px; overflow: hidden;
+    }
+    .factor-fill {
+      height: 100%; border-radius: 4px;
+      transition: width 1.2s cubic-bezier(.4,0,.2,1);
+    }
+
+    .factor-note {
+      font-size: 11px; color: var(--text-soft);
+      margin-top: 5px;
+    }
+
+    /* ── AI ANALYSIS PANEL ── */
+    .ai-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .ai-panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, #f7fff9 0%, #fffdf5 100%);
+    }
+
+    .ai-panel-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 14px; font-weight: 600; color: var(--text-primary);
+    }
+
+    .claude-badge {
+      display: flex; align-items: center; gap: 5px;
+      background: var(--green-deep); color: var(--gold);
+      font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+      padding: 3px 9px; border-radius: 20px; text-transform: uppercase;
+    }
+
+    .ai-body { padding: 22px; }
+
+    /* Loading state */
+    .ai-loading {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 36px 0; gap: 14px;
+    }
+    .ai-loading-dots {
+      display: flex; gap: 6px;
+    }
+    .ai-loading-dots span {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green-light);
+      animation: dotBounce 1.2s ease-in-out infinite;
+    }
+    .ai-loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .ai-loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dotBounce {
+      0%,100% { transform: translateY(0); opacity: 0.4; }
+      50%      { transform: translateY(-6px); opacity: 1; }
+    }
+    .ai-loading p { font-size: 13px; color: var(--text-soft); }
+
+    /* Streamed text */
+    .ai-verdict {
+      font-size: 15px; font-weight: 600; color: var(--text-primary);
+      margin-bottom: 12px; line-height: 1.5;
+      display: none;
+    }
+    .ai-reasoning {
+      font-size: 13px; color: var(--text-mid); line-height: 1.75;
+      display: none;
+    }
+    .ai-reasoning p { margin-bottom: 10px; }
+    .ai-reasoning p:last-child { margin-bottom: 0; }
+
+    /* Action items */
+    .ai-actions-title {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--text-soft);
+      margin: 18px 0 10px; display: none;
+    }
+    .ai-action-list {
+      display: flex; flex-direction: column; gap: 8px;
+      display: none;
+    }
+    .ai-action-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 11px 13px;
+      font-size: 13px; color: var(--text-primary); line-height: 1.4;
+    }
+    .ai-action-item .bullet { font-size: 16px; flex-shrink: 0; margin-top: -1px; }
+
+    /* Cursor blink */
+    .cursor {
+      display: inline-block; width: 2px; height: 14px;
+      background: var(--green-light); vertical-align: middle;
+      margin-left: 2px;
+      animation: blink 0.8s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── HISTORY ── */
+    .history-chart {
+      padding: 20px 22px;
+    }
+    .h-months {
+      display: flex; align-items: flex-end;
+      gap: 10px; height: 80px; margin-bottom: 8px;
+    }
+    .h-month-col {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; gap: 4px; height: 100%;
+      justify-content: flex-end;
+    }
+    .h-bar {
+      width: 100%; border-radius: 4px 4px 0 0;
+      transition: height 0.8s cubic-bezier(.4,0,.2,1);
+    }
+    .h-month-label { font-size: 10px; color: var(--text-soft); }
+    .h-month-score { font-size: 10px; font-weight: 600; color: var(--text-primary); }
+
+    /* ── COMMUNITY SCORES ── */
+    .community-list { padding: 6px 0; }
+    .c-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 22px; border-bottom: 1px solid var(--surface-3);
+      cursor: pointer; transition: background 0.15s;
+    }
+    .c-item:last-child { border-bottom: none; }
+    .c-item:hover { background: var(--surface-2); }
+
+    .c-rank {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px; font-weight: 700;
+      width: 22px; text-align: center; color: var(--text-soft);
+      flex-shrink: 0;
+    }
+    .c-rank.top { color: var(--gold); }
+
+    .c-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: white;
+      flex-shrink: 0; font-family: 'Playfair Display', serif;
+    }
+    .c-info { flex: 1; }
+    .c-name   { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .c-market { font-size: 11px; color: var(--text-soft); margin-top: 1px; }
+
+    .c-score-pill {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px;
+    }
+
+    /* ── LOANS PANEL ── */
+    .loans-body { padding: 18px 22px; }
+    .loan-offer {
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      padding: 16px; margin-bottom: 12px;
+      position: relative; transition: all 0.2s; cursor: pointer;
+    }
+    .loan-offer:last-child { margin-bottom: 0; }
+    .loan-offer:hover { border-color: var(--green-light); box-shadow: 0 3px 14px rgba(10,46,26,0.08); }
+    .loan-offer.locked {
+      opacity: 0.5; cursor: not-allowed;
+      background: var(--surface-2);
+    }
+    .loan-offer.locked:hover { border-color: var(--border); box-shadow: none; }
+
+    .loan-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .loan-partner { font-size: 12px; font-weight: 700; color: var(--text-mid); }
+    .loan-rate {
+      font-size: 11px; padding: 2px 8px; border-radius: 20px;
+      background: rgba(26,102,55,0.08); color: var(--green-light);
+      font-weight: 600;
+    }
+    .loan-amount {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; font-weight: 800; color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .loan-detail { font-size: 11px; color: var(--text-soft); }
+
+    .loan-lock-msg {
+      font-size: 11px; color: var(--red);
+      margin-top: 8px; display: flex; align-items: center; gap: 4px;
+    }
+
+    .btn-apply {
+      width: 100%; margin-top: 12px; padding: 10px;
+      border: none; border-radius: 50px;
+      background: var(--green-deep); color: var(--gold);
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      font-weight: 600; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-apply:hover { background: var(--green-light); }
+
+    /* ── FADE IN ── */
+    .fade-up {
+      opacity:0; transform:translateY(14px);
+      animation: fadeUp 0.4s ease forwards;
+    }
+    @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+    .fade-up:nth-child(1){animation-delay:.05s}
+    .fade-up:nth-child(2){animation-delay:.1s}
+    .fade-up:nth-child(3){animation-delay:.15s}
+    .fade-up:nth-child(4){animation-delay:.2s}
+
+    @media(max-width:1100px){ .score-hero{grid-template-columns:1fr; } .score-grid{grid-template-columns:1fr;} }
+    @media(max-width:768px){ .sidebar{display:none;} .main{margin-left:0;padding:20px 16px;} }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">SUWE<span>Built for the market</span></div>
+  <div class="nav-section">
+    <div class="nav-label">Main</div>
+    <div class="nav-item"><span class="icon">⊞</span> Dashboard</div>
+    <div class="nav-item"><span class="icon">📊</span> Sales</div>
+    <div class="nav-item"><span class="icon">📦</span> Inventory</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Community</div>
+    <div class="nav-item"><span class="icon">🔄</span> My Ajo</div>
+    <div class="nav-item"><span class="icon">🤝</span> Traders</div>
+    <div class="nav-item"><span class="icon">📢</span> Feed</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Finance</div>
+    <div class="nav-item active"><span class="icon">⭐</span> Credit Score</div>
+    <div class="nav-item"><span class="icon">💳</span> Loans</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Account</div>
+    <div class="nav-item"><span class="icon">⚙️</span> Settings</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="user-avatar">AM</div>
+      <div>
+        <div class="user-name">Adaeze M.</div>
+        <div class="user-market">Balogun Market</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1>SUWE Credit Score</h1>
+      <p>Powered by Claude AI · Analysed from your real business data · Visible to all traders</p>
+    </div>
+    <button class="ai-refresh-btn" id="refresh-btn" onclick="runAIAnalysis()">
+      <span id="refresh-icon">✦</span> Refresh AI Analysis
+    </button>
+  </div>
+
+  <!-- Score Hero -->
+  <div class="score-hero fade-up">
+    <!-- Gauge -->
+    <div class="gauge-wrap">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <!-- 270° arc from 135° to 405° -->
+        <!-- We use a clipped circle approach: r=65, circumference ~408, we use 306 for 270° -->
+        <circle class="gauge-bg" cx="80" cy="80" r="65"
+          stroke-dasharray="306 408"
+          stroke-dashoffset="-51"
+          transform="rotate(135 80 80)"/>
+        <circle class="gauge-fill" id="gauge-fill" cx="80" cy="80" r="65"
+          stroke-dasharray="306 408"
+          stroke-dashoffset="306"
+          transform="rotate(135 80 80)"
+          stroke="#c9a84c"/>
+      </svg>
+      <div class="gauge-center">
+        <div class="gauge-number" id="gauge-number">—</div>
+        <div class="gauge-max">/ 850</div>
+        <div class="gauge-tier" id="gauge-tier" style="background:rgba(201,168,76,0.15);color:var(--gold)">—</div>
+      </div>
+    </div>
+
+    <!-- Middle -->
+    <div class="score-hero-mid">
+      <div class="score-hero-name">Adaeze Madu</div>
+      <div class="score-hero-market">📍 Balogun Market, Lagos · Member since Jan 2026</div>
+      <div class="score-unlocks">
+        <div clas
