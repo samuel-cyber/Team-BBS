@@ -1167,7 +1167,7 @@ function selectType(type) {
   document.getElementById('post-text').placeholder = placeholders[type];
 }
 
-function submitPost() {
+function submitPostToSupabase()() {
   const text = document.getElementById('post-text').value.trim();
   if (!text) { document.getElementById('post-text').focus(); return; }
 
