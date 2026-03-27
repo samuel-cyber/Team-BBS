@@ -19,6 +19,109 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
+// ══════════════════════════════════════════════════════════════
+// POST /api/notifications
+// Creates a notification for one or more users
+// Body: { userId, title, message, type, meta }
+//    OR: { userIds: [...], title, message, type, meta }  (bulk)
+// ══════════════════════════════════════════════════════════════
+app.post('/api/notifications', async (req, res) => {
+  try {
+    const { userId, userIds, title, message, type = 'general', meta = {} } = req.body;
+ 
+    const targets = userIds
+      ? userIds
+      : userId
+        ? [userId]
+        : [];
+ 
+    if (!targets.length) return res.status(400).json({ error: 'userId or userIds required' });
+    if (!title || !message) return res.status(400).json({ error: 'title and message required' });
+ 
+    const rows = targets.map(uid => ({
+      user_id: uid,
+      title,
+      message,
+      type,
+      meta,
+      read: false
+    }));
+ 
+    const { error } = await supabaseAdmin
+      .from('notifications')
+      .insert(rows);
+ 
+    if (error) throw error;
+ 
+    res.json({ success: true, count: rows.length });
+  } catch (err) {
+    console.error('[notifications]', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+ 
+// ══════════════════════════════════════════════════════════════
+// GET /api/notifications/:userId
+// Returns all notifications for a user (newest first)
+// ══════════════════════════════════════════════════════════════
+app.get('/api/notifications/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { data, error } = await supabaseAdmin
+      .from('notifications')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(50);
+ 
+    if (error) throw error;
+    res.json({ notifications: data || [] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+ 
+// ══════════════════════════════════════════════════════════════
+// PATCH /api/notifications/:userId/read-all
+// Marks all notifications as read for a user
+// ══════════════════════════════════════════════════════════════
+app.patch('/api/notifications/:userId/read-all', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { error } = await supabaseAdmin
+      .from('notifications')
+      .update({ read: true })
+      .eq('user_id', userId)
+      .eq('read', false);
+ 
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+ 
+// ══════════════════════════════════════════════════════════════
+// GET /api/notifications/:userId/unread-count
+// Returns the count of unread notifications
+// ══════════════════════════════════════════════════════════════
+app.get('/api/notifications/:userId/unread-count', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { count, error } = await supabaseAdmin
+      .from('notifications')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('read', false);
+ 
+    if (error) throw error;
+    res.json({ count: count || 0 });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 // ── Interswitch token cache ──────────────────────────────────
 let cachedToken = null;
 let tokenExpiry = 0;
@@ -60,85 +163,6 @@ function qtbConfigured() {
 }
 
 // ════════════════════════════════════════════════════════════
-//  HUGGING FACE INFERENCE HELPER
-//  Primary:  mistralai/Mistral-7B-Instruct-v0.3 (free, strong)
-//  Fallback: HuggingFaceH4/zephyr-7b-beta
-//  Fallback: microsoft/Phi-3-mini-4k-instruct
-//  Add HUGGINGFACE_API_KEY to .env for higher rate limits.
-//  Without a key it still works on the public free tier.
-// ════════════════════════════════════════════════════════════
-const HF_API_KEY = process.env.HUGGINGFACE_API_KEY || '';
-const HF_MODELS  = [
-  'mistralai/Mistral-7B-Instruct-v0.3',
-  'HuggingFaceH4/zephyr-7b-beta',
-  'microsoft/Phi-3-mini-4k-instruct'
-];
-
-/**
- * Call HuggingFace Inference API with automatic model fallback.
- * @param {string} prompt             Full formatted prompt string
- * @param {object} opts               { maxTokens, temperature }
- * @returns {Promise<string>}         Model's text response
- */
-async function hfInfer(prompt, opts = {}) {
-  const { maxTokens = 800, temperature = 0.7 } = opts;
-
-  for (const model of HF_MODELS) {
-    try {
-      const url     = `https://api-inference.huggingface.co/models/${model}`;
-      const headers = { 'Content-Type': 'application/json' };
-      if (HF_API_KEY) headers['Authorization'] = `Bearer ${HF_API_KEY}`;
-
-      const payload = {
-        inputs: prompt,
-        parameters: {
-          max_new_tokens:   maxTokens,
-          temperature:      temperature,
-          do_sample:        temperature > 0,
-          return_full_text: false,
-          stop:             ['</s>', '[INST]', 'User:', 'Human:']
-        }
-      };
-
-      const res = await axios.post(url, payload, { headers, timeout: 30000 });
-
-      const raw = Array.isArray(res.data)
-        ? res.data[0]?.generated_text
-        : res.data?.generated_text;
-
-      if (!raw) throw new Error('Empty response from model');
-      return raw.trim();
-
-    } catch (err) {
-      const status = err.response?.status;
-      console.warn(`[HF] Model ${model} failed (${status || err.message}), trying next…`);
-      // 503 = model loading, 429 = rate limited → try next model
-      if (status !== 503 && status !== 429) throw err;
-    }
-  }
-  throw new Error('All HuggingFace models unavailable. Please try again in a moment.');
-}
-
-/**
- * Build a Mistral/Zephyr-compatible [INST] chat prompt from history.
- * @param {string}                   systemPrompt
- * @param {Array<{role,content}>}    messages
- * @returns {string}
- */
-function buildChatPrompt(systemPrompt, messages) {
-  let prompt = '';
-  messages.forEach((msg, i) => {
-    if (msg.role === 'user') {
-      const sys = i === 0 ? `${systemPrompt}\n\n` : '';
-      prompt += `<s>[INST] ${sys}${msg.content} [/INST]`;
-    } else if (msg.role === 'assistant') {
-      prompt += ` ${msg.content} </s>`;
-    }
-  });
-  return prompt;
-}
-
-// ════════════════════════════════════════════════════════════
 app.get('/', (req, res) => res.json({ message: 'SUWE backend v4', version: '4.0' }));
 
 // ════════════════════════════════════════════════════════════
@@ -172,15 +196,15 @@ app.get('/api/group-members/:groupId', async (req, res) => {
 
     // Shape the data the way the frontend expects
     const shaped = (members || []).map(m => ({
-      id:                  m.member_id,
-      group_id:            m.group_id,
-      user_id:             m.user_id,
-      joined_at:           m.joined_at,
-      payout_position:     m.payout_position,
-      bcs_at_join:         m.bcs_at_join,
-      payment_status:      m.payment_status,
-      paid_this_cycle:     m.paid_this_cycle,
-      has_received_payout: m.has_received_payout,
+      id:                 m.member_id,
+      group_id:           m.group_id,
+      user_id:            m.user_id,
+      joined_at:          m.joined_at,
+      payout_position:    m.payout_position,
+      bcs_at_join:        m.bcs_at_join,
+      payment_status:     m.payment_status,
+      paid_this_cycle:    m.paid_this_cycle,
+      has_received_payout:m.has_received_payout,
       profile: {
         full_name:       m.full_name,
         market_location: m.market_location,
@@ -327,8 +351,8 @@ app.post('/api/sandbox-confirm-payment', async (req, res) => {
   const { groupId, userId, amount, cycleNumber } = req.body;
 
   try {
-    const txRef   = `SANDBOX-${Date.now()}`;
-    const today   = new Date();
+    const txRef = `SANDBOX-${Date.now()}`;
+    const today = new Date();
     const dueDate = new Date(today.getFullYear(), today.getMonth() + 1, 1).toISOString().split('T')[0];
 
     // 1. Record the payment as completed
@@ -406,13 +430,13 @@ app.post('/api/sandbox-confirm-payment', async (req, res) => {
 // ════════════════════════════════════════════════════════════
 app.post('/api/payment-webhook', async (req, res) => {
   try {
-    const body  = req.body;
-    const txRef = body.transactionReference || body.txnRef || body.merchantReference || '';
-    const isOk  = body.responseCode === '00' || body.responseCode === '000';
+    const body   = req.body;
+    const txRef  = body.transactionReference || body.txnRef || body.merchantReference || '';
+    const isOk   = body.responseCode === '00' || body.responseCode === '000';
     console.log('[WEBHOOK]', txRef, body.responseCode);
 
     if (isOk && txRef.startsWith('SUWE-AJO-')) {
-      const parts     = txRef.split('-');
+      const parts   = txRef.split('-');
       // Format: SUWE-AJO-{groupId8}-{userId8}-{ts}
       const groupSnip = parts[2];
       const userSnip  = parts[3];
@@ -557,7 +581,7 @@ app.post('/api/accept-invitation', async (req, res) => {
     // Check group is still forming and has space
     const { data: group } = await supabaseAdmin.from('ajo_groups')
       .select('*').eq('id', groupId).maybeSingle();
-    if (!group)                     throw new Error('Group not found.');
+    if (!group)                 throw new Error('Group not found.');
     if (group.status !== 'forming') throw new Error('Group no longer accepting members.');
     if ((group.current_members || 0) >= group.max_members) throw new Error('Group is full.');
 
@@ -647,7 +671,7 @@ app.get('/api/my-invitations/:userId', async (req, res) => {
 });
 
 // ════════════════════════════════════════════════════════════
-//  AI: PARSE SALE  (Anthropic Haiku — fast & precise for parsing)
+//  AI: PARSE SALE
 // ════════════════════════════════════════════════════════════
 app.post('/api/parse-sale', async (req, res) => {
   try {
@@ -668,7 +692,7 @@ k=1000, ₦=naira. Multiply per-unit by quantity for total.`,
 });
 
 // ════════════════════════════════════════════════════════════
-//  AI: MARKET ADVICE  (Anthropic Haiku — kept as-is)
+//  AI: MARKET ADVICE
 // ════════════════════════════════════════════════════════════
 app.post('/api/market-advice', async (req, res) => {
   try {
@@ -697,6 +721,98 @@ app.post('/api/market-advice', async (req, res) => {
     res.status(500).json({ success: false, error: 'Could not generate advice.' });
   }
 });
+
+app.post('/api/send-welcome', (req, res) => {
+  console.log('Welcome:', req.body.email);
+  res.json({ success: true });
+});
+
+// ════════════════════════════════════════════════════════════
+app.listen(PORT, () => {
+  console.log(`SUWE backend v4 on http://localhost:${PORT}`);
+  console.log(`ISW keys: ${iswKeysConfigured() ? '✅ configured' : '⚠️  missing → sandbox mode'}`);
+  console.log(`QTB merchant: ${qtbConfigured() ? '✅ configured' : '⚠️  missing → sandbox payments'}`);
+});
+
+
+
+// ════════════════════════════════════════════════════════════
+//  HUGGING FACE INFERENCE HELPER
+//  Primary:  mistralai/Mistral-7B-Instruct-v0.3 (free, strong)
+//  Fallback: HuggingFaceH4/zephyr-7b-beta
+//  Fallback: microsoft/Phi-3-mini-4k-instruct
+// ════════════════════════════════════════════════════════════
+const HF_API_KEY = process.env.HUGGINGFACE_API_KEY || '';
+const HF_MODELS  = [
+  'mistralai/Mistral-7B-Instruct-v0.3',
+  'HuggingFaceH4/zephyr-7b-beta',
+  'microsoft/Phi-3-mini-4k-instruct'
+];
+
+/**
+ * Call HuggingFace Inference API with automatic model fallback.
+ * @param {string} prompt             Full formatted prompt string
+ * @param {object} opts               { maxTokens, temperature }
+ * @returns {Promise<string>}         Model's text response
+ */
+async function hfInfer(prompt, opts = {}) {
+  const { maxTokens = 800, temperature = 0.7 } = opts;
+
+  for (const model of HF_MODELS) {
+    try {
+      const url     = `https://api-inference.huggingface.co/models/${model}`;
+      const headers = { 'Content-Type': 'application/json' };
+      if (HF_API_KEY) headers['Authorization'] = `Bearer ${HF_API_KEY}`;
+
+      const payload = {
+        inputs: prompt,
+        parameters: {
+          max_new_tokens:   maxTokens,
+          temperature:      temperature,
+          do_sample:        temperature > 0,
+          return_full_text: false,
+          stop:             ['</s>', '[INST]', 'User:', 'Human:']
+        }
+      };
+
+      const res = await axios.post(url, payload, { headers, timeout: 30000 });
+
+      const raw = Array.isArray(res.data)
+        ? res.data[0]?.generated_text
+        : res.data?.generated_text;
+
+      if (!raw) throw new Error('Empty response from model');
+      return raw.trim();
+
+    } catch (err) {
+      const status = err.response?.status;
+      console.warn(`[HF] Model ${model} failed (${status || err.message}), trying next…`);
+      // 503 = model loading, 429 = rate limited → try next model
+      if (status !== 503 && status !== 429) throw err;
+    }
+  }
+  throw new Error('All HuggingFace models unavailable. Please try again in a moment.');
+}
+
+/**
+ * Build a Mistral/Zephyr-compatible [INST] chat prompt from history.
+ * @param {string}                   systemPrompt
+ * @param {Array<{role,content}>}    messages
+ * @returns {string}
+ */
+function buildChatPrompt(systemPrompt, messages) {
+  let prompt = '';
+  messages.forEach((msg, i) => {
+    if (msg.role === 'user') {
+      const sys = i === 0 ? `${systemPrompt}\n\n` : '';
+      prompt += `<s>[INST] ${sys}${msg.content} [/INST]`;
+    } else if (msg.role === 'assistant') {
+      prompt += ` ${msg.content} </s>`;
+    }
+  });
+  return prompt;
+}
+
 
 // ════════════════════════════════════════════════════════════
 //  AI: CHATBOT  (HuggingFace Mistral — multi-turn assistant)
@@ -965,16 +1081,7 @@ Answer in 2-4 sentences. Be direct, friendly, and practical. Use ₦ for Naira.`
   }
 });
 
-// ════════════════════════════════════════════════════════════
-app.post('/api/send-welcome', (req, res) => {
-  console.log('Welcome:', req.body.email);
-  res.json({ success: true });
-});
+
 
 // ════════════════════════════════════════════════════════════
-app.listen(PORT, () => {
-  console.log(`SUWE backend v4 on http://localhost:${PORT}`);
-  console.log(`ISW keys:     ${iswKeysConfigured() ? '✅ configured' : '⚠️  missing → sandbox mode'}`);
-  console.log(`QTB merchant: ${qtbConfigured()     ? '✅ configured' : '⚠️  missing → sandbox payments'}`);
-  console.log(`HuggingFace:  ${HF_API_KEY          ? '✅ API key set' : '⚠️  no key → rate limits apply'}`);
-});
+app.get('/', (req, res) => res.json({ message: 'SUWE backend v4', version: '4.0' }));
