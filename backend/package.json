@@ -1,19 +1,32 @@
 {
   "name": "suwe-backend",
   "version": "1.0.0",
-  "description": "SUWE backend API proxy",
   "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
-  },
+  "scripts": { "start": "node server.js", "dev": "nodemon server.js" },
   "dependencies": {
-    "express": "^4.18.2",
+    "@anthropic-ai/sdk": "^0.20.1",
+    "@supabase/supabase-js": "^2.39.0",
+    "axios": "^1.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "@anthropic-ai/sdk": "^0.20.1"
+    "express": "^4.18.2"
   },
-  "devDependencies": {
-    "nodemon": "^3.0.2"
-  }
+  "engines": { "node": ">=18.0.0" }
 }
+```
+
+---
+
+### Also — set your Vercel environment variables
+
+In your Vercel project dashboard → Settings → Environment Variables, make sure these are all set:
+```
+ANTHROPIC_API_KEY
+SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
+INTERSWITCH_CLIENT_ID
+INTERSWITCH_CLIENT_SECRET
+INTERSWITCH_MERCHANT_CODE
+HUGGINGFACE_API_KEY
+NODE_ENV=production
+FRONTEND_URL=https://your-frontend-url.vercel.app
