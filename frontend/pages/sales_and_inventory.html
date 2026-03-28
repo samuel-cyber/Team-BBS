@@ -185,8 +185,7 @@ border-radius: 50%;
 content: '';
 position: absolute; bottom: -60px; left: 30%;
 width: 300px; height: 300px;
-background: radial-gradient(circle, rgba(26,102,55,0.3) 0%, transparent
-70%);
+background: radial-gradient(circle, rgba(26,102,55,0.3) 0%, transparent 70%);
 border-radius: 50%;
 }
 .hero-top {
@@ -746,10 +745,8 @@ you sold, like "sold 3 tomatoes for 500"
 </div>
 </div>
 <div class="chat-input-box">
-<input class="input" id="aiInput" placeholder="e.g. sold 3
-tomatoes for 500"/>
-<button class="btn" onclick="aiAdd()" style="width:auto;padding:0
-24px;">Send</button>
+<input class="input" id="aiInput" placeholder="e.g. sold 3 tomatoes for 500"/>
+<button class="btn" onclick="aiAdd()" style="width:auto;padding:0 24px;">Send</button>
 </div>
 </div>
 </div>
@@ -943,14 +940,10 @@ renderInventoryList();
 }
 // ── HERO STATS (Today only, resets at midnight) ───────────────
 function updateHeroStats() {
-const totalRevenue = todaySales.reduce((s, r) => s + (r.selling_price
-|| 0), 0);
-const totalProfit = todaySales.reduce((s, r) => s + (r.profit || 0),
-0);
-const totalItems = todaySales.reduce((s, r) => s + (r.quantity || 0),
-0);
-const margin = totalRevenue > 0 ? Math.round((totalProfit /
-totalRevenue) * 100) : 0;
+const totalRevenue = todaySales.reduce((s, r) => s + (r.selling_price || 0), 0);
+const totalProfit = todaySales.reduce((s, r) => s + (r.profit || 0), 0);
+const totalItems = todaySales.reduce((s, r) => s + (r.quantity || 0), 0);
+const margin = totalRevenue > 0 ? Math.round((totalProfit / totalRevenue) * 100) : 0;
 setText('revenue', totalRevenue.toLocaleString());
 setText('itemsSold', totalItems.toString());
 setText('profit', totalProfit.toLocaleString());
@@ -991,12 +984,11 @@ return `
 <div class="sale">
 <div class="sale-info">
 <div class="sale-name">${sale.item_name}</div>
-<div class="sale-meta">${sale.quantity} ${sale.unit ||
-'units'} · ${time}</div>
+<div class="sale-meta">${sale.quantity} ${sale.unit || 'units'} · ${time}</div>
+
 </div>
 <div class="sale-amount">
-<div class="sale-price">₦${(sale.selling_price ||
-0).toLocaleString()}</div>
+<div class="sale-price">₦${(sale.selling_price || 0).toLocaleString()}</div>
 <div class="sale-profit"
 style="color:${profitColour}">₦${profit.toLocaleString()}
 profit</div>
@@ -1309,11 +1301,9 @@ ${sale.unit || 'units'})</span></div>
 <div class="h-date">${date}</div>
 </div>
 <div class="h-row-amount">
-<div class="h-price">₦${(sale.selling_price ||
-0).toLocaleString()}</div>
+<div class="h-price">₦${(sale.selling_price || 0).toLocaleString()}</div>
 <div class="h-profit"
-style="color:${profitColour}">₦${(sale.profit ||
-0).toLocaleString()} profit</div>
+style="color:${profitColour}">₦${(sale.profit || 0).toLocaleString()} profit</div>
 </div>
 </div>`;
 }).join('');
@@ -1336,8 +1326,8 @@ return `
 </div>
 <div class="h-row-amount">
 <div class="h-price"
-style="color:var(--text-primary)">${inv.quantity} ${inv.unit ||
-'units'} in stock</div>
+style="color:var(--text-primary)">${inv.quantity} ${inv.unit || 'units'} in stock</div>
+
 </div>
 </div>`;
 }).join('');
