@@ -7,6 +7,24 @@ const SUPABASE_URL = 'https://jqfmybadioqbmrkrsvbl.supabase.co';
 const SUPABASE_ANON_KEY =
 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpxZm15YmFkaW9xYm1ya3JzdmJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNjczMTIsImV4cCI6MjA4OTg0MzMxMn0.R58UVPxWfNoyOwKB3qIelhp35zcmNcVMhgWwSEpDkE4';
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ── AUTH PROVIDERS ────────────────────────────────────────────
+ 
+export async function signInWithGoogle() {
+  try {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + '/frontend/pages/dashboard.html'
+      }
+    });
+    if (error) return { success: false, error: error.message };
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
 // ── AUTH ──────────────────────────────────────────────────────
 export async function getCurrentUser() {
 try {
