@@ -1081,7 +1081,30 @@ Answer in 2-4 sentences. Be direct, friendly, and practical. Use ₦ for Naira.`
   }
 });
 
-
+app.post('/api/notify-new-group-member', async (req, res) => {
+  const { groupId, userId, userName, userBCS } = req.body;
+  try {
+    const { data: members } = await supabaseAdmin
+      .from('ajo_members').select('user_id')
+      .eq('group_id', groupId).neq('user_id', userId);
+    const { data: group } = await supabaseAdmin
+      .from('ajo_groups').select('group_name').eq('id', groupId).maybeSingle();
+    if (members?.length) {
+      await supabaseAdmin.from('notifications').insert(
+        members.map(m => ({
+          user_id: m.user_id,
+          title: '🎉 New Member Joined!',
+          message: `${userName || 'Someone'} (BCS: ${userBCS || 0}) joined "${group?.group_name}".`,
+          type: 'member_joined', read: false,
+          meta: { group_id: groupId, new_member_id: userId }
+        }))
+      );
+    }
+    return res.json({ success: true });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 // ════════════════════════════════════════════════════════════
 app.get('/', (req, res) => res.json({ message: 'SUWE backend v4', version: '4.0' }));
