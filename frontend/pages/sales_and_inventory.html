@@ -897,8 +897,8 @@ import {
   getLowStockItems,
   hasInventory,
   getAllSales
-} from '../js/supabase.js';
-import { initTour } from '../js/tour.js';
+} from '/js/supabase.js';
+import { initTour } from '/js/tour.js';
  
 const BACKEND = 'https://team-bbs-sandy.vercel.app/';
  
@@ -910,11 +910,11 @@ let inventoryMap  = {};
 // ── BOOT ─────────────────────────────────────────────────────
 async function boot() {
   currentUser = await getCurrentUser();
-  if (!currentUser) { window.location.href = '/frontend/index.html'; return; }
+  if (!currentUser) { window.location.href = '/index.html'; return; }
  
   vendorProfile = await getVendorProfile(currentUser.id);
   if (!vendorProfile || !vendorProfile.phone) {
-    window.location.href = '/frontend/pages/onboarding.html'; return;
+    window.location.href = '/pages/onboarding.html'; return;
   }
  
   // Fill in sidebar user info
