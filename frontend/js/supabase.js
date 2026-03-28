@@ -154,7 +154,7 @@ export async function getUserAjoGroupCount(userId) {
  * Uses the backend (service role) so RLS doesn't block cross-user reads.
  * Falls back gracefully if backend is unreachable.
  */
-export async function getGroupMembers(groupId, backendUrl = 'http://localhost:3000') {
+export async function getGroupMembers(groupId, backendUrl = 'https://team-bbs-sandy.vercel.app/') {
   try {
     const { data: { session } } = await supabase.auth.getSession();
     const res = await fetch(`${backendUrl}/api/group-members/${groupId}`, {
