@@ -415,10 +415,10 @@ market</span></div>
 <div class="nav-section">
 <div class="nav-label">Main</div>
 <div class="nav-item"
-data-route="/frontend/pages/dashboard.html"><span
+data-route="/pages/dashboard.html"><span
 class="icon">⊞</span> Dashboard</div>
 <div class="nav-item"
-data-route="/frontend/pages/sales_and_inventory.html"><span
+data-route="/pages/sales_and_inventory.html"><span
 class="icon">📦</span> Sales & Inventory</div>
 </div>
 <div class="nav-section">
@@ -426,10 +426,10 @@ class="icon">📦</span> Sales & Inventory</div>
 <div class="nav-item active"><span class="icon">🔄</span> My
 Ajo</div>
 <div class="nav-item"
-data-route="/frontend/pages/community.html"><span
+data-route="/pages/community.html"><span
 class="icon">🤝</span> Traders</div>
 <div class="nav-item"
-data-route="/frontend/pages/community.html"><span
+data-route="/pages/community.html"><span
 class="icon">📢</span> Feed</div>
 </div>
 <div class="sidebar-footer">
@@ -643,19 +643,19 @@ Near You</div></div>
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav" role="navigation">
 <a class="bottom-nav-item"
-href="/frontend/pages/dashboard.html"><span
+href="/pages/dashboard.html"><span
 class="bn-icon">⊞</span><span
 class="bn-label">Home</span></a>
 <a class="bottom-nav-item"
-href="/frontend/pages/sales_and_inventory.html"><span
+href="/pages/sales_and_inventory.html"><span
 class="bn-icon">📦</span><span
 class="bn-label">Sales</span></a>
 <a class="bottom-nav-item active"
-href="/frontend/pages/ajo.html"><span
+href="/pages/ajo.html"><span
 class="bn-icon">🔄</span><span
 class="bn-label">Ajo</span></a>
 <a class="bottom-nav-item"
-href="/frontend/pages/community.html"><span
+href="/pages/community.html"><span
 class="bn-icon">🤝</span><span
 class="bn-label">Community</span></a>
 </nav>
@@ -861,7 +861,7 @@ getUnreadCount,
 markAllRead,
 markNotificationRead,
 getContributionDueInfo
-} from '../js/supabase.js';
+} from '/js/supabase.js';
 const BACKEND = 'https://team-bbs-sandy.vercel.app';
 const AVATAR_COLORS =
 ['#c9a84c','#3b7dd8','#1a6637','#e05c4b','#5a4a8a','#d8753b','#4a8a6a','#8a4a5a'];
@@ -882,7 +882,7 @@ cycleNumber }
 // ── BOOT ─────────────────────────────────────────────────────
 async function boot() {
 currentUser = await getCurrentUser();
-if (!currentUser) { window.location.href = '/frontend/index.html';
+if (!currentUser) { window.location.href = '/index.html';
 return; }
 vendorProfile = await getVendorProfile(currentUser.id);
 if (!vendorProfile?.phone) { window.location.href =
