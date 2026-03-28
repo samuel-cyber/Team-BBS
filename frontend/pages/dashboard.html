@@ -2,2229 +2,917 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,
-initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>SUWE --- Dashboard</title>
-<link
-href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap"
-rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
 <style>
 :root {
---green-deep: #0a2e1a;
---green-mid: #134d2c;
---green-light: #1a6637;
---gold: #c9a84c;
---gold-soft: #e8c96a;
---cream: #f5f0e8;
---surface: #ffffff;
---surface-2: #f7f8f5;
---surface-3: #eef0eb;
---text-primary: #111a14;
---text-mid: #3d5244;
---text-soft: #7a9485;
---border: #dde5df;
---red: #e05c4b;
---blue: #3b7dd8;
---radius: 14px;
---radius-sm: 8px;
+--green-deep: #0a2e1a; --green-mid: #134d2c; --green-light: #1a6637;
+--gold: #c9a84c; --gold-soft: #e8c96a; --cream: #f5f0e8;
+--surface: #ffffff; --surface-2: #f7f8f5; --surface-3: #eef0eb;
+--text-primary: #111a14; --text-mid: #3d5244; --text-soft: #7a9485;
+--border: #dde5df; --red: #e05c4b; --blue: #3b7dd8;
+--radius: 14px; --radius-sm: 8px;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-a {
-color: inherit; text-decoration: none;
-}
-body {
-font-family: 'DM Sans', sans-serif;
-background: var(--surface-2);
-color: var(--text-primary);
-min-height: 100vh;
-}
-/* ── SIDEBAR ── */
-.sidebar {
-position: fixed; top:0; left:0;
-width: 220px; height: 100vh;
-background: var(--green-deep);
-display: flex; flex-direction: column;
-padding: 28px 0; z-index: 100;
-}
-.sidebar-logo {
-font-family: 'Playfair Display', serif;
-font-size: 22px; color: var(--gold);
-letter-spacing: 2px;
-padding: 0 24px 28px;
-border-bottom: 1px solid rgba(255,255,255,0.07);
-}
-.sidebar-logo span {
-display: block;
-font-family: 'DM Sans', sans-serif;
-font-size: 10px; letter-spacing: 1.5px;
-color: rgba(255,255,255,0.3);
-font-weight: 400; text-transform: uppercase; margin-top: 2px;
-}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+a { color: inherit; text-decoration: none; }
+body { font-family: 'DM Sans', sans-serif; background: var(--surface-2); color: var(--text-primary); min-height: 100vh; }
+.sidebar { position: fixed; top:0; left:0; width: 220px; height: 100vh; background: var(--green-deep); display: flex; flex-direction: column; padding: 28px 0; z-index: 100; }
+.sidebar-logo { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--gold); letter-spacing: 2px; padding: 0 24px 28px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+.sidebar-logo span { display: block; font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: 1.5px; color: rgba(255,255,255,0.3); font-weight: 400; text-transform: uppercase; margin-top: 2px; }
 .nav-section { padding: 20px 14px 6px; }
-.nav-label {
-font-size: 10px; letter-spacing: 1.5px;
-text-transform: uppercase; color: rgba(255,255,255,0.25);
-padding: 0 10px; margin-bottom: 6px;
-}
-.nav-item {
-display: flex; align-items: center; gap: 10px;
-padding: 10px 14px; border-radius: var(--radius-sm);
-color: rgba(255,255,255,0.55); font-size: 14px; font-weight: 500;
-cursor: pointer; transition: all 0.15s; margin-bottom: 2px;
-}
-.nav-item:hover { background: rgba(255,255,255,0.06); color:
-rgba(255,255,255,0.85); }
-.nav-item.active { background: rgba(201,168,76,0.15); color:
-var(--gold); }
+.nav-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.25); padding: 0 10px; margin-bottom: 6px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--radius-sm); color: rgba(255,255,255,0.55); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; margin-bottom: 2px; }
+.nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+.nav-item.active { background: rgba(201,168,76,0.15); color: var(--gold); }
 .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
-.sidebar-footer {
-margin-top: auto; padding: 16px 14px;
-border-top: 1px solid rgba(255,255,255,0.07);
-}
-.user-pill {
-display: flex; align-items: center; gap: 10px;
-padding: 10px 12px; border-radius: var(--radius-sm);
-background: rgba(255,255,255,0.05);
-}
-.user-avatar {
-width: 32px; height: 32px; border-radius: 50%;
-background: var(--green-light);
-display: flex; align-items: center; justify-content: center;
-font-size: 13px; font-weight: 600; color: var(--gold); flex-shrink: 0;
-}
-.user-name { font-size: 13px; font-weight: 500; color:
-rgba(255,255,255,0.8); }
-.user-market{ font-size: 11px; color: rgba(255,255,255,0.3); }
-/* ── SIGN OUT ── */
-.sign-out-btn {
-width: 100%; margin-top: 8px;
-padding: 8px; border-radius: var(--radius-sm);
-background: none; border: 1px solid rgba(255,255,255,0.1);
-color: rgba(255,255,255,0.35); font-family: 'DM Sans', sans-serif;
-font-size: 12px; cursor: pointer; transition: all 0.15s;
-}
-.sign-out-btn:hover { border-color: rgba(255,255,255,0.25); color:
-rgba(255,255,255,0.6); }
-/* ── MAIN ── */
+.sidebar-footer { margin-top: auto; padding: 16px 14px; border-top: 1px solid rgba(255,255,255,0.07); }
+.user-pill { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); background: rgba(255,255,255,0.05); }
+.user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: var(--gold); flex-shrink: 0; }
+.user-name { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.8); }
+.user-market { font-size: 11px; color: rgba(255,255,255,0.3); }
+.sign-out-btn { width: 100%; margin-top: 8px; padding: 8px; border-radius: var(--radius-sm); background: none; border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.35); font-family: 'DM Sans', sans-serif; font-size: 12px; cursor: pointer; transition: all 0.15s; }
+.sign-out-btn:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.6); }
 .main { margin-left: 220px; padding: 32px 36px; min-height: 100vh; }
-/* ── TOP BAR ── */
-.topbar {
-display: flex; align-items: center; justify-content: space-between;
-margin-bottom: 30px;
-}
-.topbar-greeting h2 {
-font-family: 'Playfair Display', serif;
-font-size: 26px; font-weight: 700; color: var(--text-primary);
-}
-.topbar-greeting p { font-size: 13px; color: var(--text-soft);
-margin-top: 2px; }
+.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+.topbar-greeting h2 { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--text-primary); }
+.topbar-greeting p { font-size: 13px; color: var(--text-soft); margin-top: 2px; }
 .topbar-right { display: flex; align-items: center; gap: 12px; }
-.notif-btn {
-width: 38px; height: 38px; background: var(--surface);
-border: 1px solid var(--border); border-radius: var(--radius-sm);
-display: flex; align-items: center; justify-content: center;
-cursor: pointer; font-size: 16px; position: relative;
-}
-.notif-dot {
-position: absolute; top: 7px; right: 7px;
-width: 7px; height: 7px;
-background: var(--red); border-radius: 50%;
-border: 1.5px solid var(--surface);
-}
-.btn-log-sale {
-display: flex; align-items: center; gap: 8px;
-background: var(--green-deep); color: var(--gold);
-border: none; padding: 10px 20px; border-radius: 50px;
-font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
-cursor: pointer; transition: all 0.2s; letter-spacing: 0.3px;
-}
-.btn-log-sale:hover {
-background: var(--green-light); transform: translateY(-1px);
-box-shadow: 0 6px 20px rgba(10,46,26,0.2);
-}
+.notif-btn { width: 38px; height: 38px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; position: relative; }
+.notif-dot { position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; background: var(--red); border-radius: 50%; border: 1.5px solid var(--surface); }
+.btn-log-sale { display: flex; align-items: center; gap: 8px; background: var(--green-deep); color: var(--gold); border: none; padding: 10px 20px; border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn-log-sale:hover { background: var(--green-light); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(10,46,26,0.2); }
 .btn-log-sale .plus { font-size: 18px; line-height: 1; }
-/* ── BVN BANNER ── */
-.bvn-banner {
-display: flex; align-items: center; gap: 14px;
-background: linear-gradient(135deg, rgba(201,168,76,0.12),
-rgba(201,168,76,0.05));
-border: 1px solid rgba(201,168,76,0.3);
-border-radius: var(--radius); padding: 16px 20px;
-margin-bottom: 24px;
-}
+.bvn-banner { display: flex; align-items: center; gap: 14px; background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.05)); border: 1px solid rgba(201,168,76,0.3); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 24px; }
 .bvn-banner-icon { font-size: 24px; }
-.bvn-banner-text h4 { font-size: 14px; font-weight: 600; color:
-var(--text-primary); }
-.bvn-banner-text p { font-size: 12px; color: var(--text-soft);
-margin-top: 2px; }
-.btn-verify-bvn {
-margin-left: auto; padding: 9px 18px;
-background: var(--gold); color: var(--green-deep);
-border: none; border-radius: 50px;
-font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700;
-cursor: pointer; white-space: nowrap; transition: all 0.2s;
-flex-shrink: 0;
-}
-.btn-verify-bvn:hover { background: var(--gold-soft); }
-/* ── STATS ROW ── */
-.stats-row {
-display: grid; grid-template-columns: repeat(4, 1fr);
-gap: 16px; margin-bottom: 28px;
-}
-.stat-card {
-background: var(--surface); border: 1px solid var(--border);
-border-radius: var(--radius); padding: 22px 20px;
-position: relative; overflow: hidden;
-}
-.stat-card::before {
-content: ''; position: absolute;
-top: 0; left: 0; right: 0; height: 3px;
-}
+.bvn-banner-text h4 { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.bvn-banner-text p { font-size: 12px; color: var(--text-soft); margin-top: 2px; }
+.btn-verify-bvn { margin-left: auto; padding: 9px 18px; background: var(--gold); color: var(--green-deep); border: none; border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 20px; position: relative; overflow: hidden; }
+.stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
 .stat-card.gold::before { background: var(--gold); }
 .stat-card.green::before { background: var(--green-light); }
 .stat-card.red::before { background: var(--red); }
 .stat-card.blue::before { background: var(--blue); }
-.stat-label {
-font-size: 11px; text-transform: uppercase;
-letter-spacing: 1px; color: var(--text-soft); margin-bottom: 10px;
-}
-.stat-value {
-font-family: 'Playfair Display', serif;
-font-size: 28px; font-weight: 700; color: var(--text-primary);
-line-height: 1;
-}
-.stat-value .currency { font-size: 16px; vertical-align: super;
-margin-right: 2px; }
-/* Empty state for stat value */
-.stat-value.empty {
-font-family: 'DM Sans', sans-serif;
-font-size: 14px; color: var(--text-soft); font-weight: 400;
-}
-.stat-change {
-font-size: 12px; margin-top: 8px;
-display: flex; align-items: center; gap: 4px;
-}
+.stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-soft); margin-bottom: 10px; }
+.stat-value { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+.stat-value .currency { font-size: 16px; vertical-align: super; margin-right: 2px; }
+.stat-change { font-size: 12px; margin-top: 8px; display: flex; align-items: center; gap: 4px; }
 .stat-change.up { color: #1a8a4a; }
 .stat-change.down { color: var(--red); }
 .stat-change.neutral { color: var(--text-soft); }
-/* ── CONTENT GRID ── */
-.content-grid {
-display: grid; grid-template-columns: 1fr 340px; gap: 20px;
-}
+.content-grid { display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
 .left-col { display: flex; flex-direction: column; gap: 20px; }
 .right-col { display: flex; flex-direction: column; gap: 20px; }
-/* ── SECTION CARDS ── */
-.card {
-background: var(--surface); border: 1px solid var(--border);
-border-radius: var(--radius); overflow: hidden;
-}
-.card-header {
-display: flex; align-items: center; justify-content: space-between;
-padding: 18px 22px; border-bottom: 1px solid var(--border);
-}
-.card-title {
-font-size: 14px; font-weight: 600; color: var(--text-primary);
-display: flex; align-items: center; gap: 8px;
-}
-.card-title .badge { font-size: 11px; padding: 2px 8px; border-radius:
-20px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.card-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid var(--border); }
+.card-title { font-size: 14px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+.card-title .badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; }
 .badge-gold { background: rgba(201,168,76,0.12); color: var(--gold); }
-.badge-green { background: rgba(26,102,55,0.1); color:
-var(--green-light); }
+.badge-green { background: rgba(26,102,55,0.1); color: var(--green-light); }
 .badge-red { background: rgba(224,92,75,0.1); color: var(--red); }
-.card-action {
-font-size: 12px; color: var(--text-soft); cursor: pointer;
-padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border);
-transition: all 0.15s;
-}
-.card-action:hover { color: var(--green-deep); border-color:
-var(--green-deep); }
-/* ── EMPTY STATE ── */
-.empty-state {
-text-align: center; padding: 40px 24px;
-display: flex; flex-direction: column; align-items: center; gap: 12px;
-}
+.card-action { font-size: 12px; color: var(--text-soft); cursor: pointer; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border); transition: all 0.15s; }
+.card-action:hover { color: var(--green-deep); border-color: var(--green-deep); }
+.empty-state { text-align: center; padding: 40px 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .empty-state-icon { font-size: 36px; }
-.empty-state h4 { font-size: 15px; font-weight: 600; color:
-var(--text-primary); }
-.empty-state p { font-size: 13px; color: var(--text-soft); max-width:
-260px; line-height: 1.6; }
-.empty-state .btn-start {
-padding: 10px 22px; background: var(--green-deep); color: var(--gold);
-border: none; border-radius: 50px; font-family: 'DM Sans', sans-serif;
-font-size: 13px; font-weight: 600; cursor: pointer; transition: all
-0.2s; margin-top: 4px;
-}
-.empty-state .btn-start:hover { background: var(--green-light); }
-/* ── CHART ── */
+.empty-state h4 { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.empty-state p { font-size: 13px; color: var(--text-soft); max-width: 260px; line-height: 1.6; }
+.empty-state .btn-start { padding: 10px 22px; background: var(--green-deep); color: var(--gold); border: none; border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 4px; }
 .chart-area { padding: 20px 22px; }
 .chart-tabs { display: flex; gap: 4px; margin-bottom: 20px; }
-.chart-tab {
-padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight:
-500;
-cursor: pointer; border: 1px solid transparent; color:
-var(--text-soft); transition: all 0.15s;
-}
-.chart-tab.active { background: var(--green-deep); color: var(--gold);
-}
-.chart-tab:hover:not(.active) { border-color: var(--border); color:
-var(--text-primary); }
-.bar-chart {
-display: flex; align-items: flex-end; gap: 8px; height: 120px;
-padding-bottom: 24px; position: relative;
-}
-.bar-chart::after {
-content: ''; position: absolute;
-bottom: 24px; left: 0; right: 0;
-height: 1px; background: var(--border);
-}
-.bar-col {
-flex: 1; display: flex; flex-direction: column;
-align-items: center; gap: 6px; height: 100%; justify-content: flex-end;
-}
-.bar {
-width: 100%; border-radius: 4px 4px 0 0;
-transition: all 0.4s cubic-bezier(.34,1.56,.64,1);
-cursor: pointer; position: relative;
-}
+.chart-tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid transparent; color: var(--text-soft); transition: all 0.15s; }
+.chart-tab.active { background: var(--green-deep); color: var(--gold); }
+.bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding-bottom: 24px; position: relative; }
+.bar-chart::after { content: ''; position: absolute; bottom: 24px; left: 0; right: 0; height: 1px; background: var(--border); }
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+.bar { width: 100%; border-radius: 4px 4px 0 0; transition: all 0.4s cubic-bezier(.34,1.56,.64,1); cursor: pointer; position: relative; }
 .bar.profit { background: var(--green-light); }
 .bar.revenue { background: rgba(26,102,55,0.15); }
 .bar.today { background: var(--gold); }
-.bar:hover { filter: brightness(1.1); }
-.bar-label {
-font-size: 10px; color: var(--text-soft);
-position: absolute; bottom: -20px; white-space: nowrap;
-}
-/* ── RESTOCK ── */
-.restock-item {
-display: flex; align-items: center; gap: 14px;
-padding: 12px 22px; border-bottom: 1px solid var(--surface-3);
-transition: background 0.15s; cursor: pointer;
-}
+.bar-label { font-size: 10px; color: var(--text-soft); position: absolute; bottom: -20px; white-space: nowrap; }
+.restock-item { display: flex; align-items: center; gap: 14px; padding: 12px 22px; border-bottom: 1px solid var(--surface-3); transition: background 0.15s; cursor: pointer; }
 .restock-item:last-child { border-bottom: none; }
 .restock-item:hover { background: var(--surface-2); }
-.restock-icon {
-width: 36px; height: 36px; border-radius: var(--radius-sm);
-display: flex; align-items: center; justify-content: center;
-font-size: 18px; flex-shrink: 0;
-}
+.restock-icon { width: 36px; height: 36px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
 .restock-icon.urgent { background: rgba(224,92,75,0.1); }
 .restock-icon.medium { background: rgba(201,168,76,0.1); }
 .restock-icon.low { background: rgba(26,102,55,0.08); }
 .restock-info { flex: 1; }
-.restock-name { font-size: 13px; font-weight: 600; color:
-var(--text-primary); }
-.restock-detail { font-size: 12px; color: var(--text-soft); margin-top:
-2px; }
-.restock-urgency {
-font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius:
-20px;
-}
+.restock-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.restock-detail { font-size: 12px; color: var(--text-soft); margin-top: 2px; }
+.restock-urgency { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
 .urgency-urgent { background: rgba(224,92,75,0.1); color: var(--red); }
 .urgency-medium { background: rgba(201,168,76,0.12); color: #a07820; }
-.urgency-low { background: rgba(26,102,55,0.08); color:
-var(--green-light); }
-/* AI Loading pulse */
-.ai-loading {
-padding: 24px 22px; display: flex; gap: 12px; align-items: center;
-color: var(--text-soft); font-size: 13px;
-}
-.pulse-dot {
-width: 8px; height: 8px; background: var(--green-light);
-border-radius: 50%; animation: pulse 1.4s ease-in-out infinite;
-}
+.urgency-low { background: rgba(26,102,55,0.08); color: var(--green-light); }
+.ai-loading { padding: 24px 22px; display: flex; gap: 12px; align-items: center; color: var(--text-soft); font-size: 13px; }
+.pulse-dot { width: 8px; height: 8px; background: var(--green-light); border-radius: 50%; animation: pulse 1.4s ease-in-out infinite; }
 .pulse-dot:nth-child(2) { animation-delay: 0.2s; }
 .pulse-dot:nth-child(3) { animation-delay: 0.4s; }
-@keyframes pulse {
-0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-40% { transform: scale(1); opacity: 1; }
-}
-/* ── COMMUNITY FEED ── */
-.feed-item {
-display: flex; gap: 12px; padding: 14px 22px;
-border-bottom: 1px solid var(--surface-3);
-transition: background 0.15s; cursor: pointer;
-}
+@keyframes pulse { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+.feed-item { display: flex; gap: 12px; padding: 14px 22px; border-bottom: 1px solid var(--surface-3); transition: background 0.15s; cursor: pointer; }
 .feed-item:last-child { border-bottom: none; }
 .feed-item:hover { background: var(--surface-2); }
-.feed-avatar {
-width: 36px; height: 36px; border-radius: 50%;
-display: flex; align-items: center; justify-content: center;
-font-size: 14px; font-weight: 700; color: white; flex-shrink: 0;
-font-family: 'Playfair Display', serif;
-}
+.feed-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: white; flex-shrink: 0; font-family: 'Playfair Display', serif; }
 .feed-content { flex: 1; }
-.feed-meta { display: flex; align-items: center; gap: 6px;
-margin-bottom: 4px; }
-.feed-name { font-size: 13px; font-weight: 600; color:
-var(--text-primary); }
+.feed-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.feed-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
 .feed-market { font-size: 11px; color: var(--text-soft); }
-.feed-time { font-size: 11px; color: var(--text-soft); margin-left:
-auto; }
-.feed-text { font-size: 13px; color: var(--text-mid); line-height: 1.5;
-}
-.feed-tag {
-display: inline-block; font-size: 11px; padding: 2px 8px;
-border-radius: 20px; margin-top: 6px; font-weight: 500;
-}
-/* ── AJO ── */
+.feed-time { font-size: 11px; color: var(--text-soft); margin-left: auto; }
+.feed-text { font-size: 13px; color: var(--text-mid); line-height: 1.5; }
+.feed-tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 20px; margin-top: 6px; font-weight: 500; }
 .ajo-body { padding: 20px 22px; }
-.ajo-group-name {
-font-family: 'Playfair Display', serif;
-font-size: 17px; font-weight: 700; color: var(--text-primary);
-margin-bottom: 4px;
-}
-.ajo-meta { font-size: 12px; color: var(--text-soft); margin-bottom:
-18px; }
-.ajo-progress-label {
-display: flex; justify-content: space-between;
-font-size: 12px; margin-bottom: 8px;
-}
-.ajo-progress-label .amount { font-weight: 600; color:
-var(--text-primary); }
-.progress-track {
-height: 8px; background: var(--surface-3); border-radius: 4px;
-overflow: hidden; margin-bottom: 18px;
-}
-.progress-fill {
-height: 100%;
-background: linear-gradient(90deg, var(--green-light),
-var(--gold-soft));
-border-radius: 4px; width: 62%; transition: width 0.6s ease;
-}
-.ajo-members { display: flex; align-items: center; gap: 8px;
-margin-bottom: 14px; }
+.ajo-group-name { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.ajo-meta { font-size: 12px; color: var(--text-soft); margin-bottom: 18px; }
+.ajo-progress-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; }
+.ajo-progress-label .amount { font-weight: 600; color: var(--text-primary); }
+.progress-track { height: 8px; background: var(--surface-3); border-radius: 4px; overflow: hidden; margin-bottom: 18px; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--green-light), var(--gold-soft)); border-radius: 4px; width: 62%; transition: width 0.6s ease; }
+.ajo-members { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
 .member-stack { display: flex; }
-.member-dot {
-width: 26px; height: 26px; border-radius: 50%;
-border: 2px solid var(--surface);
-display: flex; align-items: center; justify-content: center;
-font-size: 10px; font-weight: 600; color: white; margin-left: -6px;
-}
+.member-dot { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--surface); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: white; margin-left: -6px; }
 .member-dot:first-child { margin-left: 0; }
 .ajo-members-label { font-size: 12px; color: var(--text-soft); }
-.ajo-next-due {
-display: flex; align-items: center; justify-content: space-between;
-background: var(--surface-2); border: 1px solid var(--border);
-border-radius: var(--radius-sm); padding: 12px 14px;
-}
-.due-label { font-size: 11px; color: var(--text-soft); margin-bottom:
-2px; }
-.due-date { font-size: 13px; font-weight: 600; color:
-var(--text-primary); }
-.btn-pay {
-background: var(--green-deep); color: var(--gold); border: none;
-padding: 8px 16px; border-radius: 20px;
-font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
-cursor: pointer; transition: all 0.2s;
-}
-.btn-pay:hover { background: var(--green-light); }
-/* ── SALES LOG ── */
-.sale-row {
-display: flex; align-items: center; justify-content: space-between;
-padding: 12px 22px; border-bottom: 1px solid var(--surface-3);
-}
+.ajo-next-due { display: flex; align-items: center; justify-content: space-between; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; }
+.due-label { font-size: 11px; color: var(--text-soft); margin-bottom: 2px; }
+.due-date { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.btn-pay { background: var(--green-deep); color: var(--gold); border: none; padding: 8px 16px; border-radius: 20px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.sale-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 22px; border-bottom: 1px solid var(--surface-3); }
 .sale-row:last-child { border-bottom: none; }
-/* ── LOG SALE MODAL ── */
-.modal-overlay {
-display: none; position: fixed; inset: 0;
-background: rgba(10,46,26,0.5); z-index: 200;
-align-items: center; justify-content: center; backdrop-filter:
-blur(4px);
-}
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(10,46,26,0.5); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
 .modal-overlay.open { display: flex; }
-.modal {
-background: var(--surface); border-radius: 20px; padding: 32px;
-width: 440px; max-width: 94vw;
-animation: modalIn 0.25s cubic-bezier(.34,1.56,.64,1);
-}
-@keyframes modalIn {
-from { transform: scale(0.92) translateY(10px); opacity: 0; }
-to { transform: scale(1) translateY(0); opacity: 1; }
-}
-.modal-title {
-font-family: 'Playfair Display', serif; font-size: 20px; font-weight:
-700; margin-bottom: 6px;
-}
-.modal-sub { font-size: 13px; color: var(--text-soft); margin-bottom:
-24px; }
+.modal { background: var(--surface); border-radius: 20px; padding: 32px; width: 440px; max-width: 94vw; animation: modalIn 0.25s cubic-bezier(.34,1.56,.64,1); }
+@keyframes modalIn { from { transform: scale(0.92) translateY(10px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+.modal-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+.modal-sub { font-size: 13px; color: var(--text-soft); margin-bottom: 24px; }
 .form-group { margin-bottom: 18px; }
-.form-label {
-font-size: 12px; font-weight: 600; color: var(--text-mid);
-letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 7px;
-display: block;
-}
-.form-input, .form-select {
-width: 100%; padding: 12px 14px;
-border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-font-family: 'DM Sans', sans-serif; font-size: 14px; color:
-var(--text-primary);
-background: var(--surface); outline: none; transition: border-color
-0.15s;
-}
-.form-input:focus, .form-select:focus { border-color:
-var(--green-light); }
+.form-label { font-size: 12px; font-weight: 600; color: var(--text-mid); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 7px; display: block; }
+.form-input, .form-select { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text-primary); background: var(--surface); outline: none; transition: border-color 0.15s; }
+.form-input:focus, .form-select:focus { border-color: var(--green-light); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.profit-preview {
-background: var(--surface-2); border: 1px solid var(--border);
-border-radius: var(--radius-sm); padding: 14px;
-display: flex; align-items: center; justify-content: space-between;
-margin-bottom: 20px;
-}
+.profit-preview { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
 .profit-preview-label { font-size: 12px; color: var(--text-soft); }
-.profit-preview-value {
-font-family: 'Playfair Display', serif;
-font-size: 22px; font-weight: 700; color: var(--green-light);
-}
+.profit-preview-value { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--green-light); }
 .modal-actions { display: flex; gap: 10px; }
-.btn-cancel {
-flex: 1; padding: 13px; border: 1.5px solid var(--border);
-border-radius: 50px;
-background: none; font-family: 'DM Sans', sans-serif;
-font-size: 14px; font-weight: 600; color: var(--text-mid); cursor:
-pointer; transition: all 0.15s;
-}
-.btn-cancel:hover { border-color: var(--text-mid); }
-.btn-confirm {
-flex: 2; padding: 13px; border: none; border-radius: 50px;
-background: var(--green-deep); color: var(--gold);
-font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
-cursor: pointer; transition: all 0.2s;
-}
-.btn-confirm:hover { background: var(--green-light); transform:
-translateY(-1px); }
-/* BVN Modal */
-.bvn-modal {
-background: var(--surface); border-radius: 20px; padding: 32px;
-width: 400px; max-width: 94vw;
-animation: modalIn 0.25s cubic-bezier(.34,1.56,.64,1);
-}
+.btn-cancel { flex: 1; padding: 13px; border: 1.5px solid var(--border); border-radius: 50px; background: none; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-mid); cursor: pointer; }
+.btn-confirm { flex: 2; padding: 13px; border: none; border-radius: 50px; background: var(--green-deep); color: var(--gold); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn-confirm:hover { background: var(--green-light); }
+.bvn-modal { background: var(--surface); border-radius: 20px; padding: 32px; width: 400px; max-width: 94vw; animation: modalIn 0.25s cubic-bezier(.34,1.56,.64,1); }
 .bvn-steps { display: flex; gap: 8px; margin-bottom: 24px; }
-.bvn-step {
-flex: 1; height: 4px; border-radius: 2px; background: var(--surface-3);
-}
+.bvn-step { flex: 1; height: 4px; border-radius: 2px; background: var(--surface-3); }
 .bvn-step.done { background: var(--green-light); }
-.bvn-step.active{ background: var(--gold); }
-.bvn-info-box {
-background: rgba(201,168,76,0.08); border: 1px solid
-rgba(201,168,76,0.2);
-border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom:
-20px;
-font-size: 12px; color: var(--text-mid); line-height: 1.6;
-}
-#bvn-verified-info {
-background: rgba(26,102,55,0.06); border: 1px solid
-rgba(26,102,55,0.15);
-border-radius: var(--radius-sm); padding: 16px;
-}
-#bvn-verified-info .vname {
-font-size: 18px; font-weight: 700; font-family: 'Playfair Display',
-serif;
-color: var(--text-primary); margin-bottom: 4px;
-}
+.bvn-step.active { background: var(--gold); }
+.bvn-info-box { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.2); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 20px; font-size: 12px; color: var(--text-mid); line-height: 1.6; }
+#bvn-verified-info { background: rgba(26,102,55,0.06); border: 1px solid rgba(26,102,55,0.15); border-radius: var(--radius-sm); padding: 16px; }
+#bvn-verified-info .vname { font-size: 18px; font-weight: 700; font-family: 'Playfair Display', serif; color: var(--text-primary); margin-bottom: 4px; }
 #bvn-verified-info .vmeta { font-size: 13px; color: var(--text-soft); }
-/* ── LOADER SCREEN ── */
-#page-loader {
-position: fixed; inset: 0; background: var(--surface);
-display: flex; flex-direction: column;
-align-items: center; justify-content: center; z-index: 999; gap: 16px;
-}
-.loader-logo {
-font-family: 'Playfair Display', serif;
-font-size: 36px; color: var(--green-deep); letter-spacing: 4px;
-}
-.loader-bar {
-width: 120px; height: 3px; background: var(--surface-3); border-radius:
-2px; overflow: hidden;
-}
-.loader-fill {
-width: 0%; height: 100%; background: var(--gold);
-border-radius: 2px; animation: loadFill 1.2s ease forwards;
-}
+#page-loader { position: fixed; inset: 0; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; gap: 16px; }
+.loader-logo { font-family: 'Playfair Display', serif; font-size: 36px; color: var(--green-deep); letter-spacing: 4px; }
+.loader-bar { width: 120px; height: 3px; background: var(--surface-3); border-radius: 2px; overflow: hidden; }
+.loader-fill { width: 0%; height: 100%; background: var(--gold); border-radius: 2px; animation: loadFill 1.2s ease forwards; }
 @keyframes loadFill { to { width: 100%; } }
-/* ── RESPONSIVE ── */
-@media (max-width: 1100px) {
-.stats-row { grid-template-columns: repeat(2, 1fr); }
-.content-grid { grid-template-columns: 1fr; }
-}
-/* ── MOBILE LAYOUT ── */
-@media (max-width: 768px) {
-.sidebar {
-transform: translateX(-100%);
-transition: transform 0.28s cubic-bezier(.4,0,.2,1);
-z-index: 300;
-}
-.sidebar.open { transform: translateX(0); }
-.main { margin-left: 0; padding: 16px 14px 90px; }
-.stats-row { grid-template-columns: 1fr 1fr; }
-.topbar { gap: 8px; }
-.btn-log-sale span:last-child { display: none; }
-.btn-log-sale { padding: 10px 14px; }
-}
-/* ── SIDEBAR BACKDROP (mobile) ── */
-#sidebar-backdrop {
-display: none; position: fixed; inset: 0;
-background: rgba(10,46,26,0.5); z-index: 299;
-backdrop-filter: blur(2px);
-}
-#sidebar-backdrop.show { display: block; }
-/* ── HAMBURGER BUTTON ── */
-#hamburger-btn {
-display: none; align-items: center; justify-content: center;
-width: 38px; height: 38px; background: var(--surface);
-border: 1px solid var(--border); border-radius: var(--radius-sm);
-cursor: pointer; font-size: 18px; flex-shrink: 0;
-}
-@media (max-width: 768px) { #hamburger-btn { display: flex; } }
-/* ── BOTTOM NAV BAR (mobile) ── */
-.bottom-nav {
-display: none;
-position: fixed; bottom: 0; left: 0; right: 0;
-background: var(--green-deep);
-border-top: 1px solid rgba(255,255,255,0.08);
-z-index: 200; padding: 0;
-box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
-}
-@media (max-width: 768px) { .bottom-nav { display: flex; } }
-.bottom-nav-item {
-flex: 1; display: flex; flex-direction: column; align-items: center;
-justify-content: center; gap: 3px; padding: 10px 4px;
-color: rgba(255,255,255,0.5); cursor: pointer; transition: color 0.15s;
-text-decoration: none; font-family: 'DM Sans', sans-serif;
-border: none; background: none;
-}
-.bottom-nav-item.active { color: var(--gold); }
-.bottom-nav-item:hover { color: rgba(255,255,255,0.85); }
-.bottom-nav-item .bn-icon { font-size: 20px; }
-.bottom-nav-item .bn-label { font-size: 9px; font-weight: 600;
-letter-spacing: 0.5px; text-transform: uppercase; }
-/* ── FADE IN ── */
-.fade-up { opacity: 0; transform: translateY(16px); animation: fadeUp
-0.4s ease forwards; }
+.quick-btn { padding: 14px 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); cursor: pointer; text-align: center; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+.quick-btn:hover { border-color: var(--green-deep); }
+#inv-gate-overlay { display: none; position: fixed; inset: 0; background: rgba(10,46,26,0.55); z-index: 500; align-items: center; justify-content: center; backdrop-filter: blur(4px); padding: 20px; }
+#inv-gate-overlay.open { display: flex; }
+.inv-gate-box { background: var(--surface); border-radius: 20px; padding: 32px; width: 400px; max-width: 94vw; text-align: center; animation: modalIn 0.25s cubic-bezier(.34,1.56,.64,1); }
+.inv-gate-box .gate-icon { font-size: 52px; margin-bottom: 16px; }
+.inv-gate-box h3 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+.inv-gate-box p { font-size: 14px; color: var(--text-soft); line-height: 1.6; margin-bottom: 22px; }
+.inv-gate-box .btn-go { display: block; width: 100%; padding: 14px; background: var(--green-deep); color: var(--gold); border: none; border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; margin-bottom: 10px; }
+.inv-gate-box .btn-dismiss { background: none; border: none; color: var(--text-soft); font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+.fade-up { opacity: 0; transform: translateY(16px); animation: fadeUp 0.4s ease forwards; }
 @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 .fade-up:nth-child(1){ animation-delay: 0.05s; }
 .fade-up:nth-child(2){ animation-delay: 0.10s; }
 .fade-up:nth-child(3){ animation-delay: 0.15s; }
 .fade-up:nth-child(4){ animation-delay: 0.20s; }
-/* (Tour styles are injected by tour.js) */
-.tour-tooltip {
-background: var(--surface); border-radius: var(--radius);
-box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 400px;
-position: relative; padding: 24px; text-align: center;
-}
-.tour-tooltip::before {
-content: ''; position: absolute; width: 0; height: 0;
-border: 12px solid transparent; top: -24px; left: 50%; transform:
-translateX(-50%);
-border-bottom-color: var(--surface);
-}
-.tour-tooltip::after {
-content: ''; position: absolute; width: 0; height: 0;
-border: 10px solid transparent; top: -20px; left: 50%; transform:
-translateX(-50%);
-border-bottom-color: var(--surface);
-}
-.tour-icon { font-size: 48px; margin-bottom: 16px; }
-.tour-title {
-font-family: 'Playfair Display', serif; font-size: 24px;
-font-weight: 700; color: var(--text-primary); margin-bottom: 12px;
-}
-.tour-text {
-font-size: 15px; color: var(--text-mid); line-height: 1.6;
-margin-bottom: 24px;
-}
-.tour-nav {
-display: flex; align-items: center; justify-content: space-between;
-margin-top: 20px;
-}
-.tour-dots {
-display: flex; gap: 8px;
-}
-.tour-dot {
-width: 8px; height: 8px; border-radius: 50%;
-background: var(--surface-3); transition: background 0.2s;
-}
-.tour-dot.active { background: var(--gold); }
-.tour-btn {
-padding: 10px 16px; border-radius: var(--radius-sm);
-font-size: 14px; font-weight: 500; border: none; cursor: pointer;
-transition: all 0.2s;
-}
-.tour-btn.secondary {
-background: var(--surface-2); color: var(--text-mid);
-border: 1px solid var(--border);
-}
-.tour-btn.secondary:hover {
-background: var(--surface-3); border-color: var(--text-soft);
-}
-.tour-btn.primary {
-background: var(--gold); color: var(--green-deep);
-}
-.tour-btn.primary:hover { transform: translateY(-1px); }
-/* Tour highlighting */
-.tour-highlight {
-position: relative; z-index: 999;
-box-shadow: 0 0 0 4px var(--gold), 0 0 0 8px rgba(201,168,76,0.3);
-border-radius: var(--radius);
-}
-/* Tour positioning variants */
-.tour-tooltip.top { margin-bottom: 20px; }
-.tour-tooltip.top::before,
-.tour-tooltip.top::after { top: auto; bottom: -24px; border-top-color:
-var(--surface); border-bottom: none; }
-.tour-tooltip.left { margin-right: 20px; }
-.tour-tooltip.left::before,
-.tour-tooltip.left::after { left: auto; right: -24px; top: 50%;
-transform: translateY(-50%); border-left-color: var(--surface);
-border-bottom: none; }
-.tour-tooltip.right { margin-left: 20px; }
-.tour-tooltip.right::before,
-.tour-tooltip.right::after { left: -24px; right: auto; top: 50%;
-transform: translateY(-50%); border-right-color: var(--surface);
-border-bottom: none; }
-/* ── INVENTORY GATE MODAL ── */
-#inv-gate-overlay {
-display: none; position: fixed; inset: 0;
-background: rgba(10,46,26,0.55); z-index: 500;
-align-items: center; justify-content: center;
-backdrop-filter: blur(4px); padding: 20px;
-}
-#inv-gate-overlay.open { display: flex; }
-.inv-gate-box {
-background: var(--surface); border-radius: 20px; padding: 32px;
-width: 400px; max-width: 94vw; text-align: center;
-animation: modalIn 0.25s cubic-bezier(.34,1.56,.64,1);
-}
-.inv-gate-box .gate-icon { font-size: 52px; margin-bottom: 16px; }
-.inv-gate-box h3 {
-font-family: 'Playfair Display', serif;
-font-size: 20px; font-weight: 700; margin-bottom: 10px;
-}
-.inv-gate-box p { font-size: 14px; color: var(--text-soft);
-line-height: 1.6; margin-bottom: 22px; }
-.inv-gate-box .btn-go {
-display: block; width: 100%; padding: 14px;
-background: var(--green-deep); color: var(--gold);
-border: none; border-radius: 50px;
-font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700;
-cursor: pointer; transition: all 0.2s; margin-bottom: 10px;
-}
-.inv-gate-box .btn-go:hover { background: var(--green-light); }
-.inv-gate-box .btn-dismiss {
-background: none; border: none; color: var(--text-soft);
-font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+#sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(10,46,26,0.5); z-index: 299; backdrop-filter: blur(2px); }
+#sidebar-backdrop.show { display: block; }
+#hamburger-btn { display: none; align-items: center; justify-content: center; width: 38px; height: 38px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; font-size: 18px; flex-shrink: 0; }
+.bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--green-deep); border-top: 1px solid rgba(255,255,255,0.08); z-index: 200; }
+.bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 10px 4px; color: rgba(255,255,255,0.5); cursor: pointer; transition: color 0.15s; text-decoration: none; font-family: 'DM Sans', sans-serif; border: none; background: none; }
+.bottom-nav-item.active { color: var(--gold); }
+.bn-icon { font-size: 20px; }
+.bn-label { font-size: 9px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+@media (max-width: 1100px) { .stats-row { grid-template-columns: repeat(2, 1fr); } .content-grid { grid-template-columns: 1fr; } }
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); transition: transform 0.28s cubic-bezier(.4,0,.2,1); z-index: 300; }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; padding: 16px 14px 90px; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  #hamburger-btn { display: flex; }
+  .bottom-nav { display: flex; }
 }
 </style>
 </head>
 <body>
-<!-- PAGE LOADER -->
+
 <div id="page-loader">
-<div class="loader-logo">SUWE</div>
-<div class="loader-bar"><div
-class="loader-fill"></div></div>
+  <div class="loader-logo">SUWE</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
 </div>
-<!-- Sidebar backdrop for mobile -->
+
 <div id="sidebar-backdrop"></div>
-<!-- ── SIDEBAR ── -->
+
 <aside class="sidebar" id="main-sidebar">
-<div class="sidebar-logo">SUWE<span>Built for the
-market</span></div>
-<div class="nav-section">
-<div class="nav-label">Main</div>
-<div class="nav-item active"
-data-route="/frontend/pages/dashboard.html"><span
-class="icon">⊞</span> Dashboard</div>
-<div class="nav-item"
-data-route="/frontend/pages/sales_and_inventory.html"><span
-class="icon">📦</span> Sales and Inventory</div>
-</div>
-<div class="nav-section">
-<div class="nav-label">Community</div>
-<div class="nav-item" data-route="/frontend/pages/ajo.html"><span
-class="icon">🔄</span> My Ajo</div>
-<div class="nav-item"
-data-route="/frontend/pages/community.html"><span
-class="icon">🤝</span> Traders</div>
-<div class="nav-item"
-data-route="/frontend/pages/community.html"><span
-class="icon">📢</span> Feed</div>
-</div>
-<div class="nav-section">
-<div class="nav-label">Account</div>
-<div class="nav-item" id="quick-tour-btn"><span
-class="icon">🎯</span> Quick Tour</div>
-<div class="nav-item"><span class="icon">⚙️</span>
-Settings</div>
-</div>
-<div class="sidebar-footer">
-<div class="user-pill">
-<!-- Populated by JS -->
-<div class="user-avatar" id="sidebar-avatar">...</div>
-<div>
-<div class="user-name" id="sidebar-name">Loading...</div>
-<div class="user-market" id="sidebar-market"></div>
-</div>
-</div>
-<button class="sign-out-btn" id="sign-out-btn">Sign out</button>
-</div>
+  <div class="sidebar-logo">SUWE<span>Built for the market</span></div>
+  <div class="nav-section">
+    <div class="nav-label">Main</div>
+    <div class="nav-item active" data-route="/pages/dashboard.html"><span class="icon">⊞</span> Dashboard</div>
+    <div class="nav-item" data-route="/pages/sales_and_inventory.html"><span class="icon">📦</span> Sales & Inventory</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Community</div>
+    <div class="nav-item" data-route="/pages/ajo.html"><span class="icon">🔄</span> My Ajo</div>
+    <div class="nav-item" data-route="/pages/community.html"><span class="icon">🤝</span> Traders</div>
+    <div class="nav-item" data-route="/pages/community.html"><span class="icon">📢</span> Feed</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Account</div>
+    <div class="nav-item" id="quick-tour-btn"><span class="icon">🎯</span> Quick Tour</div>
+    <div class="nav-item"><span class="icon">⚙️</span> Settings</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="user-avatar" id="sidebar-avatar">...</div>
+      <div>
+        <div class="user-name" id="sidebar-name">Loading...</div>
+        <div class="user-market" id="sidebar-market"></div>
+      </div>
+    </div>
+    <button class="sign-out-btn" id="sign-out-btn">Sign out</button>
+  </div>
 </aside>
-<!-- ── MAIN ── -->
+
 <main class="main">
-<!-- Topbar -->
-<div class="topbar">
-<div style="display:flex;align-items:center;gap:10px;">
-<div id="hamburger-btn" aria-label="Open menu">☰</div>
-<div class="topbar-greeting">
-<h2 id="greeting-text">Good morning 👋</h2>
-<p id="greeting-sub">Loading your dashboard...</p>
-</div>
-</div>
-<div class="topbar-right">
-<div class="notif-btn" id="notif-btn"
-style="position:relative;cursor:pointer;">
-🔔
-<div class="notif-dot" id="notif-dot"
-style="display:none"></div>
-</div>
-<button class="btn-log-sale" id="open-modal">
-<span class="plus">+</span><span> Log a Sale</span>
-</button>
-</div>
-</div>
-<!-- BVN Banner (shown only when not yet verified) -->
-<div class="bvn-banner" id="bvn-banner" style="display:none">
-<div class="bvn-banner-icon">🛡️</div>
-<div class="bvn-banner-text">
-<h4>Verify your identity to unlock all features</h4>
-<p>BVN verification takes 60 seconds and protects your account.</p>
-</div>
-<button class="btn-verify-bvn" id="open-bvn-modal">Verify
-Now</button>
-</div>
-<!-- Stats Row -->
-<div class="stats-row">
-<div class="stat-card gold fade-up">
-<div class="stat-label">Today's Revenue</div>
-<div class="stat-value" id="stat-today-revenue"><span
-class="currency">₦</span>0</div>
-<div class="stat-change neutral" id="stat-today-revenue-change">No
-sales yet today</div>
-</div>
-<div class="stat-card green fade-up">
-<div class="stat-label">Today's Profit</div>
-<div class="stat-value" id="stat-today-profit"><span
-class="currency">₦</span>0</div>
-<div class="stat-change neutral" id="stat-today-profit-change">Log
-a sale to start</div>
-</div>
-<div class="stat-card blue fade-up">
-<div class="stat-label">Week Revenue</div>
-<div class="stat-value" id="stat-week-revenue"><span
-class="currency">₦</span>0</div>
-<div class="stat-change neutral" id="stat-week-change">This
-week</div>
-</div>
-<div class="stat-card red fade-up">
-<div class="stat-label">Items Low Stock</div>
-<div class="stat-value" id="stat-low-stock">0</div>
-<div class="stat-change neutral" id="stat-low-stock-change">All
-good</div>
-</div>
-</div>
-<!-- Content Grid -->
-<div class="content-grid">
-<div class="left-col">
-<!-- Sales Chart -->
-<div class="card">
-<div class="card-header">
-<div class="card-title">Sales Overview <span class="badge
-badge-green" id="chart-badge">This Week</span></div>
-</div>
-<div class="chart-area">
-<div class="chart-tabs">
-<div class="chart-tab active" data-period="week">This Week</div>
-<div class="chart-tab" data-period="month">This Month</div>
-<div class="chart-tab" data-period="3months">3 Months</div>
-</div>
-<div class="bar-chart" id="bar-chart"></div>
-</div>
-</div>
-<!-- AI Restock Suggestions -->
-<div class="card">
-<div class="card-header">
-<div class="card-title">🧠 Personalized AI Suggestions <span
-class="badge badge-red" id="restock-badge">Loading</span></div>
-<div class="card-action">See all</div>
-</div>
-<div id="restock-container">
-<div class="ai-loading">
-<div class="pulse-dot"></div><div
-class="pulse-dot"></div><div class="pulse-dot"></div>
-<span>Claude is analysing your inventory...</span>
-</div>
-</div>
-</div>
-<!-- Community Feed -->
-<div class="card">
-<div class="card-header">
-<div class="card-title">🤝 Trade Community <span class="badge
-badge-gold">3 New</span></div>
-<div class="card-action"
-data-route="/frontend/pages/community.html"><a
-href="/frontend/pages/community.html">Post</a></div>
-</div>
-<div id="community-feed">
-<div class="feed-item">
-<div class="feed-avatar"
-style="background:#c9a84c;color:#0a2e1a;">F</div>
-<div class="feed-content">
-<div class="feed-meta">
-<span class="feed-name">Fatima Bello</span>
-<span class="feed-market">· Mile 12</span>
-<span class="feed-time">2h ago</span>
-</div>
-<div class="feed-text">Anyone buying tomatoes bulk this week?
-Supplier offering ₦12,000/crate for 20+ crates together.</div>
-<span class="feed-tag"
-style="background:rgba(26,102,55,0.08);color:var(--green-light);">Bulk
-Buy</span>
-</div>
-</div>
-<div class="feed-item">
-<div class="feed-avatar" style="background:#3b7dd8;">C</div>
-<div class="feed-content">
-<div class="feed-meta">
-<span class="feed-name">Chidi Okonkwo</span>
-<span class="feed-market">· Oshodi</span>
-<span class="feed-time">5h ago</span>
-</div>
-<div class="feed-text">Pepper prices at Ketu went up 30% since
-Monday. Moving my buying to Mile 12 this week.</div>
-<span class="feed-tag"
-style="background:rgba(224,92,75,0.1);color:var(--red);">Price
-Alert</span>
-</div>
-</div>
-</div>
-</div>
-</div><!-- /left-col -->
-<!-- RIGHT COLUMN -->
-<div class="right-col">
-<!-- Ajo Status -->
-<div class="card">
-<div class="card-header">
-<div class="card-title">🔄 Ajo Savings Group</div>
-<div class="card-action" data-route="/frontend/pages/ajo.html"><a
-href="/frontend/pages/ajo.html">Details</a></div>
-</div>
-<div class="ajo-body" id="ajo-container">
-<div class="ajo-group-name">Balogun Strong Women</div>
-<div class="ajo-meta">Rotating savings · ₦15,000/month · 8
-members</div>
-<div class="ajo-progress-label">
-<span style="color:var(--text-soft);font-size:12px">Cycle
-progress</span>
-<span class="amount">₦74,400 / ₦120,000</span>
-</div>
-<div class="progress-track"><div
-class="progress-fill"></div></div>
-<div class="ajo-members">
-<div class="member-stack">
-<div class="member-dot"
-style="background:#c9a84c;color:#0a2e1a;">A</div>
-<div class="member-dot" style="background:#3b7dd8;">F</div>
-<div class="member-dot" style="background:#1a6637;">C</div>
-<div class="member-dot" style="background:#e05c4b;">N</div>
-<div class="member-dot" style="background:#5a4a8a;">+4</div>
-</div>
-<span class="ajo-members-label">8 active members · All up to
-date</span>
-</div>
-<div class="ajo-next-due">
-<div>
-<div class="due-label">Next contribution</div>
-<div class="due-date">April 1, 2026 · ₦15,000</div>
-</div>
-<button class="btn-pay">Pay Early</button>
-</div>
-</div>
-</div>
-<!-- Quick Actions -->
-<div class="card">
-<div class="card-header"><div class="card-title">Quick
-Actions</div></div>
-<div style="padding:14px;display:grid;grid-template-columns:1fr
-1fr;gap:10px;">
-<button class="quick-btn"
-onclick="document.getElementById('open-modal').click()">
-<div style="font-size:20px;margin-bottom:6px;">💰</div>
-<div
-style="font-size:12px;font-weight:600;color:var(--text-primary)">Log
-Sale</div>
-</button>
-<button class="quick-btn"
-onclick="window.location.href='/frontend/pages/sales_and_inventory.html'">
-<div style="font-size:20px;margin-bottom:6px;">📦</div>
-<div
-style="font-size:12px;font-weight:600;color:var(--text-primary)">Update
-Stock</div>
-</button>
-<button class="quick-btn"
-onclick="window.location.href='/frontend/pages/ajo.html'">
-<div style="font-size:20px;margin-bottom:6px;">🔄</div>
-<div
-style="font-size:12px;font-weight:600;color:var(--text-primary)">Pay
-Ajo</div>
-</button>
-<button class="quick-btn"
-onclick="window.location.href='/frontend/pages/community.html'">
-<div style="font-size:20px;margin-bottom:6px;">📢</div>
-<div
-style="font-size:12px;font-weight:600;color:var(--text-primary)">Post
-to Feed</div>
-</button>
-</div>
-</div>
-<style>
-.quick-btn {
-padding: 14px 10px; border: 1.5px solid var(--border); border-radius:
-var(--radius-sm);
-background: var(--surface); cursor: pointer; text-align: center;
-font-family: 'DM Sans', sans-serif; transition: all 0.15s;
-}
-.quick-btn:hover { border-color: var(--green-deep); }
-</style>
-<!-- Today's Sales Log -->
-<div class="card">
-<div class="card-header">
-<div class="card-title">Today's Sales Log</div>
-<div class="card-action"><a
-href="/frontend/pages/sales_and_inventory.html">View
-all</a></div>
-</div>
-<div id="today-sales-log">
-<div class="empty-state" style="padding:30px 24px;">
-<div class="empty-state-icon">📋</div>
-<h4>No sales yet today</h4>
-<p>Tap "Log a Sale" to record your first transaction.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div id="hamburger-btn" aria-label="Open menu">☰</div>
+      <div class="topbar-greeting">
+        <h2 id="greeting-text">Good morning 👋</h2>
+        <p id="greeting-sub">Loading your dashboard...</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="notif-btn" id="notif-btn" style="position:relative;cursor:pointer;">
+        🔔<div class="notif-dot" id="notif-dot" style="display:none"></div>
+      </div>
+      <button class="btn-log-sale" id="open-modal">
+        <span class="plus">+</span><span> Log a Sale</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="bvn-banner" id="bvn-banner" style="display:none">
+    <div class="bvn-banner-icon">🛡️</div>
+    <div class="bvn-banner-text">
+      <h4>Verify your identity to unlock all features</h4>
+      <p>BVN verification takes 60 seconds and protects your account.</p>
+    </div>
+    <button class="btn-verify-bvn" id="open-bvn-modal">Verify Now</button>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card gold fade-up">
+      <div class="stat-label">Today's Revenue</div>
+      <div class="stat-value" id="stat-today-revenue"><span class="currency">₦</span>0</div>
+      <div class="stat-change neutral" id="stat-today-revenue-change">No sales yet today</div>
+    </div>
+    <div class="stat-card green fade-up">
+      <div class="stat-label">Today's Profit</div>
+      <div class="stat-value" id="stat-today-profit"><span class="currency">₦</span>0</div>
+      <div class="stat-change neutral" id="stat-today-profit-change">Log a sale to start</div>
+    </div>
+    <div class="stat-card blue fade-up">
+      <div class="stat-label">Week Revenue</div>
+      <div class="stat-value" id="stat-week-revenue"><span class="currency">₦</span>0</div>
+      <div class="stat-change neutral" id="stat-week-change">This week</div>
+    </div>
+    <div class="stat-card red fade-up">
+      <div class="stat-label">Items Low Stock</div>
+      <div class="stat-value" id="stat-low-stock">0</div>
+      <div class="stat-change neutral" id="stat-low-stock-change">All good</div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="left-col">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Sales Overview <span class="badge badge-green" id="chart-badge">This Week</span></div>
+        </div>
+        <div class="chart-area">
+          <div class="chart-tabs">
+            <div class="chart-tab active" data-period="week">This Week</div>
+            <div class="chart-tab" data-period="month">This Month</div>
+            <div class="chart-tab" data-period="3months">3 Months</div>
+          </div>
+          <div class="bar-chart" id="bar-chart"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🧠 AI Suggestions <span class="badge badge-red" id="restock-badge">Loading</span></div>
+          <div class="card-action">See all</div>
+        </div>
+        <div id="restock-container">
+          <div class="ai-loading">
+            <div class="pulse-dot"></div><div class="pulse-dot"></div><div class="pulse-dot"></div>
+            <span>Claude is analysing your data...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🤝 Trade Community <span class="badge badge-gold">3 New</span></div>
+          <div class="card-action"><a href="/pages/community.html">Post</a></div>
+        </div>
+        <div id="community-feed">
+          <div class="feed-item">
+            <div class="feed-avatar" style="background:#c9a84c;color:#0a2e1a;">F</div>
+            <div class="feed-content">
+              <div class="feed-meta"><span class="feed-name">Fatima Bello</span><span class="feed-market">· Mile 12</span><span class="feed-time">2h ago</span></div>
+              <div class="feed-text">Anyone buying tomatoes bulk this week? Supplier offering ₦12,000/crate for 20+ crates together.</div>
+              <span class="feed-tag" style="background:rgba(26,102,55,0.08);color:var(--green-light);">Bulk Buy</span>
+            </div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-avatar" style="background:#3b7dd8;">C</div>
+            <div class="feed-content">
+              <div class="feed-meta"><span class="feed-name">Chidi Okonkwo</span><span class="feed-market">· Oshodi</span><span class="feed-time">5h ago</span></div>
+              <div class="feed-text">Pepper prices at Ketu went up 30% since Monday. Moving my buying to Mile 12 this week.</div>
+              <span class="feed-tag" style="background:rgba(224,92,75,0.1);color:var(--red);">Price Alert</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-col">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🔄 Ajo Savings Group</div>
+          <div class="card-action"><a href="/pages/ajo.html">Details</a></div>
+        </div>
+        <div class="ajo-body" id="ajo-container">
+          <div class="empty-state" style="padding:30px 22px;">
+            <div class="empty-state-icon">🔄</div>
+            <h4>Loading ajo status...</h4>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">Quick Actions</div></div>
+        <div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <button class="quick-btn" onclick="document.getElementById('open-modal').click()">
+            <div style="font-size:20px;margin-bottom:6px;">💰</div>
+            <div style="font-size:12px;font-weight:600;color:var(--text-primary)">Log Sale</div>
+          </button>
+          <button class="quick-btn" onclick="window.location.href='/pages/sales_and_inventory.html'">
+            <div style="font-size:20px;margin-bottom:6px;">📦</div>
+            <div style="font-size:12px;font-weight:600;color:var(--text-primary)">Update Stock</div>
+          </button>
+          <button class="quick-btn" onclick="window.location.href='/pages/ajo.html'">
+            <div style="font-size:20px;margin-bottom:6px;">🔄</div>
+            <div style="font-size:12px;font-weight:600;color:var(--text-primary)">Pay Ajo</div>
+          </button>
+          <button class="quick-btn" onclick="window.location.href='/pages/community.html'">
+            <div style="font-size:20px;margin-bottom:6px;">📢</div>
+            <div style="font-size:12px;font-weight:600;color:var(--text-primary)">Post to Feed</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Today's Sales Log</div>
+          <div class="card-action"><a href="/pages/sales_and_inventory.html">View all</a></div>
+        </div>
+        <div id="today-sales-log">
+          <div class="empty-state" style="padding:30px 24px;">
+            <div class="empty-state-icon">📋</div>
+            <h4>No sales yet today</h4>
+            <p>Tap "Log a Sale" to record your first transaction.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </main>
-<!-- ── BOTTOM NAV (mobile) ── -->
-<nav class="bottom-nav" role="navigation" aria-label="Main
-navigation">
-<a class="bottom-nav-item active"
-href="/frontend/pages/dashboard.html">
-<span class="bn-icon">⊞</span>
-<span class="bn-label">Home</span>
-</a>
-<a class="bottom-nav-item"
-href="/frontend/pages/sales_and_inventory.html">
-<span class="bn-icon">📦</span>
-<span class="bn-label">Sales</span>
-</a>
-<a class="bottom-nav-item" href="/frontend/pages/ajo.html">
-<span class="bn-icon">🔄</span>
-<span class="bn-label">Ajo</span>
-</a>
-<a class="bottom-nav-item" href="/frontend/pages/community.html">
-<span class="bn-icon">🤝</span>
-<span class="bn-label">Community</span>
-</a>
-<button class="bottom-nav-item quick-tour-btn" aria-label="Quick
-Tour">
-<span class="bn-icon">🎯</span>
-<span class="bn-label">Tour</span>
-</button>
+
+<nav class="bottom-nav">
+  <a class="bottom-nav-item active" href="/pages/dashboard.html"><span class="bn-icon">⊞</span><span class="bn-label">Home</span></a>
+  <a class="bottom-nav-item" href="/pages/sales_and_inventory.html"><span class="bn-icon">📦</span><span class="bn-label">Sales</span></a>
+  <a class="bottom-nav-item" href="/pages/ajo.html"><span class="bn-icon">🔄</span><span class="bn-label">Ajo</span></a>
+  <a class="bottom-nav-item" href="/pages/community.html"><span class="bn-icon">🤝</span><span class="bn-label">Community</span></a>
 </nav>
-<!-- ── INVENTORY GATE MODAL ── -->
+
 <div id="inv-gate-overlay">
-<div class="inv-gate-box">
-<div class="gate-icon">📦</div>
-<h3>Set Up Inventory First</h3>
-<p>Before you can log sales, you need to add your products to
-inventory. This ensures we track your stock accurately and calculate
-real profits.</p>
-<button class="btn-go" id="inv-gate-go">Go to Inventory Setup
-→</button>
-<button class="btn-dismiss" id="inv-gate-dismiss">Remind me
-later</button>
+  <div class="inv-gate-box">
+    <div class="gate-icon">📦</div>
+    <h3>Set Up Inventory First</h3>
+    <p>Before logging sales, add your products to inventory so SUWE can track stock and calculate real profits.</p>
+    <button class="btn-go" id="inv-gate-go">Go to Inventory Setup →</button>
+    <button class="btn-dismiss" id="inv-gate-dismiss">Remind me later</button>
+  </div>
 </div>
-</div>
-<!-- ── LOG SALE MODAL ── -->
+
 <div class="modal-overlay" id="modal-overlay">
-<div class="modal">
-<div class="modal-title">Log a Sale</div>
-<div class="modal-sub">Enter what you sold and SUWE calculates your
-real profit.</div>
-<div class="form-group">
-<label class="form-label">Item Name</label>
-<input class="form-input" type="text" placeholder="e.g. Tomatoes,
-Onions, Pepper..." id="item-name"/>
+  <div class="modal">
+    <div class="modal-title">Log a Sale</div>
+    <div class="modal-sub">Enter what you sold and SUWE calculates your real profit.</div>
+    <div class="form-group">
+      <label class="form-label">Item Name</label>
+      <input class="form-input" type="text" placeholder="e.g. Tomatoes, Onions, Pepper..." id="item-name"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Selling Price (₦)</label>
+        <input class="form-input" type="number" placeholder="0" id="sell-price" oninput="calcProfit()"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cost Price (₦)</label>
+        <input class="form-input" type="number" placeholder="0" id="cost-price" oninput="calcProfit()"/>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Quantity</label>
+        <input class="form-input" type="number" placeholder="1" id="quantity" value="1" oninput="calcProfit()"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Unit</label>
+        <select class="form-select" id="unit">
+          <option>bags</option><option>crates</option><option>bundles</option><option>pieces</option><option>kg</option>
+        </select>
+      </div>
+    </div>
+    <div class="profit-preview">
+      <div>
+        <div class="profit-preview-label">Estimated Profit</div>
+        <div style="font-size:11px;color:var(--text-soft);margin-top:2px" id="profit-breakdown">Fill in prices above</div>
+      </div>
+      <div class="profit-preview-value" id="profit-value">₦---</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="close-modal">Cancel</button>
+      <button class="btn-confirm" id="confirm-sale">Save Sale ✓</button>
+    </div>
+  </div>
 </div>
-<div class="form-row">
-<div class="form-group">
-<label class="form-label">Selling Price (₦)</label>
-<input class="form-input" type="number" placeholder="0"
-id="sell-price" oninput="calcProfit()"/>
-</div>
-<div class="form-group">
-<label class="form-label">Cost Price (₦)</label>
-<input class="form-input" type="number" placeholder="0"
-id="cost-price" oninput="calcProfit()"/>
-</div>
-</div>
-<div class="form-row">
-<div class="form-group">
-<label class="form-label">Quantity</label>
-<input class="form-input" type="number" placeholder="1"
-id="quantity" value="1" oninput="calcProfit()"/>
-</div>
-<div class="form-group">
-<label class="form-label">Unit</label>
-<select class="form-select" id="unit">
-<option>bags</option><option>crates</option><option>bundles</option>
-<option>pieces</option><option>kg</option>
-</select>
-</div>
-</div>
-<div class="profit-preview">
-<div>
-<div class="profit-preview-label">Estimated Profit</div>
-<div style="font-size:11px;color:var(--text-soft);margin-top:2px"
-id="profit-breakdown">Fill in prices above</div>
-</div>
-<div class="profit-preview-value" id="profit-value">₦---</div>
-</div>
-<div class="modal-actions">
-<button class="btn-cancel" id="close-modal">Cancel</button>
-<button class="btn-confirm" id="confirm-sale">Save Sale
-✓</button>
-</div>
-</div>
-</div>
-<!-- ── BVN VERIFICATION MODAL ── -->
+
 <div class="modal-overlay" id="bvn-overlay">
-<div class="bvn-modal">
-<div class="modal-title" style="margin-bottom:6px;">Verify Your
-BVN</div>
-<div class="modal-sub">Your BVN is used only to confirm your
-identity. We never share it.</div>
-<div class="bvn-steps">
-<div class="bvn-step active" id="bvn-step-1"></div>
-<div class="bvn-step" id="bvn-step-2"></div>
-<div class="bvn-step" id="bvn-step-3"></div>
+  <div class="bvn-modal">
+    <div class="modal-title" style="margin-bottom:6px;">Verify Your BVN</div>
+    <div class="modal-sub">Your BVN is used only to confirm your identity. We never share it.</div>
+    <div class="bvn-steps">
+      <div class="bvn-step active" id="bvn-step-1"></div>
+      <div class="bvn-step" id="bvn-step-2"></div>
+      <div class="bvn-step" id="bvn-step-3"></div>
+    </div>
+    <div id="bvn-s1">
+      <div class="bvn-info-box">🔒 Your BVN is an 11-digit number. Dial <strong>*565*0#</strong> on any network to retrieve it.</div>
+      <div class="form-group">
+        <label class="form-label">Bank Verification Number (BVN)</label>
+        <input class="form-input" type="tel" maxlength="11" placeholder="Enter 11-digit BVN" id="bvn-input"/>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="close-bvn">Cancel</button>
+        <button class="btn-confirm" id="bvn-submit">Verify →</button>
+      </div>
+    </div>
+    <div id="bvn-s2" style="display:none;text-align:center;padding:20px 0 28px;">
+      <div style="font-size:40px;margin-bottom:12px;">🔐</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:6px;">Contacting Interswitch...</div>
+      <div class="ai-loading" style="justify-content:center;margin-top:20px;">
+        <div class="pulse-dot"></div><div class="pulse-dot"></div><div class="pulse-dot"></div>
+      </div>
+    </div>
+    <div id="bvn-s3" style="display:none;">
+      <div id="bvn-verified-info">
+        <div class="vname" id="bvn-confirmed-name">Adaeze Madu</div>
+        <div class="vmeta" id="bvn-confirmed-meta">DOB: 14 Mar 1990</div>
+      </div>
+      <p style="font-size:13px;color:var(--text-soft);margin-top:14px;margin-bottom:20px;">Is this you? Confirming will link this identity to your SUWE account.</p>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="bvn-not-me">Not me</button>
+        <button class="btn-confirm" id="bvn-confirm">✓ This is me</button>
+      </div>
+    </div>
+  </div>
 </div>
-<!-- Step 1: Enter BVN -->
-<div id="bvn-s1">
-<div class="bvn-info-box">
-🔒 Your BVN is an 11-digit number you received when opening a Nigerian
-bank account.
-Dial <strong>*565*0#</strong> on any network to retrieve it. SUWE
-only reads your name and date of birth.
-</div>
-<div class="form-group">
-<label class="form-label">Bank Verification Number (BVN)</label>
-<input class="form-input" type="tel" maxlength="11"
-placeholder="Enter 11-digit BVN" id="bvn-input"
-oninput="this.value=this.value.replace(/\\D/g,'')"/>
-</div>
-<div class="modal-actions">
-<button class="btn-cancel" id="close-bvn">Cancel</button>
-<button class="btn-confirm" id="bvn-submit">Verify →</button>
-</div>
-</div>
-<!-- Step 2: Checking -->
-<div id="bvn-s2" style="display:none; text-align:center; padding:
-20px 0 28px;">
-<div style="font-size:40px; margin-bottom:12px;">🔐</div>
-<div style="font-size:14px; font-weight:600;
-margin-bottom:6px;">Contacting Interswitch...</div>
-<div style="font-size:13px; color:var(--text-soft);">Verifying your
-identity securely. This takes a few seconds.</div>
-<div class="ai-loading" style="justify-content:center;
-margin-top:20px;">
-<div class="pulse-dot"></div><div
-class="pulse-dot"></div><div class="pulse-dot"></div>
-</div>
-</div>
-<!-- Step 3: Confirmed -->
-<div id="bvn-s3" style="display:none;">
-<div id="bvn-verified-info">
-<div class="vname" id="bvn-confirmed-name">Adaeze Madu</div>
-<div class="vmeta" id="bvn-confirmed-meta">DOB: 14 Mar 1990 ·
-Phone: 080•••••789</div>
-</div>
-<p style="font-size:13px; color:var(--text-soft); margin-top:14px;
-margin-bottom:20px;">
-Is this you? Confirming will link this identity to your SUWE account.
-</p>
-<div class="modal-actions">
-<button class="btn-cancel" id="bvn-not-me">Not me</button>
-<button class="btn-confirm" id="bvn-confirm">✓ This is
-me</button>
-</div>
-</div>
-</div>
-</div>
-<!-- NOTIFICATIONS MODAL (add before closing </body> tag) -->
-<div class="modal-overlay" id="dash-notif-overlay">
-<div
-style="background:var(--surface);border-radius:20px;width:480px;max-width:94vw;max-height:85vh;display:flex;flex-direction:column;animation:modalIn
-0.25s cubic-bezier(.34,1.56,.64,1);">
-<div style="padding:20px 22px 16px;border-bottom:1px solid
-var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-<div style="font-family:'Playfair
-Display',serif;font-size:20px;font-weight:800;">Notifications</div>
-<button id="close-dash-notif" style="padding:8px 14px;border:1.5px
-solid var(--border);border-radius:50px;background:none;font-family:'DM
-Sans',sans-serif;font-size:12px;font-weight:600;color:var(--text-mid);cursor:pointer;">Close</button>
-</div>
-<div id="dash-notif-list" style="overflow-y:auto;flex:1;"></div>
-</div>
-</div>
-<!-- Tour overlay injected by tour.js -->
-<!-- ════════════════════════════════════════════
-JAVASCRIPT
-════════════════════════════════════════════ -->
+
 <script type="module">
 import {
-supabase,
-getCurrentUser,
-getVendorProfile,
-signOut,
-getTodaySales,
-getWeekSales,
-getThreeMonthSales,
-logSale,
-reduceInventory,
-getLowStockItems,
-getAjoGroupsForUser,
-getCommunityPosts,
-computeBCS,
-hasInventory
-} from '../js/supabase.js';
-import { initTour } from '../js/tour.js';
+  supabase, getCurrentUser, getVendorProfile, signOut,
+  getTodaySales, getWeekSales, getThreeMonthSales,
+  logSale, reduceInventory, getLowStockItems,
+  getAjoGroupsForUser, getCommunityPosts, hasInventory
+} from '/js/supabase.js';
+
+// ── FIXED: all paths now use /pages/ not /frontend/pages/ ──
+const PAGES = {
+  dashboard:  '/pages/dashboard.html',
+  onboarding: '/pages/onboarding.html',
+  login:      '/index.html',
+  inventory:  '/pages/sales_and_inventory.html',
+  ajo:        '/pages/ajo.html',
+  community:  '/pages/community.html'
+};
+
 const BACKEND = 'https://team-bbs-sandy.vercel.app';
-// ── Global state ─────────────────────────────────────────────
+
 let currentUser = null;
 let vendorProfile = null;
 let todaySales = [];
-let weekSales = [];
-// ── BOOT ─────────────────────────────────────────────────────
+let weekSales  = [];
+
 async function boot() {
-try {
-currentUser = await getCurrentUser();
-if (!currentUser) { window.location.href = '/frontend/index.html';
-return; }
-vendorProfile = await getVendorProfile(currentUser.id);
-if (!vendorProfile || !vendorProfile.phone) {
-window.location.href = '/frontend/pages/onboarding.html'; return;
+  try {
+    currentUser = await getCurrentUser();
+    if (!currentUser) { window.location.href = PAGES.login; return; }
+
+    vendorProfile = await getVendorProfile(currentUser.id);
+    if (!vendorProfile || !vendorProfile.phone) {
+      window.location.href = PAGES.onboarding; return;
+    }
+
+    renderIdentity();
+    await Promise.all([loadSalesData(), loadLowStock()]);
+    renderStats();
+    renderSalesLog();
+    renderChart('week');
+    loadMarketAdvice();
+    loadAjoStatus();
+    loadCommunityPosts();
+    showBvnBanner();
+
+    // Sidebar nav routing — fixed paths
+    document.querySelectorAll('.sidebar .nav-item[data-route]').forEach(item => {
+      item.addEventListener('click', () => { window.location.href = item.dataset.route; });
+    });
+
+  } catch (err) {
+    console.error('Dashboard boot error:', err);
+  } finally {
+    const loader = document.getElementById('page-loader');
+    if (loader) {
+      loader.style.transition = 'opacity 0.3s';
+      loader.style.opacity = '0';
+      setTimeout(() => loader.style.display = 'none', 350);
+    }
+  }
 }
-renderIdentity();
-await Promise.all([loadSalesData(), loadLowStock()]);
-renderStats();
-renderSalesLog();
-renderChart('week');
-loadMarketAdvice();
-loadAjoStatus();
-loadCommunityPosts();
-showBvnBanner();
-// Sidebar nav routing
-document.querySelectorAll('.sidebar
-.nav-item[data-route]').forEach(item => {
-item.addEventListener('click', () => {
-window.location.href = item.dataset.route;
-});
-});
-} catch (err) {
-console.error('Dashboard boot error:', err);
-} finally {
-const loader = document.getElementById('page-loader');
-if (loader) {
-loader.style.transition = 'opacity 0.3s';
-loader.style.opacity = '0';
-setTimeout(() => loader.style.display = 'none', 350);
-}
-}
-}
-// ── IDENTITY ─────────────────────────────────────────────────
+
 function renderIdentity() {
-const name = vendorProfile.full_name || 'Vendor';
-const market = vendorProfile.market_location || '';
-const initials= name.split(' ').map(w =>
-w[0]).join('').toUpperCase().slice(0, 2);
-const hour = new Date().getHours();
-const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good
-afternoon' : 'Good evening';
-const dateStr= new Date().toLocaleDateString('en-GB', {
-weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-});
-const greetEl = document.getElementById('greeting-text');
-const subEl = document.getElementById('greeting-sub');
-if (greetEl) greetEl.textContent = `${greet}, ${name.split('
-')[0]} 👋`;
-if (subEl) subEl.textContent = market ? `${dateStr} · ${market}` :
-dateStr;
-const avatarEl = document.getElementById('sidebar-avatar');
-const nameEl = document.getElementById('sidebar-name');
-const mktEl = document.getElementById('sidebar-market');
-if (avatarEl) avatarEl.textContent = initials;
-if (nameEl) nameEl.textContent = name;
-if (mktEl) mktEl.textContent = market;
+  const name    = vendorProfile.full_name || 'Vendor';
+  const market  = vendorProfile.market_location || '';
+  const initials= name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  const hour    = new Date().getHours();
+  const greet   = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  const dateStr = new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+  const greetEl = document.getElementById('greeting-text');
+  const subEl   = document.getElementById('greeting-sub');
+  if (greetEl) greetEl.textContent = `${greet}, ${name.split(' ')[0]} 👋`;
+  if (subEl)   subEl.textContent   = market ? `${dateStr} · ${market}` : dateStr;
+
+  const avatarEl = document.getElementById('sidebar-avatar');
+  const nameEl   = document.getElementById('sidebar-name');
+  const mktEl    = document.getElementById('sidebar-market');
+  if (avatarEl) avatarEl.textContent = initials;
+  if (nameEl)   nameEl.textContent   = name;
+  if (mktEl)    mktEl.textContent    = market;
 }
-// ── LOAD SALES DATA ───────────────────────────────────────────
+
 async function loadSalesData() {
-[todaySales, weekSales] = await Promise.all([
-getTodaySales(currentUser.id),
-getWeekSales(currentUser.id)
-]);
+  [todaySales, weekSales] = await Promise.all([
+    getTodaySales(currentUser.id),
+    getWeekSales(currentUser.id)
+  ]);
 }
-// ── STATS ─────────────────────────────────────────────────────
+
 function renderStats() {
-const todayRevenue = todaySales.reduce((s, r) => s + (r.selling_price
-|| 0), 0);
-const todayProfit = todaySales.reduce((s, r) => s + (r.profit || 0),
-0);
-const weekRevenue = weekSales.reduce ((s, r) => s + (r.selling_price
-|| 0), 0);
-const todayMargin = todayRevenue > 0 ? Math.round((todayProfit /
-todayRevenue) * 100) : 0;
-// Today's Revenue
-setStatCard(
-'stat-today-revenue', todayRevenue, 'stat-today-revenue-change',
-todaySales.length ? `${todaySales.length} sale${todaySales.length >
-1 ? 's' : ''} today` : 'No sales yet today',
-todaySales.length > 0
-);
-// Today's Profit
-setStatCard(
-'stat-today-profit', todayProfit, 'stat-today-profit-change',
-todayMargin > 0 ? `${todayMargin}% margin` : 'Log a sale to
-start',
-todayProfit > 0
-);
-// Week Revenue
-setStatCard(
-'stat-week-revenue', weekRevenue, 'stat-week-change',
-weekSales.length ? `${weekSales.length} sales this week` : 'No sales
-this week',
-weekSales.length > 0
-);
+  const todayRevenue = todaySales.reduce((s, r) => s + (r.selling_price || 0), 0);
+  const todayProfit  = todaySales.reduce((s, r) => s + (r.profit || 0), 0);
+  const weekRevenue  = weekSales.reduce ((s, r) => s + (r.selling_price || 0), 0);
+  const todayMargin  = todayRevenue > 0 ? Math.round((todayProfit / todayRevenue) * 100) : 0;
+
+  setStatCard('stat-today-revenue', todayRevenue, 'stat-today-revenue-change',
+    todaySales.length ? `${todaySales.length} sale${todaySales.length > 1 ? 's' : ''} today` : 'No sales yet today',
+    todaySales.length > 0);
+  setStatCard('stat-today-profit', todayProfit, 'stat-today-profit-change',
+    todayMargin > 0 ? `${todayMargin}% margin` : 'Log a sale to start', todayProfit > 0);
+  setStatCard('stat-week-revenue', weekRevenue, 'stat-week-change',
+    weekSales.length ? `${weekSales.length} sales this week` : 'No sales this week', weekSales.length > 0);
 }
-function setStatCard(valueId, amount, changeId, changeText, isPositive)
-{
-const valEl = document.getElementById(valueId);
-const chEl = document.getElementById(changeId);
-if (valEl) {
-valEl.innerHTML = `<span
-class="currency">₦</span>${amount.toLocaleString()}`;
-valEl.className = 'stat-value';
+
+function setStatCard(valueId, amount, changeId, changeText, isPositive) {
+  const valEl = document.getElementById(valueId);
+  const chEl  = document.getElementById(changeId);
+  if (valEl) { valEl.innerHTML = `<span class="currency">₦</span>${amount.toLocaleString()}`; valEl.className = 'stat-value'; }
+  if (chEl)  { chEl.textContent = changeText; chEl.className = `stat-change ${isPositive ? 'up' : 'neutral'}`; }
 }
-if (chEl) {
-chEl.textContent = changeText;
-chEl.className = `stat-change ${isPositive ? 'up' : 'neutral'}`;
-}
-}
-// ── LOW STOCK ─────────────────────────────────────────────────
+
 async function loadLowStock() {
-const items = await getLowStockItems(currentUser.id);
-const el = document.getElementById('stat-low-stock');
-const ch = document.getElementById('stat-low-stock-change');
-if (el) el.textContent = items.length;
-if (ch) {
-ch.textContent = items.length > 0 ? '↓ Restock needed' : 'All levels
-good';
-ch.className = `stat-change ${items.length > 0 ? 'down' :
-'neutral'}`;
+  const items = await getLowStockItems(currentUser.id);
+  const el = document.getElementById('stat-low-stock');
+  const ch = document.getElementById('stat-low-stock-change');
+  if (el) el.textContent = items.length;
+  if (ch) { ch.textContent = items.length > 0 ? '↓ Restock needed' : 'All levels good'; ch.className = `stat-change ${items.length > 0 ? 'down' : 'neutral'}`; }
 }
-}
-// ── BVN BANNER ────────────────────────────────────────────────
+
 function showBvnBanner() {
-const banner = document.getElementById('bvn-banner');
-if (!banner) return;
-banner.style.display = vendorProfile.bvn_verified ? 'none' : 'flex';
+  const banner = document.getElementById('bvn-banner');
+  if (banner) banner.style.display = vendorProfile.bvn_verified ? 'none' : 'flex';
 }
-// ── SALES LOG ─────────────────────────────────────────────────
+
 function renderSalesLog() {
-const container = document.getElementById('today-sales-log');
-if (!container) return;
-if (!todaySales.length) {
-container.innerHTML = `
-<div class="empty-state" style="padding:30px 24px;">
-<div class="empty-state-icon">📋</div>
-<h4>No sales yet today</h4>
-<p>Tap "Log a Sale" to record your first transaction.</p>
-</div>`;
-return;
+  const container = document.getElementById('today-sales-log');
+  if (!container) return;
+  if (!todaySales.length) {
+    container.innerHTML = `<div class="empty-state" style="padding:30px 24px;"><div class="empty-state-icon">📋</div><h4>No sales yet today</h4><p>Tap "Log a Sale" to record your first transaction.</p></div>`;
+    return;
+  }
+  container.innerHTML = todaySales.slice(0, 6).map(sale => {
+    const time = new Date(sale.created_at).toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+    return `<div class="sale-row">
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--text-primary)">${sale.item_name} (${sale.quantity} ${sale.unit || ''})</div>
+        <div style="font-size:11px;color:var(--text-soft);margin-top:2px">${time}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:13px;font-weight:700;color:var(--green-light)">+₦${(sale.selling_price || 0).toLocaleString()}</div>
+        <div style="font-size:11px;color:var(--green-light)">₦${(sale.profit || 0).toLocaleString()} profit</div>
+      </div>
+    </div>`;
+  }).join('');
 }
-container.innerHTML = todaySales.slice(0, 6).map(sale => {
-const time = new Date(sale.created_at).toLocaleTimeString('en-GB', {
-hour: '2-digit', minute: '2-digit'
-});
-const profitColour = (sale.profit || 0) >= 0 ?
-'var(--green-light)' : 'var(--red)';
-return `
-<div class="sale-row">
-<div>
-<div
-style="font-size:13px;font-weight:600;color:var(--text-primary)">
-${sale.item_name} (${sale.quantity} ${sale.unit || ''})
-</div>
-<div
-style="font-size:11px;color:var(--text-soft);margin-top:2px">${time}</div>
-</div>
-<div style="text-align:right">
-<div
-style="font-size:13px;font-weight:700;color:var(--green-light)">
-+₦${(sale.selling_price || 0).toLocaleString()}
-</div>
-<div style="font-size:11px;color:${profitColour}">
-₦${(sale.profit || 0).toLocaleString()} profit
-</div>
-</div>
-</div>`;
-}).join('');
-}
-// ── CHART ─────────────────────────────────────────────────────
+
 function renderChart(period) {
-const chart = document.getElementById('bar-chart');
-if (!chart) return;
-chart.innerHTML = '';
-const DAYS =
-['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-const buckets = Array(7).fill(null).map(() => ({ rev: 0, profit: 0 }));
-const source = period === 'week' ? weekSales : weekSales;
-source.forEach(s => {
-const d = new Date(s.created_at);
-const idx = (d.getDay() + 6) % 7; // Mon = 0
-buckets[idx].rev += s.selling_price || 0;
-buckets[idx].profit += s.profit || 0;
-});
-const todayIdx = (new Date().getDay() + 6) % 7;
-const maxRev = Math.max(...buckets.map(b => b.rev), 1);
-const hasData = buckets.some(b => b.rev > 0);
-if (!hasData) {
-chart.innerHTML = `
-<div
-style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px
-0;gap:8px;">
-<div style="font-size:28px;">📊</div>
-<div style="font-size:13px;color:var(--text-soft)">No sales this
-week yet. Log sales to see your chart.</div>
-</div>`;
-return;
+  const chart = document.getElementById('bar-chart');
+  if (!chart) return;
+  chart.innerHTML = '';
+  const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const buckets = Array(7).fill(null).map(() => ({ rev:0, profit:0 }));
+  weekSales.forEach(s => {
+    const idx = (new Date(s.created_at).getDay() + 6) % 7;
+    buckets[idx].rev    += s.selling_price || 0;
+    buckets[idx].profit += s.profit || 0;
+  });
+  const todayIdx = (new Date().getDay() + 6) % 7;
+  const maxRev   = Math.max(...buckets.map(b => b.rev), 1);
+  const hasData  = buckets.some(b => b.rev > 0);
+  if (!hasData) {
+    chart.innerHTML = `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 0;gap:8px;"><div style="font-size:28px;">📊</div><div style="font-size:13px;color:var(--text-soft)">No sales this week yet.</div></div>`;
+    return;
+  }
+  DAYS.forEach((day, i) => {
+    const { rev, profit } = buckets[i];
+    const revH  = rev > 0 ? Math.max(Math.round((rev / maxRev) * 90), 4) : 0;
+    const profH = profit > 0 ? Math.max(Math.round((profit / maxRev) * 90), 2) : 0;
+    const isToday = i === todayIdx;
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    col.style.position = 'relative';
+    if (rev === 0) {
+      col.innerHTML = `<div style="flex:1"></div><div style="height:2px;width:100%;background:var(--border)"></div><div style="font-size:10px;color:var(--text-soft);margin-top:6px">${day}</div>`;
+    } else {
+      col.innerHTML = `<div class="bar ${isToday ? 'today' : 'revenue'}" style="height:${revH}px;width:100%;position:relative" title="₦${rev.toLocaleString()}">
+        <div class="bar ${isToday ? 'today' : 'profit'}" style="height:${profH}px;width:100%;position:absolute;bottom:0;opacity:${isToday?1:0.6}"></div>
+        <span class="bar-label">${day}</span>
+      </div>`;
+    }
+    chart.appendChild(col);
+  });
 }
-DAYS.forEach((day, i) => {
-const { rev, profit } = buckets[i];
-const revH = rev > 0 ? Math.max(Math.round((rev / maxRev) * 90), 4) :
-0;
-const profH = profit > 0 ? Math.max(Math.round((profit / maxRev) *
-90), 2) : 0;
-const isToday = i === todayIdx;
-const col = document.createElement('div');
-col.className = 'bar-col';
-col.style.position= 'relative';
-if (rev === 0) {
-col.innerHTML = `
-<div style="flex:1"></div>
-<div
-style="height:2px;width:100%;background:var(--border)"></div>
-<div
-style="font-size:10px;color:var(--text-soft);margin-top:6px">${day}</div>`;
-} else {
-col.innerHTML = `
-<div class="bar ${isToday ? 'today' : 'revenue'}"
-style="height:${revH}px;width:100%;position:relative"
-title="₦${rev.toLocaleString()}">
-<div class="bar ${isToday ? 'today' : 'profit'}"
-style="height:${profH}px;width:100%;position:absolute;bottom:0;opacity:${isToday
-? 1 : 0.6}">
-</div>
-<span class="bar-label">${day}</span>
-</div>`;
-}
-chart.appendChild(col);
-});
-}
-// Wire up chart tab buttons
+
 document.querySelectorAll('.chart-tab').forEach(tab => {
-tab.addEventListener('click', () => {
-document.querySelectorAll('.chart-tab').forEach(t =>
-t.classList.remove('active'));
-tab.classList.add('active');
-renderChart(tab.dataset.period);
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    renderChart(tab.dataset.period);
+  });
 });
-});
-// ── AI MARKET ADVICE ─────────────────────────────────────────
-// Fetches 3-month sales and asks Claude for actionable advice.
+
 async function loadMarketAdvice() {
-const container = document.getElementById('restock-container');
-const badge = document.getElementById('restock-badge');
-if (!container) return;
-if (weekSales.length === 0) {
-if (badge) { badge.textContent = 'No data'; badge.className = 'badge
-badge-green'; }
-container.innerHTML = `
-<div class="empty-state">
-<div class="empty-state-icon">🧠</div>
-<h4>Nothing to analyse yet</h4>
-<p>Log some sales and Claude will start giving you market advice and
-restocking suggestions.</p>
-</div>`;
-return;
+  const container = document.getElementById('restock-container');
+  const badge     = document.getElementById('restock-badge');
+  if (!container) return;
+  if (weekSales.length === 0) {
+    if (badge) { badge.textContent = 'No data'; badge.className = 'badge badge-green'; }
+    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🧠</div><h4>Nothing to analyse yet</h4><p>Log some sales and Claude will give you market advice.</p></div>`;
+    return;
+  }
+  container.innerHTML = `<div class="ai-loading"><div class="pulse-dot"></div><div class="pulse-dot"></div><div class="pulse-dot"></div><span>Claude is reading your market data...</span></div>`;
+  if (badge) { badge.textContent = 'Analysing...'; badge.className = 'badge badge-gold'; }
+  try {
+    const threeMonthSales = await getThreeMonthSales(currentUser.id);
+    const response = await fetch(`${BACKEND}/api/market-advice`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ salesData: threeMonthSales, userProfile: { market_location: vendorProfile.market_location, product_categories: vendorProfile.product_categories, trading_years: vendorProfile.trading_years } })
+    });
+    const result = await response.json();
+    if (!result.success) throw new Error(result.error);
+    const adv = result.advice;
+    if (badge) { badge.textContent = adv.urgency === 'high' ? '⚠ Urgent' : '✓ Updated'; badge.className = adv.urgency === 'high' ? 'badge badge-red' : 'badge badge-green'; }
+    container.innerHTML = `<div style="padding:20px 22px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <span style="font-size:28px;">${adv.emoji || '📊'}</span>
+        <div><div style="font-size:14px;font-weight:600;color:var(--text-primary)">${adv.headline}</div></div>
+      </div>
+      <div style="font-size:13px;color:var(--text-mid);line-height:1.6;margin-bottom:12px;">${adv.advice}</div>
+      <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:10px;">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-soft);margin-bottom:4px;">Price Alert</div>
+        <div style="font-size:13px;color:var(--text-primary)">${adv.priceAlert}</div>
+      </div>
+      <div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:12px;">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--gold);margin-bottom:4px;">Strategy Tip</div>
+        <div style="font-size:13px;color:var(--text-primary)">${adv.strategyTip}</div>
+      </div>
+    </div>`;
+  } catch (err) {
+    if (badge) { badge.textContent = 'Unavailable'; badge.className = 'badge badge-gold'; }
+    container.innerHTML = `<div style="padding:20px 22px;font-size:13px;color:var(--text-soft);">AI market advice is temporarily unavailable. Is your backend server running?</div>`;
+  }
 }
-// Show loading state
-container.innerHTML = `
-<div class="ai-loading">
-<div class="pulse-dot"></div><div
-class="pulse-dot"></div><div class="pulse-dot"></div>
-<span>Claude is reading your market data...</span>
-</div>`;
-if (badge) { badge.textContent = 'Analysing...'; badge.className =
-'badge badge-gold'; }
-try {
-const threeMonthSales = await getThreeMonthSales(currentUser.id);
-const response = await fetch(`${BACKEND}/api/market-advice`, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({
-salesData: threeMonthSales,
-userProfile: {
-market_location: vendorProfile.market_location,
-product_categories: vendorProfile.product_categories,
-trading_years: vendorProfile.trading_years
-}
-})
-});
-const result = await response.json();
-if (!result.success) throw new Error(result.error);
-const adv = result.advice;
-const sentimentColor = adv.sentiment === 'positive' ?
-'var(--green-light)' :
-adv.sentiment === 'warning' ? 'var(--red)' : 'var(--gold)';
-if (badge) {
-badge.textContent = adv.urgency === 'high' ? '⚠ Urgent' : '✓
-Updated';
-badge.className = adv.urgency === 'high' ? 'badge badge-red' :
-'badge badge-green';
-}
-container.innerHTML = `
-<div style="padding:20px 22px;">
-<div
-style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-<span style="font-size:28px;">${adv.emoji || '📊'}</span>
-<div>
-<div
-style="font-size:14px;font-weight:600;color:var(--text-primary)">${adv.headline}</div>
-<div
-style="font-size:11px;color:${sentimentColor};margin-top:2px;font-weight:600">
-${adv.urgency === 'high' ? '⚠ Action needed' : adv.urgency ===
-'medium' ? '• Monitor closely' : '✓ Looking stable'}
-</div>
-</div>
-</div>
-<div
-style="font-size:13px;color:var(--text-mid);line-height:1.6;margin-bottom:12px;">${adv.advice}</div>
-<div style="background:var(--surface-2);border:1px solid
-var(--border);border-radius:8px;padding:12px;margin-bottom:10px;">
-<div
-style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-soft);margin-bottom:4px;">Price
-Alert</div>
-<div
-style="font-size:13px;color:var(--text-primary)">${adv.priceAlert}</div>
-</div>
-<div style="background:rgba(201,168,76,0.06);border:1px solid
-rgba(201,168,76,0.2);border-radius:8px;padding:12px;">
-<div
-style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--gold);margin-bottom:4px;">Strategy
-Tip</div>
-<div
-style="font-size:13px;color:var(--text-primary)">${adv.strategyTip}</div>
-</div>
-</div>`;
-} catch (err) {
-console.warn('Market advice error:', err.message);
-if (badge) { badge.textContent = 'Unavailable'; badge.className =
-'badge badge-gold'; }
-container.innerHTML = `
-<div style="padding:20px
-22px;font-size:13px;color:var(--text-soft);">
-AI market advice is temporarily unavailable. Is your backend server
-running?
-</div>`;
-}
-}
-// ── AJO STATUS ───────────────────────────────────────────────
+
 async function loadAjoStatus() {
-const container = document.getElementById('ajo-container');
-if (!container) return;
-// If BVN not verified, show verification prompt
-if (!vendorProfile.bvn_verified) {
-container.innerHTML = `
-<div class="empty-state" style="padding:30px 22px;">
-<div class="empty-state-icon">🔐</div>
-<h4>Verify your BVN first</h4>
-<p>BVN verification is required to join or create ajo savings groups.
-It protects every member.</p>
-<button class="btn-start"
-onclick="document.getElementById('open-bvn-modal').click()">
-Verify BVN Now
-</button>
-</div>`;
-return;
+  const container = document.getElementById('ajo-container');
+  if (!container) return;
+  if (!vendorProfile.bvn_verified) {
+    container.innerHTML = `<div class="empty-state" style="padding:30px 22px;"><div class="empty-state-icon">🔐</div><h4>Verify your BVN first</h4><p>BVN verification is required to join or create ajo savings groups.</p><button class="btn-start" onclick="document.getElementById('open-bvn-modal').click()">Verify BVN Now</button></div>`;
+    return;
+  }
+  const groups = await getAjoGroupsForUser(currentUser.id);
+  if (!groups.length) {
+    container.innerHTML = `<div class="empty-state" style="padding:30px 22px;"><div class="empty-state-icon">🔄</div><h4>Not in any ajo group yet</h4><p>Join or create a savings group with trusted vendors.</p><button class="btn-start" onclick="window.location.href='/pages/ajo.html'">Browse Ajo Groups</button></div>`;
+    return;
+  }
+  const g = groups[0];
+  const freq = g.frequency ? `₦${Number(g.contribution_amount).toLocaleString()}/${g.frequency}` : '';
+  const nextDate = new Date(); nextDate.setMonth(nextDate.getMonth() + 1);
+  const nextStr  = nextDate.toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+  container.innerHTML = `
+    <div class="ajo-group-name">${g.group_name}</div>
+    <div class="ajo-meta">Rotating savings · ${freq} · ${g.max_members} members</div>
+    <div class="ajo-progress-label"><span style="color:var(--text-soft);font-size:12px">Cycle progress</span><span class="amount">${g.current_members||1} of ${g.max_members} members</span></div>
+    <div class="progress-track"><div class="progress-fill" style="width:${Math.round(((g.current_members||1)/g.max_members)*100)}%"></div></div>
+    <div class="ajo-next-due">
+      <div><div class="due-label">Next contribution</div><div class="due-date">${nextStr} · ₦${Number(g.contribution_amount).toLocaleString()}</div></div>
+      <button class="btn-pay" onclick="window.location.href='/pages/ajo.html'">Manage</button>
+    </div>`;
 }
-const groups = await getAjoGroupsForUser(currentUser.id);
-// BVN verified but no groups
-if (!groups.length) {
-container.innerHTML = `
-<div class="empty-state" style="padding:30px 22px;">
-<div class="empty-state-icon">🔄</div>
-<h4>You're not in any ajo group yet</h4>
-<p>Join or create a savings group with trusted vendors. Your BVN is
-verified and you're ready.</p>
-<button class="btn-start"
-onclick="window.location.href='ajo.html'">
-Browse Ajo Groups
-</button>
-</div>`;
-return;
-}
-// Show first group
-const g = groups[0];
-const freq = g.frequency ?
-`₦${Number(g.contribution_amount).toLocaleString()}/${g.frequency}`
-: '';
-const nextDate = new Date();
-nextDate.setMonth(nextDate.getMonth() + 1);
-const nextStr = nextDate.toLocaleDateString('en-GB', {
-day:'numeric', month:'long', year:'numeric' });
-// Progress: assume 62% for now --- wires to payment data on ajo page
-container.innerHTML = `
-<div class="ajo-group-name">${g.group_name}</div>
-<div class="ajo-meta">Rotating savings · ${freq} ·
-${g.max_members} members</div>
-<div class="ajo-progress-label">
-<span style="color:var(--text-soft);font-size:12px">Cycle
-progress</span>
-<span class="amount">${g.current_members || 1} of
-${g.max_members} members</span>
-</div>
-<div class="progress-track">
-<div class="progress-fill"
-style="width:${Math.round(((g.current_members || 1) / g.max_members)
-* 100)}%"></div>
-</div>
-<div class="ajo-next-due">
-<div>
-<div class="due-label">Next contribution</div>
-<div class="due-date">${nextStr} ·
-₦${Number(g.contribution_amount).toLocaleString()}</div>
-</div>
-<button class="btn-pay"
-onclick="window.location.href='ajo.html'">Manage</button>
-</div>
-${groups.length > 1 ? `<div
-style="font-size:12px;color:var(--text-soft);margin-top:12px;text-align:center">+${groups.length -
-1} more group${groups.length > 2 ? 's' : ''} --- <a
-href="ajo.html" style="color:var(--gold)">View all</a></div>`
-: ''}`;
-}
-// ── COMMUNITY POSTS ──────────────────────────────────────────
+
 async function loadCommunityPosts() {
-const container = document.getElementById('community-feed');
-if (!container) return;
-const posts = await getCommunityPosts(3);
-if (!posts.length) {
-container.innerHTML = `
-<div class="empty-state" style="padding:30px 22px;">
-<div class="empty-state-icon">🤝</div>
-<h4>No posts yet</h4>
-<p>Be the first to share a trade tip, bulk buy opportunity, or price
-alert with the community.</p>
-<button class="btn-start"
-onclick="window.location.href='community.html'">Post to
-Feed</button>
-</div>`;
-return;
+  const container = document.getElementById('community-feed');
+  if (!container) return;
+  const posts = await getCommunityPosts(3);
+  if (!posts.length) return;
+  const tagColors = {
+    'Bulk Buy': { bg:'rgba(26,102,55,0.08)', color:'var(--green-light)' },
+    'Price Coordination': { bg:'rgba(224,92,75,0.1)', color:'var(--red)' },
+    'Supplier Recommendation': { bg:'rgba(59,125,216,0.1)', color:'var(--blue)' },
+    'Trade Alert': { bg:'rgba(201,168,76,0.12)', color:'var(--gold)' }
+  };
+  const avatarColors = ['#c9a84c','#3b7dd8','#1a6637','#e05c4b','#5a4a8a'];
+  container.innerHTML = posts.map(p => {
+    const tag    = tagColors[p.post_type] || { bg:'rgba(0,0,0,0.05)', color:'#666' };
+    const name   = p.users?.full_name || 'Vendor';
+    const market = p.users?.market_location || '';
+    const bg     = avatarColors[name.charCodeAt(0) % avatarColors.length];
+    const time   = timeSince(new Date(p.created_at));
+    return `<div class="feed-item">
+      <div class="feed-avatar" style="background:${bg}">${name[0].toUpperCase()}</div>
+      <div class="feed-content">
+        <div class="feed-meta"><span class="feed-name">${name}</span>${market?`<span class="feed-market">· ${market}</span>`:''}<span class="feed-time">${time}</span></div>
+        <div class="feed-text">${p.title}${p.description?' — '+p.description:''}</div>
+        <span class="feed-tag" style="background:${tag.bg};color:${tag.color}">${p.post_type}</span>
+      </div>
+    </div>`;
+  }).join('') + `<div style="text-align:center;padding:12px;"><a href="/pages/community.html" style="font-size:12px;color:var(--gold);text-decoration:none;font-weight:600;">See all posts →</a></div>`;
 }
-const tagColors = {
-'Bulk Buy': { bg:'rgba(26,102,55,0.08)',
-color:'var(--green-light)' },
-'Price Coordination': { bg:'rgba(224,92,75,0.1)',
-color:'var(--red)' },
-'Supplier Recommendation':{ bg:'rgba(59,125,216,0.1)',
-color:'var(--blue)' },
-'Trade Alert': { bg:'rgba(201,168,76,0.12)', color:'var(--gold)'
-}
-};
-container.innerHTML = posts.map(p => {
-const tag = tagColors[p.post_type] || { bg:'rgba(0,0,0,0.05)',
-color:'#666' };
-const name = p.users?.full_name || 'Vendor';
-const market = p.users?.market_location || '';
-const initial= name[0].toUpperCase();
-const time = timeSince(new Date(p.created_at));
-const avatarColors =
-['#c9a84c','#3b7dd8','#1a6637','#e05c4b','#5a4a8a'];
-const avatarBg = avatarColors[name.charCodeAt(0) %
-avatarColors.length];
-return `
-<div class="feed-item">
-<div class="feed-avatar"
-style="background:${avatarBg}">${initial}</div>
-<div class="feed-content">
-<div class="feed-meta">
-<span class="feed-name">${name}</span>
-${market ? `<span class="feed-market">· ${market}</span>` :
-''}
-<span class="feed-time">${time}</span>
-</div>
-<div class="feed-text">${p.title}${p.description ? ' --- ' +
-p.description : ''}</div>
-<span class="feed-tag"
-style="background:${tag.bg};color:${tag.color}">${p.post_type}</span>
-</div>
-</div>`;
-}).join('') + `
-<div style="text-align:center;padding:12px;">
-<a href="community.html"
-style="font-size:12px;color:var(--gold);text-decoration:none;font-weight:600;">
-See all posts →
-</a>
-</div>`;
-}
+
 function timeSince(date) {
-const seconds = Math.floor((new Date() - date) / 1000);
-if (seconds < 60) return 'just now';
-if (seconds < 3600) return Math.floor(seconds / 60) + 'm ago';
-if (seconds < 86400) return Math.floor(seconds / 3600) + 'h ago';
-return Math.floor(seconds / 86400) + 'd ago';
+  const s = Math.floor((new Date() - date) / 1000);
+  if (s < 60) return 'just now';
+  if (s < 3600) return Math.floor(s/60) + 'm ago';
+  if (s < 86400) return Math.floor(s/3600) + 'h ago';
+  return Math.floor(s/86400) + 'd ago';
 }
-// ── INVENTORY GATE ────────────────────────────────────────────
+
+// ── Inventory gate ──
 const invGateOverlay = document.getElementById('inv-gate-overlay');
-function showInventoryGate() {
-invGateOverlay.classList.add('open');
-}
-document.getElementById('inv-gate-go')?.addEventListener('click', ()
-=> {
-window.location.href =
-'/frontend/pages/sales_and_inventory.html#inventory';
-});
-document.getElementById('inv-gate-dismiss')?.addEventListener('click',
-() => {
-invGateOverlay.classList.remove('open');
-});
-invGateOverlay?.addEventListener('click', e => {
-if (e.target === invGateOverlay)
-invGateOverlay.classList.remove('open');
-});
-// ── LOG SALE MODAL ────────────────────────────────────────────
+document.getElementById('inv-gate-go')?.addEventListener('click', () => { window.location.href = PAGES.inventory + '#inventory'; });
+document.getElementById('inv-gate-dismiss')?.addEventListener('click', () => invGateOverlay.classList.remove('open'));
+invGateOverlay?.addEventListener('click', e => { if (e.target === invGateOverlay) invGateOverlay.classList.remove('open'); });
+
+// ── Log sale modal ──
 const overlay = document.getElementById('modal-overlay');
-document.getElementById('open-modal').addEventListener('click',
-async () => {
-const hasInv = await hasInventory(currentUser?.id);
-if (!hasInv) { showInventoryGate(); return; }
-overlay.classList.add('open');
+document.getElementById('open-modal').addEventListener('click', async () => {
+  const hasInv = await hasInventory(currentUser?.id);
+  if (!hasInv) { invGateOverlay.classList.add('open'); return; }
+  overlay.classList.add('open');
 });
-document.getElementById('close-modal').addEventListener('click', ()
-=> overlay.classList.remove('open'));
-overlay.addEventListener('click', e => { if (e.target === overlay)
-overlay.classList.remove('open'); });
+document.getElementById('close-modal').addEventListener('click', () => overlay.classList.remove('open'));
+overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+
 window.calcProfit = function() {
-const sell = parseFloat(document.getElementById('sell-price').value)
-|| 0;
-const cost = parseFloat(document.getElementById('cost-price').value)
-|| 0;
-const qty = parseFloat(document.getElementById('quantity').value) ||
-1;
-const unit = document.getElementById('unit').value;
-const profit = (sell - cost) * qty;
-const margin = sell > 0 ? Math.round((profit / (sell * qty)) * 100) :
-0;
-if (sell > 0 && cost > 0) {
-document.getElementById('profit-value').textContent =
-`₦${profit.toLocaleString()}`;
-document.getElementById('profit-value').style.color = profit >= 0 ?
-'var(--green-light)' : 'var(--red)';
-document.getElementById('profit-breakdown').textContent = `${qty}
-${unit} · ${margin}% margin`;
-} else {
-document.getElementById('profit-value').textContent = '₦---';
-document.getElementById('profit-breakdown').textContent = 'Fill in
-prices above';
-}
+  const sell   = parseFloat(document.getElementById('sell-price').value) || 0;
+  const cost   = parseFloat(document.getElementById('cost-price').value) || 0;
+  const qty    = parseFloat(document.getElementById('quantity').value)   || 1;
+  const unit   = document.getElementById('unit').value;
+  const profit = (sell - cost) * qty;
+  const margin = sell > 0 ? Math.round((profit / (sell * qty)) * 100) : 0;
+  if (sell > 0 && cost > 0) {
+    document.getElementById('profit-value').textContent = `₦${profit.toLocaleString()}`;
+    document.getElementById('profit-value').style.color = profit >= 0 ? 'var(--green-light)' : 'var(--red)';
+    document.getElementById('profit-breakdown').textContent = `${qty} ${unit} · ${margin}% margin`;
+  } else {
+    document.getElementById('profit-value').textContent = '₦---';
+    document.getElementById('profit-breakdown').textContent = 'Fill in prices above';
+  }
 };
-document.getElementById('confirm-sale').addEventListener('click',
-async () => {
-const itemName = document.getElementById('item-name').value.trim();
-if (!itemName) { document.getElementById('item-name').focus(); return;
-}
-const btn = document.getElementById('confirm-sale');
-btn.textContent = 'Saving...'; btn.disabled = true;
-try {
-await logSale(currentUser.id, {
-itemName,
-quantity: parseFloat(document.getElementById('quantity').value) ||
-1,
-unit: document.getElementById('unit').value,
-costPrice: parseFloat(document.getElementById('cost-price').value)
-|| 0,
-sellPrice: parseFloat(document.getElementById('sell-price').value)
-|| 0
+
+document.getElementById('confirm-sale').addEventListener('click', async () => {
+  const itemName = document.getElementById('item-name').value.trim();
+  if (!itemName) { document.getElementById('item-name').focus(); return; }
+  const btn = document.getElementById('confirm-sale');
+  btn.textContent = 'Saving...'; btn.disabled = true;
+  try {
+    await logSale(currentUser.id, {
+      itemName,
+      quantity:  parseFloat(document.getElementById('quantity').value) || 1,
+      unit:      document.getElementById('unit').value,
+      costPrice: parseFloat(document.getElementById('cost-price').value) || 0,
+      sellPrice: parseFloat(document.getElementById('sell-price').value) || 0
+    });
+    try { await reduceInventory(currentUser.id, itemName, parseFloat(document.getElementById('quantity').value) || 1); } catch (_) {}
+    overlay.classList.remove('open');
+    ['item-name','sell-price','cost-price'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    document.getElementById('quantity').value = '1';
+    await loadSalesData(); renderStats(); renderSalesLog(); renderChart('week');
+  } catch (err) {
+    console.error('confirm-sale error:', err);
+    alert('Could not save sale: ' + err.message);
+  } finally { btn.textContent = 'Save Sale ✓'; btn.disabled = false; }
 });
-// Try to reduce inventory if the item is tracked
-try {
-await reduceInventory(
-currentUser.id, itemName,
-parseFloat(document.getElementById('quantity').value) || 1
-);
-} catch (_) { /* inventory not tracked --- that's fine */ }
-overlay.classList.remove('open');
-['item-name','sell-price','cost-price'].forEach(id => {
-const el = document.getElementById(id);
-if (el) el.value = '';
-});
-const qtyEl = document.getElementById('quantity');
-if (qtyEl) qtyEl.value = '1';
-// Refresh all dependent data
-await loadSalesData();
-renderStats();
-renderSalesLog();
-renderChart('week');
-} catch (err) {
-console.error('confirm-sale error:', err);
-alert('Could not save sale: ' + err.message);
-} finally {
-btn.textContent = 'Save Sale ✓'; btn.disabled = false;
-}
-});
-// ── AI CHAT SALE LOGGING ──────────────────────────────────────
-// The AI chat box below the log-sale modal lets vendors type
-// naturally and Claude extracts the sale details automatically.
-// This chat box must have these IDs in your HTML:
-// <div id="chatMessages"></div>
-// <input id="aiInput"/>
-// A send button calling window.aiSend()
-function addChatMsg(role, text) {
-const box = document.getElementById('chatMessages');
-if (!box) return;
-const div = document.createElement('div');
-div.className = `chat-message ${role}`;
-div.textContent = text;
-box.appendChild(div);
-box.scrollTop = box.scrollHeight;
-}
-window.aiSend = async function() {
-const input = document.getElementById('aiInput');
-const text = (input?.value || '').trim();
-if (!text) return;
-addChatMsg('user', text);
-if (input) input.value = '';
-addChatMsg('ai', '...');
-try {
-const res = await fetch(`${BACKEND}/api/parse-sale`, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({
-input: text,
-productCategories: vendorProfile.product_categories,
-marketLocation: vendorProfile.market_location
-})
-});
-const result = await res.json();
-if (!result.success) throw new Error(result.error);
-const p = result.parsed;
-// Remove the loading "..." message
-const msgs = document.getElementById('chatMessages');
-if (msgs?.lastChild) msgs.removeChild(msgs.lastChild);
-if (p.confidence === 'low') {
-addChatMsg('ai', `I'm not sure about that. Try: "sold 5 bags
-tomatoes for 12500" or "added 20 crates pepper to stock"`);
-return;
-}
-if (p.type === 'sale') {
-// Check inventory gate before logging a sale via AI
-const hasInv = await hasInventory(currentUser?.id);
-if (!hasInv) {
-const msgs2 = document.getElementById('chatMessages');
-if (msgs2?.lastChild?.textContent === '...')
-msgs2.removeChild(msgs2.lastChild);
-addChatMsg('ai', '⚠️ Please set up your inventory first before
-logging sales. Go to Sales & Inventory → Inventory Management.');
-return;
-}
-// Save the sale to the database
-await logSale(currentUser.id, {
-itemName: p.item_name,
-quantity: p.quantity,
-unit: p.unit,
-costPrice: p.cost_price / (p.quantity || 1),
-sellPrice: p.selling_price / (p.quantity || 1)
-});
-// Try to reduce inventory
-try { await reduceInventory(currentUser.id, p.item_name, p.quantity); }
-catch (_) {}
-addChatMsg('ai', `✓ ${p.summary || `Logged ${p.quantity}
-${p.unit} of ${p.item_name} for
-₦${p.selling_price.toLocaleString()}`}`);
-// Refresh stats
-await loadSalesData();
-renderStats();
-renderSalesLog();
-renderChart('week');
-} else {
-// Inventory addition
-const { upsertInventoryItem: upsert } = await
-import('../js/supabase.js');
-// Get current qty and add to it
-const { supabase: sb } = await import('../js/supabase.js');
-const { data: existing } = await
-sb.from('inventory').select('quantity')
-.eq('user_id', currentUser.id).eq('item_name',
-p.item_name).single();
-const currentQty = existing?.quantity || 0;
-await upsert(currentUser.id, p.item_name, currentQty + p.quantity,
-p.unit);
-addChatMsg('ai', `✓ ${p.summary || `Added ${p.quantity}
-${p.unit} of ${p.item_name} to inventory`}`);
-}
-} catch (err) {
-const msgs = document.getElementById('chatMessages');
-if (msgs?.lastChild?.textContent === '...')
-msgs.removeChild(msgs.lastChild);
-console.error('AI chat error:', err);
-addChatMsg('ai', 'Sorry, could not process that. Is the backend
-server running?');
-}
-};
-// Allow Enter key in AI input
-document.getElementById('aiInput')?.addEventListener('keypress', e
-=> {
-if (e.key === 'Enter') window.aiSend();
-});
-// ── BVN MODAL ─────────────────────────────────────────────────
+
+// ── BVN modal ──
 const bvnOverlay = document.getElementById('bvn-overlay');
-document.getElementById('open-bvn-modal')?.addEventListener('click',
-() => {
-if (bvnOverlay) { bvnOverlay.classList.add('open'); showBvnStep(1); }
-});
-document.getElementById('close-bvn')?.addEventListener('click', ()
-=> bvnOverlay?.classList.remove('open'));
-bvnOverlay?.addEventListener('click', e => { if (e.target ===
-bvnOverlay) bvnOverlay.classList.remove('open'); });
+document.getElementById('open-bvn-modal')?.addEventListener('click', () => { bvnOverlay.classList.add('open'); showBvnStep(1); });
+document.getElementById('close-bvn')?.addEventListener('click', () => bvnOverlay.classList.remove('open'));
+bvnOverlay?.addEventListener('click', e => { if (e.target === bvnOverlay) bvnOverlay.classList.remove('open'); });
+
 function showBvnStep(n) {
-[1,2,3].forEach(i => {
-const s = document.getElementById(`bvn-s${i}`);
-const step = document.getElementById(`bvn-step-${i}`);
-if (s) s.style.display = i === n ? '' : 'none';
-if (step) step.className = i < n ? 'bvn-step done' : i === n ?
-'bvn-step active' : 'bvn-step';
+  [1,2,3].forEach(i => {
+    const s    = document.getElementById(`bvn-s${i}`);
+    const step = document.getElementById(`bvn-step-${i}`);
+    if (s)    s.style.display = i === n ? '' : 'none';
+    if (step) step.className  = i < n ? 'bvn-step done' : i === n ? 'bvn-step active' : 'bvn-step';
+  });
+}
+
+document.getElementById('bvn-submit')?.addEventListener('click', async () => {
+  const bvn = document.getElementById('bvn-input')?.value.trim();
+  if (!bvn || bvn.length !== 11) { document.getElementById('bvn-input')?.focus(); return; }
+  showBvnStep(2);
+  try {
+    const res    = await fetch(`${BACKEND}/api/verify-bvn`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ bvn }) });
+    const result = await res.json();
+    if (!result.success) throw new Error(result.error);
+    const nameEl = document.getElementById('bvn-confirmed-name');
+    const metaEl = document.getElementById('bvn-confirmed-meta');
+    if (nameEl) nameEl.textContent = result.name;
+    if (metaEl) metaEl.textContent = `DOB: ${result.dob} · Phone: ${result.phoneHint}`;
+    showBvnStep(3);
+  } catch (err) { showBvnStep(1); alert('Could not verify BVN: ' + err.message); }
 });
-}
-document.getElementById('bvn-submit')?.addEventListener('click',
-async () => {
-const bvn = document.getElementById('bvn-input')?.value.trim();
-if (!bvn || bvn.length !== 11) {
-document.getElementById('bvn-input')?.focus(); return;
-}
-showBvnStep(2);
-try {
-const res = await fetch(`${BACKEND}/api/verify-bvn`, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ bvn })
+
+document.getElementById('bvn-not-me')?.addEventListener('click', () => showBvnStep(1));
+document.getElementById('bvn-confirm')?.addEventListener('click', async () => {
+  await supabase.from('users').update({ bvn_verified: true }).eq('id', currentUser.id);
+  vendorProfile.bvn_verified = true;
+  bvnOverlay.classList.remove('open');
+  showBvnBanner();
+  loadAjoStatus();
 });
-const result = await res.json();
-if (!result.success) throw new Error(result.error);
-const nameEl = document.getElementById('bvn-confirmed-name');
-const metaEl = document.getElementById('bvn-confirmed-meta');
-if (nameEl) nameEl.textContent = result.name;
-if (metaEl) metaEl.textContent = `DOB: ${result.dob} · Phone:
-${result.phoneHint}`;
-if (result.sandbox) {
-const infoEl = document.getElementById('bvn-verified-info');
-if (infoEl) {
-const note = document.createElement('p');
-note.style.cssText =
-'font-size:11px;color:var(--text-soft);margin-top:6px;';
-note.textContent = '(Sandbox mode --- add Interswitch keys to .env for
-live verification)';
-infoEl.appendChild(note);
-}
-}
-showBvnStep(3);
-} catch (err) {
-console.error('BVN error:', err);
-showBvnStep(1);
-alert('Could not verify BVN: ' + err.message);
-}
-});
-document.getElementById('bvn-not-me')?.addEventListener('click', ()
-=> showBvnStep(1));
-document.getElementById('bvn-confirm')?.addEventListener('click',
-async () => {
-try {
-await supabase.from('users').update({ bvn_verified: true }).eq('id',
-currentUser.id);
-vendorProfile.bvn_verified = true;
-bvnOverlay?.classList.remove('open');
-showBvnBanner();
-// Refresh ajo status now that BVN is verified
-loadAjoStatus();
-} catch (err) {
-alert('Could not update verification status. Please try again.');
-}
-});
-// ── SIGN OUT ──────────────────────────────────────────────────
-document.getElementById('sign-out-btn')?.addEventListener('click',
-() => signOut());
-// ── HAMBURGER / MOBILE SIDEBAR ────────────────────────────────
-const sidebar = document.getElementById('main-sidebar');
-const sidebarBack = document.getElementById('sidebar-backdrop');
-function openSidebar() { sidebar.classList.add('open');
-sidebarBack.classList.add('show'); }
-function closeSidebar() { sidebar.classList.remove('open');
-sidebarBack.classList.remove('show'); }
-document.getElementById('hamburger-btn')?.addEventListener('click',
-openSidebar);
-sidebarBack?.addEventListener('click', closeSidebar);
-// ── QUICK TOUR (Dashboard page) ───────────────────────────────
-const DASHBOARD_TOUR = [
-{
-icon: '👋', title: 'Welcome to SUWE!',
-text: 'Your all-in-one market management dashboard. This quick tour
-will walk you through every section. Use the arrow keys or tap Next.',
-target: null
-},
-{
-icon: '⊞', title: 'Your Sidebar --- Navigation Hub',
-text: 'The sidebar is your control centre. Switch between Dashboard,
-Sales & Inventory, Ajo savings groups, and the Trader Community from
-here.',
-target: '.sidebar'
-},
-{
-icon: '📊', title: 'Live Business Metrics',
-text: "These 4 cards update in real time: Today's Revenue (total cash
-in), Today's Profit (what you actually kept), Week Revenue (rolling 7
-days), and Low Stock alerts so you never run out.",
-target: '.stats-row'
-},
-{
-icon: '💰', title: 'Log a Sale --- Your Most Important Button',
-text: 'Tap "Log a Sale" to record any transaction. Enter the item,
-selling price, cost price and quantity --- SUWE calculates your exact
-profit margin automatically.',
-target: '#open-modal'
-},
-{
-icon: '📈', title: 'Sales Performance Chart',
-text: 'This chart shows your daily revenue and profit for the week.
-Switch between This Week, This Month, and 3 Months to see your sales
-trend over time.',
-target: '.bar-chart'
-},
-{
-icon: '🧠', title: 'Personalised AI Suggestions',
-text: 'Claude AI analyses your actual sales data and gives you specific
-market intelligence --- price alerts, restocking advice, and strategy
-tips tailored to your products and market.',
-target: '#restock-container'
-},
-{
-icon: '🔄', title: 'Ajo Savings Group',
-text: 'See your rotating savings group status at a glance. Once your
-BVN is verified, you can join or create groups where all payments are
-handled automatically by Interswitch.',
-target: '#ajo-container'
-},
-{
-icon: '⚠️', title: 'Important: Set Up Inventory First!',
-text: 'Before logging any sales, you MUST add your products to
-inventory. This allows SUWE to track stock levels and calculate accurate
-profits. Tap Finish to go set it up now!',
-target:
-'.nav-item[data-route="/frontend/pages/sales_and_inventory.html"]'
-}
-];
-// Wire up the tour using the shared tour engine
-initTour(DASHBOARD_TOUR, {
-autoShow: { profileCreatedAt: vendorProfile?.created_at },
-onFinish: async () => {
-// After completing the tour, if inventory is empty, redirect to set it
-up
-const hasInv = currentUser ? await hasInventory(currentUser.id) : false;
-if (!hasInv) {
-window.location.href =
-'/frontend/pages/sales_and_inventory.html#inventory';
-}
-}
-});
-const BACKEND_URL = 'https://team-bbs-sandy.vercel.app';
-// ── NOTIFICATION SYSTEM FOR DASHBOARD ────────────────────────
-// Update the notification dot badge
-async function updateDashNotifBadge(userId) {
-const { data, error } = await supabase.from('notifications')
-.select('*', { count: 'exact', head: true })
-.eq('user_id', userId).eq('read', false);
-const count = error ? 0 : (data?.length || 0);
-const dot = document.getElementById('notif-dot');
-if (dot) dot.style.display = count > 0 ? 'block' : 'none';
-}
-// Open notifications modal
-async function openDashNotifications(userId) {
-const overlay = document.getElementById('dash-notif-overlay');
-if (!overlay) return;
-overlay.classList.add('open');
-// Mark all read
-await supabase.from('notifications').update({ read: true })
-.eq('user_id', userId).eq('read', false);
-const dot = document.getElementById('notif-dot');
-if (dot) dot.style.display = 'none';
-// Fetch notifications + pending invitations
-const { data: notifs } = await
-supabase.from('notifications').select('*')
-.eq('user_id', userId).order('created_at', { ascending: false
-}).limit(30);
-let invitations = [];
-try {
-const invRes = await
-fetch(`${BACKEND_URL}/api/my-invitations/${userId}`);
-const invData = await invRes.json();
-invitations = invData.invitations || [];
-} catch {}
-const list = document.getElementById('dash-notif-list');
-if (!list) return;
-const icons = {
-ajo_invitation: '📨', ajo_accepted: '🎉', new_group: '🔄',
-payment_confirmed: '✅', payment_due: '⏰', payout_sent: '💰',
-member_joined: '👥', new_post: '🤝', general: '🔔'
-};
-function timeSince(date) {
-const s = Math.floor((new Date() - date) / 1000);
-if (s < 60) return 'just now';
-if (s < 3600) return Math.floor(s/60) + 'm ago';
-if (s < 86400) return Math.floor(s/3600) + 'h ago';
-return Math.floor(s/86400) + 'd ago';
-}
-const inviteHtml = invitations.map(inv => `
-<div style="display:flex;gap:12px;padding:14px 22px;border-bottom:1px
-solid var(--surface-3);background:rgba(201,168,76,0.04);border-left:3px
-solid var(--gold);">
-<div
-style="width:38px;height:38px;border-radius:50%;background:var(--surface-3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📨</div>
-<div style="flex:1;">
-<div
-style="font-size:13px;font-weight:600;color:var(--text-primary);">Ajo
-Group Invitation</div>
-<div
-style="font-size:12px;color:var(--text-soft);margin-top:2px;line-height:1.5;">
-${inv.sender?.full_name || 'Someone'} (BCS:
-${inv.sender?.bcs_score||0}) invited you to join
-"<strong>${inv.ajo_groups?.group_name}</strong>".<br>
-₦${Number(inv.ajo_groups?.contribution_amount||0).toLocaleString()}/month
-·
-${inv.ajo_groups?.current_members||0}/${inv.ajo_groups?.max_members||'?'}
-members
-</div>
-<div style="display:flex;gap:8px;margin-top:8px;">
-<button
-onclick="acceptAjoInvite('${inv.id}','${inv.group_id}')"
-style="padding:6px
-14px;background:var(--green-deep);color:var(--gold);border:none;border-radius:20px;font-family:'DM
-Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;">Accept
-✓</button>
-<button onclick="declineAjoInvite('${inv.id}')"
-style="padding:6px 14px;background:none;border:1px solid
-var(--border);border-radius:20px;font-family:'DM
-Sans',sans-serif;font-size:12px;cursor:pointer;color:var(--text-mid);">Decline</button>
-</div>
-<div
-style="font-size:11px;color:var(--text-soft);margin-top:4px;">${timeSince(new
-Date(inv.created_at))}</div>
-</div>
-</div>`).join('');
-const notifHtml = (notifs || []).map(n => `
-<div style="display:flex;gap:12px;padding:14px 22px;border-bottom:1px
-solid
-var(--surface-3);${!n.read?'background:rgba(201,168,76,0.03);border-left:3px
-solid var(--gold);':''}">
-<div
-style="width:38px;height:38px;border-radius:50%;background:var(--surface-3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">${icons[n.type]||'🔔'}</div>
-<div style="flex:1;">
-<div
-style="font-size:13px;font-weight:600;color:var(--text-primary);">${n.title}</div>
-<div
-style="font-size:12px;color:var(--text-soft);margin-top:2px;line-height:1.5;">${n.message}</div>
-<div
-style="font-size:11px;color:var(--text-soft);margin-top:4px;">${timeSince(new
-Date(n.created_at))}</div>
-</div>
-</div>`).join('');
-if (!inviteHtml && !notifHtml) {
-list.innerHTML = `<div style="text-align:center;padding:40px
-24px;display:flex;flex-direction:column;align-items:center;gap:12px;">
-<div style="font-size:36px;">🔔</div>
-<div style="font-size:15px;font-weight:600;">All caught up!</div>
-<div style="font-size:13px;color:var(--text-soft);">No new
-notifications.</div>
-</div>`;
-return;
-}
-list.innerHTML = inviteHtml + notifHtml;
-}
-// These must be global so onclick="" attributes work
-window.acceptAjoInvite = async function(invId, groupId) {
-const user = await supabase.auth.getUser();
-const uid = user.data?.user?.id;
-if (!uid) return;
-try {
-const res = await fetch(`${BACKEND_URL}/api/accept-invitation`, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ userId: uid, groupId, invitationId: invId })
-});
-const data = await res.json();
-if (!data.success) throw new Error(data.error);
-document.getElementById('dash-notif-overlay').classList.remove('open');
-alert('✓ You have joined the group! Go to My Ajo to see it.');
-} catch (err) {
-alert('Could not accept: ' + err.message);
-}
-};
-window.declineAjoInvite = async function(invId) {
-await supabase.from('ajo_invitations').update({ status: 'declined'
-}).eq('id', invId);
-document.querySelector(`[onclick*="${invId}"]`)?.closest('div[style]')?.remove();
-};
-// Wire up after boot runs
-document.addEventListener('DOMContentLoaded', () => {
-// Notif button
-document.getElementById('notif-btn')?.addEventListener('click',
-async () => {
-const user = await supabase.auth.getUser();
-const uid = user.data?.user?.id;
-if (uid) openDashNotifications(uid);
-});
-// Close button
-document.getElementById('close-dash-notif')?.addEventListener('click',
-() => {
-document.getElementById('dash-notif-overlay')?.classList.remove('open');
-});
-// Click outside to close
-document.getElementById('dash-notif-overlay')?.addEventListener('click',
-e => {
-if (e.target === e.currentTarget)
-e.currentTarget.classList.remove('open');
-});
-});
-// ── GO ────────────────────────────────────────────────────────
+
+// ── Sign out ──
+document.getElementById('sign-out-btn')?.addEventListener('click', () => signOut());
+
+// ── Mobile sidebar ──
+const sidebar    = document.getElementById('main-sidebar');
+const sidebarBack= document.getElementById('sidebar-backdrop');
+document.getElementById('hamburger-btn')?.addEventListener('click', () => { sidebar.classList.add('open'); sidebarBack.classList.add('show'); });
+sidebarBack?.addEventListener('click', () => { sidebar.classList.remove('open'); sidebarBack.classList.remove('show'); });
+
 boot();
-updateDashNotifBadge(currentUser.id);
 </script>
 </body>
 </html>
