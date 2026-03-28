@@ -749,11 +749,13 @@ app.post('/api/send-welcome', (req, res) => {
 });
 
 // ════════════════════════════════════════════════════════════
-app.listen(PORT, () => {
-  console.log(`SUWE backend v4 on http://localhost:${PORT}`);
-  console.log(`ISW keys: ${iswKeysConfigured() ? '✅ configured' : '⚠️  missing → sandbox mode'}`);
-  console.log(`QTB merchant: ${qtbConfigured() ? '✅ configured' : '⚠️  missing → sandbox payments'}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`SUWE backend v4 on http://localhost:${PORT}`);
+    console.log(`ISW keys: ${iswKeysConfigured() ? '✅ configured' : '⚠️  missing → sandbox mode'}`);
+    console.log(`QTB merchant: ${qtbConfigured() ? '✅ configured' : '⚠️  missing → sandbox payments'}`);
+  });
+}
 
 
 
@@ -1106,3 +1108,5 @@ Answer in 2-4 sentences. Be direct, friendly, and practical. Use ₦ for Naira.`
 
 // ════════════════════════════════════════════════════════════
 app.get('/', (req, res) => res.json({ message: 'SUWE backend v4', version: '4.0' }));
+
+module.exports = app;
