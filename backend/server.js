@@ -5,31 +5,10 @@ const axios     = require('axios');
 const Anthropic = require('@anthropic-ai/sdk');
 const { createClient } = require('@supabase/supabase-js');
 
-
-
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin) return callback(null, true);
-    if (
-      origin.includes('vercel.app') ||
-      origin.includes('localhost') ||
-      origin.includes('127.0.0.1')
-    ) {
-      return callback(null, true);
-    }
-    callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
-  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization','x-suwe-secret']
-}));
-
-app.options('*', cors());
-
-//app.use(cors({ origin: '*' }));
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -184,7 +163,6 @@ function qtbConfigured() {
 }
 
 // ════════════════════════════════════════════════════════════
-app.get('/', (req, res) => res.json({ message: 'SUWE backend v4', version: '4.0' }));
 
 // ════════════════════════════════════════════════════════════
 //  GROUP MEMBERS ENDPOINT
@@ -749,13 +727,10 @@ app.post('/api/send-welcome', (req, res) => {
 });
 
 // ════════════════════════════════════════════════════════════
-if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`SUWE backend v4 on http://localhost:${PORT}`);
-    console.log(`ISW keys: ${iswKeysConfigured() ? '✅ configured' : '⚠️  missing → sandbox mode'}`);
-    console.log(`QTB merchant: ${qtbConfigured() ? '✅ configured' : '⚠️  missing → sandbox payments'}`);
-  });
-}
+
+// ════════════════════════════════════════════════════════════
+app.get('/', (req, res) => res.json({ message: 'SUWE backend v4', version: '4.0' }));
+
 
 
 
@@ -1107,6 +1082,17 @@ Answer in 2-4 sentences. Be direct, friendly, and practical. Use ₦ for Naira.`
 
 
 // ════════════════════════════════════════════════════════════
-app.get('/', (req, res) => res.json({ message: 'SUWE backend v4', version: '4.0' }));
+
+
+// ════════════════════════════════════════════════════════════
+//  Start server only when run directly (not on Vercel)
+// ════════════════════════════════════════════════════════════
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`SUWE backend v4 on http://localhost:${PORT}`);
+    console.log(`ISW keys: ${iswKeysConfigured() ? '✅ configured' : '⚠️  missing → sandbox mode'}`);
+    console.log(`QTB merchant: ${qtbConfigured() ? '✅ configured' : '⚠️  missing → sandbox payments'}`);
+  });
+}
 
 module.exports = app;
