@@ -8,15 +8,12 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ── AUTH PROVIDERS ────────────────────────────────────────────
-// Teammate added this helper — kept, but redirectTo fixed to onboarding:
-// New Google users get their profile set up first.
-// Existing users: onboarding.html detects their profile and skips straight to dashboard.
 export async function signInWithGoogle() {
   try {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + '/frontend/pages/onboarding.html'
+        redirectTo: window.location.origin + '/pages/onboarding.html'  // FIXED
       }
     });
     if (error) return { success: false, error: error.message };
@@ -50,7 +47,7 @@ export function isProfileComplete(profile) {
 
 export async function signOut() {
   await supabase.auth.signOut();
-  window.location.href = '/frontend/index.html';
+  window.location.href = '/index.html';  // FIXED
 }
 
 // ── SALES ─────────────────────────────────────────────────────
@@ -164,11 +161,6 @@ export async function getUserAjoGroupCount(userId) {
   return (data || []).length;
 }
 
-/**
- * Fetch all members of a group with profile data.
- * Uses the backend (service role) so RLS does not block cross-user reads.
- * Falls back gracefully if backend is unreachable.
- */
 export async function getGroupMembers(groupId, backendUrl = 'https://team-bbs-sandy.vercel.app') {
   try {
     const { data: { session } } = await supabase.auth.getSession();
@@ -182,7 +174,6 @@ export async function getGroupMembers(groupId, backendUrl = 'https://team-bbs-sa
   } catch (err) {
     console.warn('getGroupMembers backend failed:', err.message);
   }
-  // Fallback: own row only
   const { data, error } = await supabase.from('ajo_members').select('*')
     .eq('group_id', groupId).order('payout_position', { ascending: true });
   if (error) return [];
