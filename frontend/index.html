@@ -1247,7 +1247,7 @@
         padding: 24px 20px;
       }
     }
-      /* ── MOBILE MODAL FIX ── */
+   /* ── MOBILE MODAL FIX ── */
     @media (max-width: 768px) {
       .modal-overlay.show {
         display: flex;
@@ -1574,13 +1574,9 @@
     //  Get correct redirect URL for OAuth
     // ─────────────────────────────────────────────────
     function getOnboardingRedirectURL() {
-      // Get the current page's directory
-      const currentPath = window.location.pathname;
-      const currentDir = currentPath.substring(0, currentPath.lastIndexOf('/'));
-      
-      // Construct the onboarding URL based on current location
-      const baseURL = window.location.origin + currentDir;
-      return baseURL + '/pages/onboarding.html';
+      // Always use the fixed absolute path so this works whether Vercel
+      // serves index.html at / (via rewrite) or at /frontend/index.html directly.
+      return window.location.origin + '/frontend/pages/onboarding.html';
     }
 
     // ─────────────────────────────────────────────────
@@ -1600,49 +1596,17 @@
     // ─────────────────────────────────────────────────
     //  Force logout on landing page load (start from clean state)
     // ─────────────────────────────────────────────────
-   // FIXED — only sign out if we're NOT arriving from an OAuth callback
-async function checkSession() {
-  try {
-    // If URL has OAuth tokens, let Supabase process them first
-    const hasOAuthParams = window.location.hash.includes('access_token') ||
-                           window.location.search.includes('code=');
-
-    // Only sign out on a plain landing page visit, not after OAuth redirect
-    if (!hasOAuthParams) {
-      await supabase.auth.signOut();
+    async function resetToFreshSession() {
+      try {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          console.warn('Logout error:', error.message);
+        }
+      } catch (err) {
+        console.warn('Logout exception:', err);
+      }
     }
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return; // no user, show landing page normally
-
-    // Check if user already has a profile
-    const { data: profile } = await supabase
-      .from('users')
-      .select('id, email, phone')
-      .or(`id.eq.${user.id},email.eq.${user.email}`)
-      .maybeSingle(); // use maybeSingle() not single() — single() throws if 0 rows
-
-    if (!profile) {
-      window.location.href = '/frontend/pages/onboarding.html';
-      return;
-    }
-
-    // Sync user id if needed (Google user matching email account)
-    if (profile.id !== user.id) {
-      await supabase.from('users').upsert({
-        id: user.id,
-        email: user.email,
-        full_name: user.user_metadata?.full_name || profile.full_name || '',
-      }, { onConflict: 'id' });
-    }
-
-    window.location.href = '/frontend/pages/dashboard.html';
-  } catch (err) {
-    console.warn('Session check error:', err);
-  }
-}
-
-checkSession(); // call directly, no resetToFreshSession
     // ─────────────────────────────────────────────────
     //  Check if user is already logged in and redirect accordingly
     // ─────────────────────────────────────────────────
@@ -1680,7 +1644,7 @@ checkSession(); // call directly, no resetToFreshSession
       }
     }
 
-    resetToFreshSession().then(checkSession);
+    checkSession();
 
     // ─────────────────────────────────────────────────
     //  Google OAuth Handler
@@ -1812,9 +1776,9 @@ checkSession(); // call directly, no resetToFreshSession
         .single();
 
       if (profile) {
-        window.location.href = 'pages/dashboard.html';
+        window.location.href = '/frontend/pages/dashboard.html';
       } else {
-        window.location.href = 'pages/onboarding.html';
+        window.location.href = '/frontend/pages/onboarding.html';
       }
     });
 
@@ -1978,7 +1942,7 @@ checkSession(); // call directly, no resetToFreshSession
   </script>
 
   <!-- Hamburger Menu & Mobile Toggle Script -->
-  <script src="js/main.js"></script>
+
 
 </body>
 </html>
