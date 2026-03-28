@@ -1,1920 +1,1889 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,
-initial-scale=1.0"/>
-<title>SUWE --- Community Feed</title>
-<link
-href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Playfair+Display:wght@700;800&display=swap"
-rel="stylesheet"/>
-<style>
-:root {
---green-deep: #0a2e1a;
---green-mid: #134d2c;
---green-light: #1a6637;
---green-pale: #e8f5ee;
---gold: #c9a84c;
---gold-soft: #e8c96a;
---gold-pale: #fdf6e3;
---surface: #ffffff;
---surface-2: #f7f8f5;
---surface-3: #eef0eb;
---text-primary:#111a14;
---text-mid: #3d5244;
---text-soft: #7a9485;
---border: #dde5df;
---red: #e05c4b;
---red-pale: #fdf1ef;
---blue: #3b7dd8;
---blue-pale: #eef3fd;
---orange: #e07a2a;
---orange-pale: #fdf3e8;
---radius: 16px;
---radius-sm: 10px;
-}
-*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'DM Sans',sans-serif; background:var(--surface-2);
-color:var(--text-primary); min-height:100vh; }
-a { color:inherit; text-decoration:none; }
-/* ── PAGE LOADER ─────────────────────────────────────── */
-#page-loader {
-position:fixed; inset:0; background:var(--surface);
-display:flex; flex-direction:column; align-items:center;
-justify-content:center; z-index:999; gap:16px;
-}
-.loader-logo { font-family:'Playfair Display',serif; font-size:36px;
-color:var(--green-deep); letter-spacing:4px; }
-.loader-bar { width:120px; height:3px; background:var(--surface-3);
-border-radius:2px; overflow:hidden; }
-.loader-fill { width:0%; height:100%; background:var(--gold);
-border-radius:2px; animation:loadFill 1.2s ease forwards; }
-@keyframes loadFill { to { width:100%; } }
-/* ── SIDEBAR ─────────────────────────────────────────── */
-.sidebar {
-position:fixed; top:0; left:0;
-width:220px; height:100vh;
-background:var(--green-deep);
-display:flex; flex-direction:column;
-padding:28px 0; z-index:100;
-transition:transform 0.28s cubic-bezier(.4,0,.2,1);
-}
-.sidebar-logo {
-font-family:'Playfair Display',serif;
-font-size:22px; color:var(--gold);
-letter-spacing:2px; padding:0 24px 28px;
-border-bottom:1px solid rgba(255,255,255,0.07);
-}
-.sidebar-logo span {
-display:block; font-family:'DM Sans',sans-serif;
-font-size:10px; letter-spacing:1.5px;
-color:rgba(255,255,255,0.3); font-weight:400;
-text-transform:uppercase; margin-top:2px;
-}
-.nav-section { padding:20px 14px 6px; }
-.nav-label {
-font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
-color:rgba(255,255,255,0.25); padding:0 10px; margin-bottom:6px;
-}
-.nav-item {
-display:flex; align-items:center; gap:10px;
-padding:10px 14px; border-radius:var(--radius-sm);
-color:rgba(255,255,255,0.55); font-size:14px;
-font-weight:500; cursor:pointer; transition:all 0.15s;
-margin-bottom:2px;
-}
-.nav-item:hover { background:rgba(255,255,255,0.06);
-color:rgba(255,255,255,0.85); }
-.nav-item.active { background:rgba(201,168,76,0.15); color:var(--gold);
-}
-.nav-item .icon { font-size:16px; width:20px; text-align:center; }
-.sidebar-footer {
-margin-top:auto; padding:16px 14px;
-border-top:1px solid rgba(255,255,255,0.07);
-}
-.user-pill {
-display:flex; align-items:center; gap:10px;
-padding:10px 12px; border-radius:var(--radius-sm);
-background:rgba(255,255,255,0.05);
-}
-.user-avatar {
-width:32px; height:32px; border-radius:50%;
-background:var(--green-light);
-display:flex; align-items:center; justify-content:center;
-font-size:13px; font-weight:600; color:var(--gold); flex-shrink:0;
-}
-.user-name { font-size:13px; font-weight:500;
-color:rgba(255,255,255,0.8); }
-.user-market{ font-size:11px; color:rgba(255,255,255,0.3); }
-.sign-out-btn {
-width:100%; margin-top:8px; padding:8px;
-border-radius:var(--radius-sm);
-background:none; border:1px solid rgba(255,255,255,0.1);
-color:rgba(255,255,255,0.35); font-family:'DM Sans',sans-serif;
-font-size:12px; cursor:pointer; transition:all 0.15s;
-}
-.sign-out-btn:hover { border-color:rgba(255,255,255,0.25);
-color:rgba(255,255,255,0.6); }
-/* ── SIDEBAR BACKDROP ─────────────────────────────────── */
-#sidebar-backdrop {
-display:none; position:fixed; inset:0;
-background:rgba(10,46,26,0.5); z-index:99;
-backdrop-filter:blur(2px);
-}
-#sidebar-backdrop.show { display:block; }
-/* ── HAMBURGER ────────────────────────────────────────── */
-#hamburger-btn {
-display:none; align-items:center; justify-content:center;
-width:38px; height:38px; background:var(--surface);
-border:1px solid var(--border); border-radius:var(--radius-sm);
-cursor:pointer; font-size:18px; flex-shrink:0;
-}
-/* ── MAIN ─────────────────────────────────────────────── */
-.main { margin-left:220px; min-height:100vh; }
-/* ── TOP BAR ──────────────────────────────────────────── */
-.topbar {
-position:sticky; top:0; z-index:50;
-background:rgba(247,248,245,0.97);
-backdrop-filter:blur(10px);
-border-bottom:1px solid var(--border);
-padding:14px 28px;
-display:flex; align-items:center; justify-content:space-between;
-gap:14px; flex-wrap:wrap;
-}
-.topbar-left { display:flex; align-items:center; gap:10px; }
-.topbar-left h2 {
-font-family:'Playfair Display',serif;
-font-size:20px; font-weight:800; color:var(--text-primary);
-}
-.topbar-left p { font-size:12px; color:var(--text-soft);
-margin-top:1px; }
-.post-types { display:flex; gap:8px; flex-wrap:wrap; }
-.post-type-btn {
-display:flex; align-items:center; gap:7px;
-padding:9px 14px; border-radius:50px;
-border:1.5px solid var(--border);
-background:var(--surface); cursor:pointer;
-font-family:'DM Sans',sans-serif;
-font-size:13px; font-weight:600;
-color:var(--text-mid); transition:all 0.15s;
-white-space:nowrap;
-}
-.post-type-btn:hover { transform:translateY(-1px); box-shadow:0 4px 12px
-rgba(0,0,0,0.08); }
-.post-type-btn.update { border-color:var(--green-light);
-color:var(--green-light); }
-.post-type-btn.price { border-color:var(--red); color:var(--red); }
-.post-type-btn.bulk { border-color:var(--blue); color:var(--blue); }
-.post-type-btn.ajo { border-color:var(--gold); color:#9a7820; }
-.post-type-btn .btn-icon { font-size:17px; }
-/* ── LAYOUT ───────────────────────────────────────────── */
-.feed-layout {
-display:grid;
-grid-template-columns:1fr 300px;
-gap:0;
-max-width:1100px;
-margin:0 auto;
-padding:22px 28px;
-align-items:start;
-}
-.feed-col { }
-.side-col {
-position:sticky; top:80px;
-display:flex; flex-direction:column; gap:16px;
-padding-left:22px;
-}
-/* ── FILTER BAR ───────────────────────────────────────── */
-.filter-bar {
-display:flex; gap:8px; margin-bottom:18px;
-overflow-x:auto; padding-bottom:4px;
-}
-.filter-chip {
-display:flex; align-items:center; gap:6px;
-padding:8px 15px; border-radius:50px;
-border:1.5px solid var(--border);
-background:var(--surface); cursor:pointer;
-font-size:13px; font-weight:600;
-color:var(--text-mid); white-space:nowrap;
-transition:all 0.15s; flex-shrink:0;
-}
-.filter-chip:hover { border-color:var(--green-deep);
-color:var(--green-deep); }
-.filter-chip.active { background:var(--green-deep);
-border-color:var(--green-deep); color:var(--gold); }
-.filter-chip .chip-icon { font-size:15px; }
-/* ── FEED CARD ────────────────────────────────────────── */
-.post-card {
-background:var(--surface);
-border:1px solid var(--border);
-border-radius:var(--radius);
-margin-bottom:14px;
-overflow:hidden;
-transition:box-shadow 0.2s;
-}
-.post-card:hover { box-shadow:0 4px 20px rgba(0,0,0,0.07); }
-.post-card::before { content:''; display:block; height:4px; }
-.post-card.type-update::before { background:var(--green-light); }
-.post-card.type-price::before { background:var(--red); }
-.post-card.type-bulk::before { background:var(--blue); }
-.post-card.type-ajo::before { background:var(--gold); }
-.post-inner { padding:18px 20px; }
-/* Post header */
-.post-header {
-display:flex; align-items:flex-start;
-justify-content:space-between; margin-bottom:14px; gap:10px;
-}
-.post-author { display:flex; align-items:center; gap:12px; }
-.p-avatar {
-width:44px; height:44px; border-radius:50%;
-display:flex; align-items:center; justify-content:center;
-font-size:16px; font-weight:800; color:white;
-flex-shrink:0; font-family:'Playfair Display',serif;
-border:2px solid var(--surface-2);
-}
-.p-name {
-font-size:15px; font-weight:700; color:var(--text-primary);
-display:flex; align-items:center; gap:6px;
-}
-.p-verified { font-size:12px; color:var(--green-light); }
-.p-meta {
-font-size:12px; color:var(--text-soft); margin-top:2px;
-display:flex; align-items:center; gap:5px; flex-wrap:wrap;
-}
-.p-meta .dot { font-size:8px; }
-.post-type-badge {
-display:flex; align-items:center; gap:5px;
-padding:5px 12px; border-radius:20px;
-font-size:12px; font-weight:700; flex-shrink:0;
-}
-.badge-update { background:var(--green-pale);
-color:var(--green-light); }
-.badge-price { background:var(--red-pale); color:var(--red); }
-.badge-bulk { background:var(--blue-pale); color:var(--blue); }
-.badge-ajo { background:var(--gold-pale); color:#9a7820; }
-.post-body {
-font-size:15px; font-weight:500;
-color:var(--text-primary); line-height:1.65;
-margin-bottom:14px;
-}
-/* Price alert box */
-.price-alert-box {
-background:var(--red-pale);
-border:1.5px solid rgba(224,92,75,0.2);
-border-radius:var(--radius-sm);
-padding:14px 16px; margin-bottom:14px;
-display:flex; align-items:center; gap:14px;
-}
-.price-alert-icon { font-size:30px; flex-shrink:0; }
-.price-alert-info { flex:1; min-width:0; }
-.price-alert-item { font-size:15px; font-weight:700;
-color:var(--text-primary); }
-.price-alert-change {
-font-size:20px; font-weight:800;
-font-family:'Playfair Display',serif;
-}
-.price-up { color:var(--red); }
-.price-down { color:var(--green-light); }
-.price-alert-detail { font-size:12px; color:var(--text-soft);
-margin-top:2px; }
-/* Bulk buy box */
-.bulk-box {
-background:var(--blue-pale);
-border:1.5px solid rgba(59,125,216,0.2);
-border-radius:var(--radius-sm);
-padding:14px 16px; margin-bottom:14px;
-}
-.bulk-product { font-size:17px; font-weight:800;
-color:var(--text-primary); margin-bottom:6px; }
-.bulk-details { display:flex; gap:20px; flex-wrap:wrap; }
-.bulk-stat { display:flex; flex-direction:column; }
-.bulk-stat-label { font-size:10px; text-transform:uppercase;
-letter-spacing:1px; color:var(--text-soft); margin-bottom:2px; }
-.bulk-stat-val { font-size:14px; font-weight:700;
-color:var(--text-primary); }
-.bulk-spots { margin-top:10px; }
-.bulk-spots-track { height:6px; background:rgba(59,125,216,0.15);
-border-radius:3px; overflow:hidden; margin-bottom:5px; }
-.bulk-spots-fill { height:100%; background:var(--blue);
-border-radius:3px; transition:width 0.5s ease; }
-.bulk-spots-label { font-size:11px; color:var(--blue); font-weight:600;
-}
-/* Ajo invite box */
-.ajo-box {
-background:var(--gold-pale);
-border:1.5px solid rgba(201,168,76,0.25);
-border-radius:var(--radius-sm);
-padding:14px 16px; margin-bottom:14px;
-}
-.ajo-box-name { font-size:16px; font-weight:800;
-color:var(--text-primary); margin-bottom:8px; }
-.ajo-box-details { display:flex; gap:18px; flex-wrap:wrap; }
-.ajo-box-stat { display:flex; flex-direction:column; }
-.ajo-box-label { font-size:10px; text-transform:uppercase;
-letter-spacing:1px; color:var(--text-soft); margin-bottom:2px; }
-.ajo-box-val { font-size:14px; font-weight:700;
-color:var(--text-primary); }
-.ajo-spots-row { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;
-}
-.ajo-spot { width:28px; height:28px; border-radius:50%; display:flex;
-align-items:center; justify-content:center; font-size:11px;
-font-weight:700; }
-.ajo-spot.filled { background:var(--green-light); color:white; }
-.ajo-spot.open { background:rgba(201,168,76,0.2); color:var(--gold);
-border:1.5px dashed var(--gold); }
-/* Post footer */
-.post-footer {
-display:flex; align-items:center;
-gap:4px; padding-top:12px;
-border-top:1px solid var(--surface-3);
-flex-wrap:wrap;
-}
-.reaction-btn {
-display:flex; align-items:center; gap:6px;
-padding:7px 13px; border-radius:50px;
-border:none; background:none;
-font-family:'DM Sans',sans-serif;
-font-size:13px; font-weight:600;
-color:var(--text-soft); cursor:pointer;
-transition:all 0.15s;
-}
-.reaction-btn:hover { background:var(--surface-2);
-color:var(--text-primary); }
-.reaction-btn.liked { color:var(--red); }
-.reaction-btn .r-icon { font-size:17px; }
-.reaction-btn .r-count { font-size:12px; }
-.post-footer .spacer { flex:1; }
-.join-btn {
-padding:8px 18px; border-radius:50px;
-border:none; cursor:pointer;
-font-family:'DM Sans',sans-serif;
-font-size:13px; font-weight:700;
-transition:all 0.2s;
-}
-.join-btn.bulk-join { background:var(--blue); color:white; }
-.join-btn.bulk-join:hover { background:#2a6cc7;
-transform:translateY(-1px); }
-.join-btn.ajo-join { background:var(--gold); color:var(--green-deep);
-}
-.join-btn.ajo-join:hover { background:var(--gold-soft);
-transform:translateY(-1px); }
-.join-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none
-!important; }
-/* ── COMMENTS ─────────────────────────────────────────── */
-.comments-section {
-border-top:1px solid var(--surface-3);
-background:var(--surface-2);
-padding:14px 20px;
-display:none;
-}
-.comments-section.open { display:block; }
-.comment-item { display:flex; gap:10px; margin-bottom:12px; }
-.c-avatar-sm {
-width:32px; height:32px; border-radius:50%;
-display:flex; align-items:center; justify-content:center;
-font-size:12px; font-weight:700; color:white;
-flex-shrink:0; font-family:'Playfair Display',serif;
-}
-.c-bubble {
-background:var(--surface); border:1px solid var(--border);
-border-radius:0 12px 12px 12px; padding:10px 14px; flex:1;
-}
-.c-bubble-name { font-size:12px; font-weight:700;
-color:var(--text-primary); margin-bottom:3px; }
-.c-bubble-text { font-size:14px; color:var(--text-mid);
-line-height:1.5; }
-.c-bubble-time { font-size:11px; color:var(--text-soft);
-margin-top:4px; }
-.comment-input-row {
-display:flex; gap:10px; align-items:center; margin-top:6px;
-}
-.comment-input {
-flex:1; padding:10px 14px;
-border:1.5px solid var(--border); border-radius:50px;
-font-family:'DM Sans',sans-serif; font-size:14px;
-color:var(--text-primary); background:var(--surface); outline:none;
-}
-.comment-input:focus { border-color:var(--green-light); }
-.comment-send {
-width:38px; height:38px; border-radius:50%;
-background:var(--green-deep); border:none;
-color:var(--gold); font-size:16px;
-cursor:pointer; display:flex; align-items:center;
-justify-content:center;
-transition:all 0.15s; flex-shrink:0;
-}
-.comment-send:hover { background:var(--green-light); }
-/* ── SIDE PANEL ───────────────────────────────────────── */
-.side-card {
-background:var(--surface);
-border:1px solid var(--border);
-border-radius:var(--radius); overflow:hidden;
-}
-.side-header {
-padding:14px 18px;
-border-bottom:1px solid var(--border);
-font-size:13px; font-weight:700; color:var(--text-primary);
-display:flex; align-items:center; gap:8px;
-}
-.side-body { padding:10px 18px 14px; }
-/* Price ticker */
-.ticker-item {
-display:flex; align-items:center; justify-content:space-between;
-padding:9px 0; border-bottom:1px solid var(--surface-3);
-gap:8px;
-}
-.ticker-item:last-child { border-bottom:none; }
-.ticker-name { font-size:13px; font-weight:600;
-color:var(--text-primary); display:flex; align-items:center; gap:6px; }
-.ticker-right { text-align:right; flex-shrink:0; }
-.ticker-price { font-size:12px; font-weight:700;
-color:var(--text-primary); }
-.ticker-change { font-size:11px; font-weight:600; padding:2px 7px;
-border-radius:20px; display:inline-block; margin-top:2px; }
-.up-change { background:var(--red-pale); color:var(--red); }
-.down-change { background:var(--green-pale); color:var(--green-light);
-}
-.mixed-change{ background:var(--orange-pale); color:var(--orange); }
-.ticker-posts{ font-size:10px; color:var(--text-soft); margin-top:1px;
-}
-/* Empty ticker */
-.ticker-empty { padding:16px 0; font-size:13px; color:var(--text-soft);
-text-align:center; line-height:1.6; }
-/* Active traders */
-.active-trader {
-display:flex; align-items:center; gap:10px;
-padding:8px 0; border-bottom:1px solid var(--surface-3);
-}
-.active-trader:last-child { border-bottom:none; }
-.at-avatar {
-width:34px; height:34px; border-radius:50%;
-display:flex; align-items:center; justify-content:center;
-font-size:13px; font-weight:700; color:white;
-font-family:'Playfair Display',serif; flex-shrink:0;
-position:relative;
-}
-.online-dot {
-position:absolute; bottom:1px; right:1px;
-width:8px; height:8px; border-radius:50%;
-background:#4caf7d; border:1.5px solid var(--surface);
-}
-.at-info { flex:1; min-width:0; }
-.at-name { font-size:13px; font-weight:600; color:var(--text-primary);
-white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.at-market { font-size:11px; color:var(--text-soft);
-white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-/* ── POST MODAL ───────────────────────────────────────── */
-.modal-overlay {
-display:none; position:fixed; inset:0;
-background:rgba(10,46,26,0.55); z-index:200;
-align-items:flex-end; justify-content:center;
-backdrop-filter:blur(4px);
-}
-.modal-overlay.open { display:flex; }
-.modal {
-background:var(--surface);
-border-radius:20px 20px 0 0;
-padding:26px 26px 34px;
-width:100%; max-width:620px;
-max-height:90vh; overflow-y:auto;
-animation:slideUp 0.3s cubic-bezier(.34,1.2,.64,1);
-}
-@keyframes slideUp {
-from { transform:translateY(100%); opacity:0; }
-to { transform:translateY(0); opacity:1; }
-}
-.modal-handle {
-width:40px; height:4px; border-radius:2px;
-background:var(--border); margin:0 auto 20px;
-}
-.modal-title { font-size:18px; font-weight:700;
-color:var(--text-primary); margin-bottom:4px; }
-.modal-sub { font-size:13px; color:var(--text-soft);
-margin-bottom:18px; }
-.modal-type-pills { display:flex; gap:8px; margin-bottom:18px;
-flex-wrap:wrap; }
-.modal-pill {
-display:flex; align-items:center; gap:6px;
-padding:8px 15px; border-radius:50px;
-border:1.5px solid var(--border);
-font-family:'DM Sans',sans-serif;
-font-size:13px; font-weight:600;
-color:var(--text-soft); cursor:pointer; transition:all 0.15s;
-}
-.modal-pill.selected-update { background:var(--green-pale);
-border-color:var(--green-light); color:var(--green-light); }
-.modal-pill.selected-price { background:var(--red-pale);
-border-color:var(--red); color:var(--red); }
-.modal-pill.selected-bulk { background:var(--blue-pale);
-border-color:var(--blue); color:var(--blue); }
-.modal-pill.selected-ajo { background:var(--gold-pale);
-border-color:var(--gold); color:#9a7820; }
-.extra-fields { display:none; margin-bottom:16px; }
-.extra-fields.show { display:block; }
-.extra-row { display:grid; grid-template-columns:1fr 1fr; gap:12px;
-margin-bottom:12px; }
-.form-label {
-font-size:11px; font-weight:700; letter-spacing:0.5px;
-text-transform:uppercase; color:var(--text-mid);
-display:block; margin-bottom:6px;
-}
-.form-input, .form-select {
-width:100%; padding:11px 14px;
-border:1.5px solid var(--border); border-radius:var(--radius-sm);
-font-family:'DM Sans',sans-serif; font-size:14px;
-color:var(--text-primary); background:var(--surface); outline:none;
-transition:border-color 0.15s;
-}
-.form-input:focus, .form-select:focus {
-border-color:var(--green-light); }
-.post-textarea {
-width:100%; min-height:90px;
-padding:14px; border:1.5px solid var(--border);
-border-radius:var(--radius-sm);
-font-family:'DM Sans',sans-serif;
-font-size:16px; font-weight:500;
-color:var(--text-primary); resize:none; outline:none;
-line-height:1.6; margin-bottom:16px;
-transition:border-color 0.15s;
-}
-.post-textarea:focus { border-color:var(--green-light); }
-.post-textarea::placeholder { color:var(--text-soft); }
-.modal-footer {
-display:flex; align-items:center; justify-content:space-between;
-flex-wrap:wrap; gap:10px;
-}
-.modal-cat-select {
-padding:8px 14px; border:1.5px solid var(--border);
-border-radius:50px; font-family:'DM Sans',sans-serif;
-font-size:13px; color:var(--text-mid); outline:none;
-background:var(--surface); transition:border-color 0.15s;
-}
-.modal-cat-select:focus { border-color:var(--green-light); }
-.btn-post {
-padding:11px 26px; border:none; border-radius:50px;
-background:var(--green-deep); color:var(--gold);
-font-family:'DM Sans',sans-serif; font-size:14px;
-font-weight:700; cursor:pointer; transition:all 0.2s;
-}
-.btn-post:hover { background:var(--green-light);
-transform:translateY(-1px); }
-.btn-post:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
-/* ── EMPTY / LOADING STATES ───────────────────────────── */
-.empty-state {
-text-align:center; padding:40px 24px;
-display:flex; flex-direction:column; align-items:center; gap:12px;
-color:var(--text-soft);
-}
-.empty-icon { font-size:36px; }
-.empty-state h4 { font-size:15px; font-weight:600;
-color:var(--text-primary); }
-.empty-state p { font-size:13px; color:var(--text-soft);
-max-width:260px; line-height:1.6; }
-.skeleton {
-background:linear-gradient(90deg,var(--surface-3) 25%,var(--surface-2)
-50%,var(--surface-3) 75%);
-background-size:200% 100%;
-animation:shimmer 1.5s infinite;
-border-radius:8px; height:16px;
-}
-@keyframes shimmer { 0%{background-position:200% 0;}
-100%{background-position:-200% 0;} }
-/* ── TOAST ────────────────────────────────────────────── */
-.toast {
-position:fixed; bottom:24px; left:50%; transform:translateX(-50%)
-translateY(20px);
-background:var(--green-deep); color:white;
-padding:12px 22px; border-radius:50px;
-font-size:14px; font-weight:600;
-z-index:999; opacity:0;
-transition:all 0.35s cubic-bezier(.34,1.56,.64,1);
-pointer-events:none; white-space:nowrap;
-}
-.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
-/* ── FADE UP ──────────────────────────────────────────── */
-.fade-up { opacity:0; transform:translateY(14px); animation:fadeUp 0.35s
-ease forwards; }
-@keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
-.fade-up:nth-child(1){animation-delay:.04s}
-.fade-up:nth-child(2){animation-delay:.08s}
-.fade-up:nth-child(3){animation-delay:.12s}
-.fade-up:nth-child(4){animation-delay:.16s}
-/* ── BOTTOM NAV (mobile) ──────────────────────────────── */
-.bottom-nav {
-display:none; position:fixed; bottom:0; left:0; right:0;
-background:var(--green-deep);
-border-top:1px solid rgba(255,255,255,0.08);
-z-index:200; box-shadow:0 -4px 20px rgba(0,0,0,0.2);
-}
-.bottom-nav-item {
-flex:1; display:flex; flex-direction:column; align-items:center;
-justify-content:center; gap:3px; padding:10px 4px;
-color:rgba(255,255,255,0.5); cursor:pointer; transition:color 0.15s;
-text-decoration:none; font-family:'DM Sans',sans-serif;
-border:none; background:none;
-}
-.bottom-nav-item.active { color:var(--gold); }
-.bottom-nav-item:hover { color:rgba(255,255,255,0.85); }
-.bn-icon { font-size:20px; }
-.bn-label { font-size:9px; font-weight:600; letter-spacing:0.5px;
-text-transform:uppercase; }
-/* ── COMMUNITY FULL RESPONSIVE ── */
-/* Large desktop: constrain max width so content doesn't bleed */
-.main { overflow-x: hidden; }
-@media (max-width: 1200px) {
-/* Topbar post-type buttons become scrollable row */
-.post-types {
-overflow-x: auto;
--webkit-overflow-scrolling: touch;
-flex-wrap: nowrap;
-max-width: 60vw;
-padding-bottom: 2px;
-}
-.post-type-btn { font-size: 12px; padding: 8px 12px; }
-}
-@media (max-width: 1024px) {
-/* Collapse side panel into single column */
-.feed-layout { grid-template-columns: 1fr; }
-.side-col { display: none; }
-/* Topbar wraps to two rows */
-.topbar {
-flex-wrap: wrap;
-gap: 10px;
-padding: 12px 20px;
-}
-.post-types {
-max-width: 100%;
-width: 100%;
-order: 2;
-}
-}
-@media (max-width: 900px) {
-.feed-layout { padding: 16px 20px; }
-}
-@media (max-width: 768px) {
-/* Hide sidebar, collapse main */
-.sidebar { display: none; }
-.main { margin-left: 0; }
-/* Topbar: hide post-type buttons (use FAB instead) */
-.post-types { display: none; }
-/* Feed padding */
-.feed-layout { padding: 12px 14px; grid-template-columns: 1fr; }
-/* Topbar compact */
-.topbar { padding: 12px 14px; }
-.topbar-left h2 { font-size: 17px; }
-.topbar-left p { font-size: 11px; }
-/* Post cards */
-.post-inner { padding: 14px 14px; }
-.post-body { font-size: 14px; }
-.p-name { font-size: 14px; }
-/* Comments */
-.comments-section { padding: 12px 14px; }
-/* Filter bar scrollable */
-.filter-bar { gap: 6px; }
-.filter-chip { font-size: 12px; padding: 6px 12px; }
-/* Price/Bulk/Ajo boxes */
-.price-alert-box { padding: 10px 12px; }
-.bulk-box { padding: 10px 12px; }
-.ajo-box { padding: 10px 12px; }
-/* Modal full screen on mobile */
-.modal-overlay {
-align-items: flex-end !important;
-padding: 0;
-}
-.modal {
-border-radius: 20px 20px 0 0 !important;
-width: 100% !important;
-max-width: 100% !important;
-padding: 20px 16px 32px;
-max-height: 92vh;
-overflow-y: auto;
-}
-.modal-footer { flex-wrap: wrap; gap: 10px; }
-.modal-market-select { width: 100%; }
-.btn-post { width: 100%; }
-}
-@media (max-width: 480px) {
-.topbar { padding: 10px 12px; }
-.feed-layout { padding: 10px 10px; }
-.post-inner { padding: 12px 12px; }
-.p-avatar { width: 36px; height: 36px; font-size: 13px; }
-.post-body { font-size: 13px; }
-.reaction-btn{ padding: 6px 10px; font-size: 13px; }
-.bulk-details{ gap: 12px; }
-.ajo-box-details { gap: 12px; }
-}
-</style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SUWE — Community Feed</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green-deep:  #0a2e1a;
+      --green-mid:   #134d2c;
+      --green-light: #1a6637;
+      --green-pale:  #e8f5ee;
+      --gold:        #c9a84c;
+      --gold-soft:   #e8c96a;
+      --gold-pale:   #fdf6e3;
+      --surface:     #ffffff;
+      --surface-2:   #f7f8f5;
+      --surface-3:   #eef0eb;
+      --text-primary:#111a14;
+      --text-mid:    #3d5244;
+      --text-soft:   #7a9485;
+      --border:      #dde5df;
+      --red:         #e05c4b;
+      --red-pale:    #fdf1ef;
+      --blue:        #3b7dd8;
+      --blue-pale:   #eef3fd;
+      --orange:      #e07a2a;
+      --orange-pale: #fdf3e8;
+      --radius:      16px;
+      --radius-sm:   10px;
+    }
+    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'DM Sans',sans-serif; background:var(--surface-2); color:var(--text-primary); min-height:100vh; }
+    a { color:inherit; text-decoration:none; }
+
+    /* ── PAGE LOADER ─────────────────────────────────────── */
+    #page-loader {
+      position:fixed; inset:0; background:var(--surface);
+      display:flex; flex-direction:column; align-items:center;
+      justify-content:center; z-index:999; gap:16px;
+    }
+    .loader-logo { font-family:'Playfair Display',serif; font-size:36px; color:var(--green-deep); letter-spacing:4px; }
+    .loader-bar  { width:120px; height:3px; background:var(--surface-3); border-radius:2px; overflow:hidden; }
+    .loader-fill { width:0%; height:100%; background:var(--gold); border-radius:2px; animation:loadFill 1.2s ease forwards; }
+    @keyframes loadFill { to { width:100%; } }
+
+    /* ── SIDEBAR ─────────────────────────────────────────── */
+    .sidebar {
+      position:fixed; top:0; left:0;
+      width:220px; height:100vh;
+      background:var(--green-deep);
+      display:flex; flex-direction:column;
+      padding:28px 0; z-index:100;
+      transition:transform 0.28s cubic-bezier(.4,0,.2,1);
+    }
+    .sidebar-logo {
+      font-family:'Playfair Display',serif;
+      font-size:22px; color:var(--gold);
+      letter-spacing:2px; padding:0 24px 28px;
+      border-bottom:1px solid rgba(255,255,255,0.07);
+    }
+    .sidebar-logo span {
+      display:block; font-family:'DM Sans',sans-serif;
+      font-size:10px; letter-spacing:1.5px;
+      color:rgba(255,255,255,0.3); font-weight:400;
+      text-transform:uppercase; margin-top:2px;
+    }
+    .nav-section { padding:20px 14px 6px; }
+    .nav-label {
+      font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
+      color:rgba(255,255,255,0.25); padding:0 10px; margin-bottom:6px;
+    }
+    .nav-item {
+      display:flex; align-items:center; gap:10px;
+      padding:10px 14px; border-radius:var(--radius-sm);
+      color:rgba(255,255,255,0.55); font-size:14px;
+      font-weight:500; cursor:pointer; transition:all 0.15s; margin-bottom:2px;
+    }
+    .nav-item:hover { background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.85); }
+    .nav-item.active { background:rgba(201,168,76,0.15); color:var(--gold); }
+    .nav-item .icon { font-size:16px; width:20px; text-align:center; }
+    .sidebar-footer {
+      margin-top:auto; padding:16px 14px;
+      border-top:1px solid rgba(255,255,255,0.07);
+    }
+    .user-pill {
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px; border-radius:var(--radius-sm);
+      background:rgba(255,255,255,0.05);
+    }
+    .user-avatar {
+      width:32px; height:32px; border-radius:50%;
+      background:var(--green-light);
+      display:flex; align-items:center; justify-content:center;
+      font-size:13px; font-weight:600; color:var(--gold); flex-shrink:0;
+    }
+    .user-name  { font-size:13px; font-weight:500; color:rgba(255,255,255,0.8); }
+    .user-market{ font-size:11px; color:rgba(255,255,255,0.3); }
+    .sign-out-btn {
+      width:100%; margin-top:8px; padding:8px; border-radius:var(--radius-sm);
+      background:none; border:1px solid rgba(255,255,255,0.1);
+      color:rgba(255,255,255,0.35); font-family:'DM Sans',sans-serif;
+      font-size:12px; cursor:pointer; transition:all 0.15s;
+    }
+    .sign-out-btn:hover { border-color:rgba(255,255,255,0.25); color:rgba(255,255,255,0.6); }
+
+    /* ── SIDEBAR BACKDROP ─────────────────────────────────── */
+    #sidebar-backdrop {
+      display:none; position:fixed; inset:0;
+      background:rgba(10,46,26,0.5); z-index:99;
+      backdrop-filter:blur(2px);
+    }
+    #sidebar-backdrop.show { display:block; }
+
+    /* ── HAMBURGER ────────────────────────────────────────── */
+    #hamburger-btn {
+      display:none; align-items:center; justify-content:center;
+      width:38px; height:38px; background:var(--surface);
+      border:1px solid var(--border); border-radius:var(--radius-sm);
+      cursor:pointer; font-size:18px; flex-shrink:0;
+    }
+
+    /* ── MAIN ─────────────────────────────────────────────── */
+    .main { margin-left:220px; min-height:100vh; }
+
+    /* ── TOP BAR ──────────────────────────────────────────── */
+    .topbar {
+      position:sticky; top:0; z-index:50;
+      background:rgba(247,248,245,0.97);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--border);
+      padding:14px 28px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:14px; flex-wrap:wrap;
+    }
+    .topbar-left { display:flex; align-items:center; gap:10px; }
+    .topbar-left h2 {
+      font-family:'Playfair Display',serif;
+      font-size:20px; font-weight:800; color:var(--text-primary);
+    }
+    .topbar-left p { font-size:12px; color:var(--text-soft); margin-top:1px; }
+    .post-types { display:flex; gap:8px; flex-wrap:wrap; }
+    .post-type-btn {
+      display:flex; align-items:center; gap:7px;
+      padding:9px 14px; border-radius:50px;
+      border:1.5px solid var(--border);
+      background:var(--surface); cursor:pointer;
+      font-family:'DM Sans',sans-serif;
+      font-size:13px; font-weight:600;
+      color:var(--text-mid); transition:all 0.15s;
+      white-space:nowrap;
+    }
+    .post-type-btn:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,0.08); }
+    .post-type-btn.update { border-color:var(--green-light); color:var(--green-light); }
+    .post-type-btn.price  { border-color:var(--red);         color:var(--red); }
+    .post-type-btn.bulk   { border-color:var(--blue);        color:var(--blue); }
+    .post-type-btn.ajo    { border-color:var(--gold);        color:#9a7820; }
+    .post-type-btn .btn-icon { font-size:17px; }
+
+    /* ── LAYOUT ───────────────────────────────────────────── */
+    .feed-layout {
+      display:grid;
+      grid-template-columns:1fr 300px;
+      gap:0;
+      max-width:1100px;
+      margin:0 auto;
+      padding:22px 28px;
+      align-items:start;
+    }
+    .feed-col { }
+    .side-col {
+      position:sticky; top:80px;
+      display:flex; flex-direction:column; gap:16px;
+      padding-left:22px;
+    }
+
+    /* ── FILTER BAR ───────────────────────────────────────── */
+    .filter-bar {
+      display:flex; gap:8px; margin-bottom:18px;
+      overflow-x:auto; padding-bottom:4px;
+    }
+    .filter-chip {
+      display:flex; align-items:center; gap:6px;
+      padding:8px 15px; border-radius:50px;
+      border:1.5px solid var(--border);
+      background:var(--surface); cursor:pointer;
+      font-size:13px; font-weight:600;
+      color:var(--text-mid); white-space:nowrap;
+      transition:all 0.15s; flex-shrink:0;
+    }
+    .filter-chip:hover { border-color:var(--green-deep); color:var(--green-deep); }
+    .filter-chip.active { background:var(--green-deep); border-color:var(--green-deep); color:var(--gold); }
+    .filter-chip .chip-icon { font-size:15px; }
+
+    /* ── FEED CARD ────────────────────────────────────────── */
+    .post-card {
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:14px;
+      overflow:hidden;
+      transition:box-shadow 0.2s;
+    }
+    .post-card:hover { box-shadow:0 4px 20px rgba(0,0,0,0.07); }
+    .post-card::before { content:''; display:block; height:4px; }
+    .post-card.type-update::before { background:var(--green-light); }
+    .post-card.type-price::before  { background:var(--red); }
+    .post-card.type-bulk::before   { background:var(--blue); }
+    .post-card.type-ajo::before    { background:var(--gold); }
+    .post-inner { padding:18px 20px; }
+
+    /* Post header */
+    .post-header {
+      display:flex; align-items:flex-start;
+      justify-content:space-between; margin-bottom:14px; gap:10px;
+    }
+    .post-author { display:flex; align-items:center; gap:12px; }
+    .p-avatar {
+      width:44px; height:44px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:16px; font-weight:800; color:white;
+      flex-shrink:0; font-family:'Playfair Display',serif;
+      border:2px solid var(--surface-2);
+    }
+    .p-name {
+      font-size:15px; font-weight:700; color:var(--text-primary);
+      display:flex; align-items:center; gap:6px;
+    }
+    .p-verified { font-size:12px; color:var(--green-light); }
+    .p-meta {
+      font-size:12px; color:var(--text-soft); margin-top:2px;
+      display:flex; align-items:center; gap:5px; flex-wrap:wrap;
+    }
+    .p-meta .dot { font-size:8px; }
+    .post-type-badge {
+      display:flex; align-items:center; gap:5px;
+      padding:5px 12px; border-radius:20px;
+      font-size:12px; font-weight:700; flex-shrink:0;
+    }
+    .badge-update { background:var(--green-pale); color:var(--green-light); }
+    .badge-price  { background:var(--red-pale);   color:var(--red); }
+    .badge-bulk   { background:var(--blue-pale);  color:var(--blue); }
+    .badge-ajo    { background:var(--gold-pale);  color:#9a7820; }
+
+    .post-body {
+      font-size:15px; font-weight:500;
+      color:var(--text-primary); line-height:1.65;
+      margin-bottom:14px;
+    }
+
+    /* Price alert box */
+    .price-alert-box {
+      background:var(--red-pale);
+      border:1.5px solid rgba(224,92,75,0.2);
+      border-radius:var(--radius-sm);
+      padding:14px 16px; margin-bottom:14px;
+      display:flex; align-items:center; gap:14px;
+    }
+    .price-alert-icon { font-size:30px; flex-shrink:0; }
+    .price-alert-info { flex:1; min-width:0; }
+    .price-alert-item { font-size:15px; font-weight:700; color:var(--text-primary); }
+    .price-alert-change {
+      font-size:20px; font-weight:800;
+      font-family:'Playfair Display',serif;
+    }
+    .price-up   { color:var(--red); }
+    .price-down { color:var(--green-light); }
+    .price-alert-detail { font-size:12px; color:var(--text-soft); margin-top:2px; }
+
+    /* Bulk buy box */
+    .bulk-box {
+      background:var(--blue-pale);
+      border:1.5px solid rgba(59,125,216,0.2);
+      border-radius:var(--radius-sm);
+      padding:14px 16px; margin-bottom:14px;
+    }
+    .bulk-product { font-size:17px; font-weight:800; color:var(--text-primary); margin-bottom:6px; }
+    .bulk-details { display:flex; gap:20px; flex-wrap:wrap; }
+    .bulk-stat { display:flex; flex-direction:column; }
+    .bulk-stat-label { font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--text-soft); margin-bottom:2px; }
+    .bulk-stat-val   { font-size:14px; font-weight:700; color:var(--text-primary); }
+    .bulk-spots { margin-top:10px; }
+    .bulk-spots-track { height:6px; background:rgba(59,125,216,0.15); border-radius:3px; overflow:hidden; margin-bottom:5px; }
+    .bulk-spots-fill  { height:100%; background:var(--blue); border-radius:3px; transition:width 0.5s ease; }
+    .bulk-spots-label { font-size:11px; color:var(--blue); font-weight:600; }
+
+    /* Ajo invite box */
+    .ajo-box {
+      background:var(--gold-pale);
+      border:1.5px solid rgba(201,168,76,0.25);
+      border-radius:var(--radius-sm);
+      padding:14px 16px; margin-bottom:14px;
+    }
+    .ajo-box-name { font-size:16px; font-weight:800; color:var(--text-primary); margin-bottom:8px; }
+    .ajo-box-details { display:flex; gap:18px; flex-wrap:wrap; }
+    .ajo-box-stat  { display:flex; flex-direction:column; }
+    .ajo-box-label { font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--text-soft); margin-bottom:2px; }
+    .ajo-box-val   { font-size:14px; font-weight:700; color:var(--text-primary); }
+    .ajo-spots-row { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+    .ajo-spot { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; }
+    .ajo-spot.filled { background:var(--green-light); color:white; }
+    .ajo-spot.open   { background:rgba(201,168,76,0.2); color:var(--gold); border:1.5px dashed var(--gold); }
+
+    /* Post footer */
+    .post-footer {
+      display:flex; align-items:center;
+      gap:4px; padding-top:12px;
+      border-top:1px solid var(--surface-3);
+      flex-wrap:wrap;
+    }
+    .reaction-btn {
+      display:flex; align-items:center; gap:6px;
+      padding:7px 13px; border-radius:50px;
+      border:none; background:none;
+      font-family:'DM Sans',sans-serif;
+      font-size:13px; font-weight:600;
+      color:var(--text-soft); cursor:pointer;
+      transition:all 0.15s;
+    }
+    .reaction-btn:hover { background:var(--surface-2); color:var(--text-primary); }
+    .reaction-btn.liked { color:var(--red); }
+    .reaction-btn .r-icon  { font-size:17px; }
+    .reaction-btn .r-count { font-size:12px; }
+    .post-footer .spacer { flex:1; }
+    .join-btn {
+      padding:8px 18px; border-radius:50px;
+      border:none; cursor:pointer;
+      font-family:'DM Sans',sans-serif;
+      font-size:13px; font-weight:700;
+      transition:all 0.2s;
+    }
+    .join-btn.bulk-join { background:var(--blue); color:white; }
+    .join-btn.bulk-join:hover { background:#2a6cc7; transform:translateY(-1px); }
+    .join-btn.ajo-join  { background:var(--gold); color:var(--green-deep); }
+    .join-btn.ajo-join:hover { background:var(--gold-soft); transform:translateY(-1px); }
+    .join-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none !important; }
+
+    /* ── COMMENTS ─────────────────────────────────────────── */
+    .comments-section {
+      border-top:1px solid var(--surface-3);
+      background:var(--surface-2);
+      padding:14px 20px;
+      display:none;
+    }
+    .comments-section.open { display:block; }
+    .comment-item { display:flex; gap:10px; margin-bottom:12px; }
+    .c-avatar-sm {
+      width:32px; height:32px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:12px; font-weight:700; color:white;
+      flex-shrink:0; font-family:'Playfair Display',serif;
+    }
+    .c-bubble {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:0 12px 12px 12px; padding:10px 14px; flex:1;
+    }
+    .c-bubble-name { font-size:12px; font-weight:700; color:var(--text-primary); margin-bottom:3px; }
+    .c-bubble-text { font-size:14px; color:var(--text-mid); line-height:1.5; }
+    .c-bubble-time { font-size:11px; color:var(--text-soft); margin-top:4px; }
+    .comment-input-row {
+      display:flex; gap:10px; align-items:center; margin-top:6px;
+    }
+    .comment-input {
+      flex:1; padding:10px 14px;
+      border:1.5px solid var(--border); border-radius:50px;
+      font-family:'DM Sans',sans-serif; font-size:14px;
+      color:var(--text-primary); background:var(--surface); outline:none;
+    }
+    .comment-input:focus { border-color:var(--green-light); }
+    .comment-send {
+      width:38px; height:38px; border-radius:50%;
+      background:var(--green-deep); border:none;
+      color:var(--gold); font-size:16px;
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
+      transition:all 0.15s; flex-shrink:0;
+    }
+    .comment-send:hover { background:var(--green-light); }
+
+    /* ── SIDE PANEL ───────────────────────────────────────── */
+    .side-card {
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius); overflow:hidden;
+    }
+    .side-header {
+      padding:14px 18px;
+      border-bottom:1px solid var(--border);
+      font-size:13px; font-weight:700; color:var(--text-primary);
+      display:flex; align-items:center; gap:8px;
+    }
+    .side-body { padding:10px 18px 14px; }
+
+    /* Price ticker */
+    .ticker-item {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:9px 0; border-bottom:1px solid var(--surface-3);
+      gap:8px;
+    }
+    .ticker-item:last-child { border-bottom:none; }
+    .ticker-name { font-size:13px; font-weight:600; color:var(--text-primary); display:flex; align-items:center; gap:6px; }
+    .ticker-right { text-align:right; flex-shrink:0; }
+    .ticker-price { font-size:12px; font-weight:700; color:var(--text-primary); }
+    .ticker-change { font-size:11px; font-weight:600; padding:2px 7px; border-radius:20px; display:inline-block; margin-top:2px; }
+    .up-change   { background:var(--red-pale);   color:var(--red); }
+    .down-change { background:var(--green-pale);  color:var(--green-light); }
+    .mixed-change{ background:var(--orange-pale); color:var(--orange); }
+    .ticker-posts{ font-size:10px; color:var(--text-soft); margin-top:1px; }
+
+    /* Empty ticker */
+    .ticker-empty { padding:16px 0; font-size:13px; color:var(--text-soft); text-align:center; line-height:1.6; }
+
+    /* Active traders */
+    .active-trader {
+      display:flex; align-items:center; gap:10px;
+      padding:8px 0; border-bottom:1px solid var(--surface-3);
+    }
+    .active-trader:last-child { border-bottom:none; }
+    .at-avatar {
+      width:34px; height:34px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:13px; font-weight:700; color:white;
+      font-family:'Playfair Display',serif; flex-shrink:0;
+      position:relative;
+    }
+    .online-dot {
+      position:absolute; bottom:1px; right:1px;
+      width:8px; height:8px; border-radius:50%;
+      background:#4caf7d; border:1.5px solid var(--surface);
+    }
+    .at-info { flex:1; min-width:0; }
+    .at-name   { font-size:13px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .at-market { font-size:11px; color:var(--text-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    /* ── POST MODAL ───────────────────────────────────────── */
+    .modal-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(10,46,26,0.55); z-index:200;
+      align-items:flex-end; justify-content:center;
+      backdrop-filter:blur(4px);
+    }
+    .modal-overlay.open { display:flex; }
+    .modal {
+      background:var(--surface);
+      border-radius:20px 20px 0 0;
+      padding:26px 26px 34px;
+      width:100%; max-width:620px;
+      max-height:90vh; overflow-y:auto;
+      animation:slideUp 0.3s cubic-bezier(.34,1.2,.64,1);
+    }
+    @keyframes slideUp {
+      from { transform:translateY(100%); opacity:0; }
+      to   { transform:translateY(0);    opacity:1; }
+    }
+    .modal-handle {
+      width:40px; height:4px; border-radius:2px;
+      background:var(--border); margin:0 auto 20px;
+    }
+    .modal-title { font-size:18px; font-weight:700; color:var(--text-primary); margin-bottom:4px; }
+    .modal-sub   { font-size:13px; color:var(--text-soft); margin-bottom:18px; }
+
+    .modal-type-pills { display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap; }
+    .modal-pill {
+      display:flex; align-items:center; gap:6px;
+      padding:8px 15px; border-radius:50px;
+      border:1.5px solid var(--border);
+      font-family:'DM Sans',sans-serif;
+      font-size:13px; font-weight:600;
+      color:var(--text-soft); cursor:pointer; transition:all 0.15s;
+    }
+    .modal-pill.selected-update { background:var(--green-pale); border-color:var(--green-light); color:var(--green-light); }
+    .modal-pill.selected-price  { background:var(--red-pale);   border-color:var(--red);         color:var(--red); }
+    .modal-pill.selected-bulk   { background:var(--blue-pale);  border-color:var(--blue);        color:var(--blue); }
+    .modal-pill.selected-ajo    { background:var(--gold-pale);  border-color:var(--gold);        color:#9a7820; }
+
+    .extra-fields { display:none; margin-bottom:16px; }
+    .extra-fields.show { display:block; }
+    .extra-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+
+    .form-label {
+      font-size:11px; font-weight:700; letter-spacing:0.5px;
+      text-transform:uppercase; color:var(--text-mid);
+      display:block; margin-bottom:6px;
+    }
+    .form-input, .form-select {
+      width:100%; padding:11px 14px;
+      border:1.5px solid var(--border); border-radius:var(--radius-sm);
+      font-family:'DM Sans',sans-serif; font-size:14px;
+      color:var(--text-primary); background:var(--surface); outline:none;
+      transition:border-color 0.15s;
+    }
+    .form-input:focus, .form-select:focus { border-color:var(--green-light); }
+
+    .post-textarea {
+      width:100%; min-height:90px;
+      padding:14px; border:1.5px solid var(--border);
+      border-radius:var(--radius-sm);
+      font-family:'DM Sans',sans-serif;
+      font-size:16px; font-weight:500;
+      color:var(--text-primary); resize:none; outline:none;
+      line-height:1.6; margin-bottom:16px;
+      transition:border-color 0.15s;
+    }
+    .post-textarea:focus { border-color:var(--green-light); }
+    .post-textarea::placeholder { color:var(--text-soft); }
+
+    .modal-footer {
+      display:flex; align-items:center; justify-content:space-between;
+      flex-wrap:wrap; gap:10px;
+    }
+    .modal-cat-select {
+      padding:8px 14px; border:1.5px solid var(--border);
+      border-radius:50px; font-family:'DM Sans',sans-serif;
+      font-size:13px; color:var(--text-mid); outline:none;
+      background:var(--surface); transition:border-color 0.15s;
+    }
+    .modal-cat-select:focus { border-color:var(--green-light); }
+    .btn-post {
+      padding:11px 26px; border:none; border-radius:50px;
+      background:var(--green-deep); color:var(--gold);
+      font-family:'DM Sans',sans-serif; font-size:14px;
+      font-weight:700; cursor:pointer; transition:all 0.2s;
+    }
+    .btn-post:hover { background:var(--green-light); transform:translateY(-1px); }
+    .btn-post:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+
+    /* ── EMPTY / LOADING STATES ───────────────────────────── */
+    .empty-state {
+      text-align:center; padding:40px 24px;
+      display:flex; flex-direction:column; align-items:center; gap:12px;
+      color:var(--text-soft);
+    }
+    .empty-icon { font-size:36px; }
+    .empty-state h4 { font-size:15px; font-weight:600; color:var(--text-primary); }
+    .empty-state p  { font-size:13px; color:var(--text-soft); max-width:260px; line-height:1.6; }
+
+    .skeleton {
+      background:linear-gradient(90deg,var(--surface-3) 25%,var(--surface-2) 50%,var(--surface-3) 75%);
+      background-size:200% 100%;
+      animation:shimmer 1.5s infinite;
+      border-radius:8px; height:16px;
+    }
+    @keyframes shimmer { 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+
+    /* ── TOAST ────────────────────────────────────────────── */
+    .toast {
+      position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+      background:var(--green-deep); color:white;
+      padding:12px 22px; border-radius:50px;
+      font-size:14px; font-weight:600;
+      z-index:999; opacity:0;
+      transition:all 0.35s cubic-bezier(.34,1.56,.64,1);
+      pointer-events:none; white-space:nowrap;
+    }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+    /* ── FADE UP ──────────────────────────────────────────── */
+    .fade-up { opacity:0; transform:translateY(14px); animation:fadeUp 0.35s ease forwards; }
+    @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+    .fade-up:nth-child(1){animation-delay:.04s}
+    .fade-up:nth-child(2){animation-delay:.08s}
+    .fade-up:nth-child(3){animation-delay:.12s}
+    .fade-up:nth-child(4){animation-delay:.16s}
+
+    /* ── BOTTOM NAV (mobile) ──────────────────────────────── */
+    .bottom-nav {
+      display:none; position:fixed; bottom:0; left:0; right:0;
+      background:var(--green-deep);
+      border-top:1px solid rgba(255,255,255,0.08);
+      z-index:200; box-shadow:0 -4px 20px rgba(0,0,0,0.2);
+    }
+    .bottom-nav-item {
+      flex:1; display:flex; flex-direction:column; align-items:center;
+      justify-content:center; gap:3px; padding:10px 4px;
+      color:rgba(255,255,255,0.5); cursor:pointer; transition:color 0.15s;
+      text-decoration:none; font-family:'DM Sans',sans-serif;
+      border:none; background:none;
+    }
+    .bottom-nav-item.active { color:var(--gold); }
+    .bottom-nav-item:hover  { color:rgba(255,255,255,0.85); }
+    .bn-icon  { font-size:20px; }
+    .bn-label { font-size:9px; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; }
+
+    /* ── RESPONSIVE ───────────────────────────────────────── */
+    @media(max-width:1000px) {
+      .feed-layout { grid-template-columns:1fr; }
+      .side-col { display:none; }
+    }
+    @media(max-width:768px) {
+      .sidebar { transform:translateX(-100%); z-index:300; }
+      .sidebar.open { transform:translateX(0); }
+      .main { margin-left:0; padding-bottom:80px; }
+      .bottom-nav { display:flex; }
+      #hamburger-btn { display:flex; }
+      .post-types { display:none; }
+      .topbar { padding:12px 16px; }
+      .feed-layout { padding:16px 14px 90px; }
+      .extra-row { grid-template-columns:1fr; }
+      .modal { border-radius:20px 20px 0 0; }
+    }
+    @media(max-width:480px) {
+      .topbar-left h2 { font-size:17px; }
+      .filter-bar { gap:6px; }
+      .filter-chip { padding:7px 12px; font-size:12px; }
+    }
+
+    /* ── COMMUNITY FULL RESPONSIVE ── */
+ 
+    /* Large desktop: constrain max width so content doesn't bleed */
+    .main { overflow-x: hidden; }
+ 
+    @media (max-width: 1200px) {
+      /* Topbar post-type buttons become scrollable row */
+      .post-types {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+        max-width: 60vw;
+        padding-bottom: 2px;
+      }
+      .post-type-btn { font-size: 12px; padding: 8px 12px; }
+    }
+ 
+    @media (max-width: 1024px) {
+      /* Collapse side panel into single column */
+      .feed-layout { grid-template-columns: 1fr; }
+      .side-col { display: none; }
+ 
+      /* Topbar wraps to two rows */
+      .topbar {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px 20px;
+      }
+      .post-types {
+        max-width: 100%;
+        width: 100%;
+        order: 2;
+      }
+    }
+ 
+    @media (max-width: 900px) {
+      .feed-layout { padding: 16px 20px; }
+    }
+ 
+    @media (max-width: 768px) {
+      /* Hide sidebar, collapse main */
+      .sidebar  { display: none; }
+      .main     { margin-left: 0; }
+ 
+      /* Topbar: hide post-type buttons (use FAB instead) */
+      .post-types { display: none; }
+ 
+      /* Feed padding */
+      .feed-layout { padding: 12px 14px; grid-template-columns: 1fr; }
+ 
+      /* Topbar compact */
+      .topbar { padding: 12px 14px; }
+      .topbar-left h2 { font-size: 17px; }
+      .topbar-left p  { font-size: 11px; }
+ 
+      /* Post cards */
+      .post-inner { padding: 14px 14px; }
+      .post-body  { font-size: 14px; }
+      .p-name     { font-size: 14px; }
+ 
+      /* Comments */
+      .comments-section { padding: 12px 14px; }
+ 
+      /* Filter bar scrollable */
+      .filter-bar { gap: 6px; }
+      .filter-chip { font-size: 12px; padding: 6px 12px; }
+ 
+      /* Price/Bulk/Ajo boxes */
+      .price-alert-box { padding: 10px 12px; }
+      .bulk-box        { padding: 10px 12px; }
+      .ajo-box         { padding: 10px 12px; }
+ 
+      /* Modal full screen on mobile */
+      .modal-overlay {
+        align-items: flex-end !important;
+        padding: 0;
+      }
+      .modal {
+        border-radius: 20px 20px 0 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 20px 16px 32px;
+        max-height: 92vh;
+        overflow-y: auto;
+      }
+      .modal-footer { flex-wrap: wrap; gap: 10px; }
+      .modal-market-select { width: 100%; }
+      .btn-post { width: 100%; }
+    }
+ 
+    @media (max-width: 480px) {
+      .topbar { padding: 10px 12px; }
+      .feed-layout { padding: 10px 10px; }
+      .post-inner  { padding: 12px 12px; }
+      .p-avatar    { width: 36px; height: 36px; font-size: 13px; }
+      .post-body   { font-size: 13px; }
+      .reaction-btn{ padding: 6px 10px; font-size: 13px; }
+      .bulk-details{ gap: 12px; }
+      .ajo-box-details { gap: 12px; }
+    }
+  </style>
 </head>
 <body>
+
 <!-- PAGE LOADER -->
 <div id="page-loader">
-<div class="loader-logo">SUWE</div>
-<div class="loader-bar"><div
-class="loader-fill"></div></div>
+  <div class="loader-logo">SUWE</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
 </div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
+
 <!-- SIDEBAR BACKDROP -->
 <div id="sidebar-backdrop"></div>
+
 <!-- SIDEBAR -->
 <aside class="sidebar" id="main-sidebar">
-<div class="sidebar-logo">SUWE<span>Built for the
-market</span></div>
-<div class="nav-section">
-<div class="nav-label">Main</div>
-<div class="nav-item" data-route="/pages/dashboard.html">
-<span class="icon">⊞</span> Dashboard
-</div>
-<div class="nav-item"
-data-route="/pages/sales_and_inventory.html">
-<span class="icon">📦</span> Sales &amp; Inventory
-</div>
-</div>
-<div class="nav-section">
-<div class="nav-label">Community</div>
-<div class="nav-item" data-route="/pages/ajo.html">
-<span class="icon">🔄</span> My Ajo
-</div>
-<div class="nav-item active">
-<span class="icon">📢</span> Feed
-</div>
-</div>
-<div class="nav-section">
-<div class="nav-label">Account</div>
-<div class="nav-item"><span class="icon">⚙️</span>
-Settings</div>
-</div>
-<div class="sidebar-footer">
-<div class="user-pill">
-<div class="user-avatar" id="sidebar-avatar">...</div>
-<div>
-<div class="user-name" id="sidebar-name">Loading...</div>
-<div class="user-market" id="sidebar-market"></div>
-</div>
-</div>
-<button class="sign-out-btn" id="sign-out-btn">Sign out</button>
-</div>
+  <div class="sidebar-logo">SUWE<span>Built for the market</span></div>
+  <div class="nav-section">
+    <div class="nav-label">Main</div>
+    <div class="nav-item" data-route="/frontend/pages/dashboard.html">
+      <span class="icon">⊞</span> Dashboard
+    </div>
+    <div class="nav-item" data-route="/frontend/pages/sales_and_inventory.html">
+      <span class="icon">📦</span> Sales &amp; Inventory
+    </div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Community</div>
+    <div class="nav-item" data-route="/frontend/pages/ajo.html">
+      <span class="icon">🔄</span> My Ajo
+    </div>
+    <div class="nav-item active">
+      <span class="icon">📢</span> Feed
+    </div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Account</div>
+    <div class="nav-item"><span class="icon">⚙️</span> Settings</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="user-avatar" id="sidebar-avatar">…</div>
+      <div>
+        <div class="user-name"  id="sidebar-name">Loading…</div>
+        <div class="user-market" id="sidebar-market"></div>
+      </div>
+    </div>
+    <button class="sign-out-btn" id="sign-out-btn">Sign out</button>
+  </div>
 </aside>
+
 <!-- MAIN -->
 <main class="main">
-<!-- Top Bar -->
-<div class="topbar">
-<div class="topbar-left">
-<div id="hamburger-btn">☰</div>
-<div>
-<h2>📢 Trader Feed</h2>
-<p>What traders are sharing today</p>
-</div>
-</div>
-<div class="post-types">
-<button class="post-type-btn update"
-onclick="openModal('update')">
-<span class="btn-icon">✍️</span> Update
-</button>
-<button class="post-type-btn price"
-onclick="openModal('price')">
-<span class="btn-icon">🚨</span> Price Alert
-</button>
-<button class="post-type-btn bulk" onclick="openModal('bulk')">
-<span class="btn-icon">🤝</span> Bulk Buy
-</button>
-<button class="post-type-btn ajo" onclick="openModal('ajo')">
-<span class="btn-icon">🔄</span> Ajo Invite
-</button>
-</div>
-</div>
-<!-- Mobile post fab -->
-<button id="fab-post" style="
-display:none; position:fixed; bottom:78px; right:18px; z-index:150;
-width:52px; height:52px; border-radius:50%; border:none;
-background:var(--green-deep); color:var(--gold);
-font-size:24px; cursor:pointer;
-box-shadow:0 4px 18px rgba(10,46,26,0.35);
-align-items:center; justify-content:center;
-transition:transform 0.15s;
-" onclick="openModal('update')">＋</button>
-<div class="feed-layout">
-<!-- FEED COLUMN -->
-<div class="feed-col">
-<!-- Filter bar -->
-<div class="filter-bar" id="filter-bar">
-<div class="filter-chip active" data-filter="all">
-<span class="chip-icon">🌍</span> All Posts
-</div>
-<div class="filter-chip" data-filter="food">
-<span class="chip-icon">🍅</span> Food &amp; Produce
-</div>
-<div class="filter-chip" data-filter="fabric">
-<span class="chip-icon">🧵</span> Fabric &amp; Fashion
-</div>
-<div class="filter-chip" data-filter="electronics">
-<span class="chip-icon">📱</span> Electronics
-</div>
-<div class="filter-chip" data-filter="cosmetics">
-<span class="chip-icon">💄</span> Cosmetics
-</div>
-<div class="filter-chip" data-filter="building">
-<span class="chip-icon">🧱</span> Building Materials
-</div>
-<div class="filter-chip" data-filter="household">
-<span class="chip-icon">🏠</span> Household
-</div>
-<div class="filter-chip" data-filter="liked">
-<span class="chip-icon">💬</span> Liked/Commented
-</div>
-</div>
-<!-- Feed posts -->
-<div id="feed-container">
-<!-- Loading skeletons -->
-<div class="post-card" style="border-radius:var(--radius);">
-<div style="height:4px;background:var(--surface-3);"></div>
-<div style="padding:18px 20px;">
-<div class="skeleton"
-style="width:60%;height:14px;margin-bottom:10px;"></div>
-<div class="skeleton"
-style="width:100%;height:12px;margin-bottom:6px;"></div>
-<div class="skeleton" style="width:80%;height:12px;"></div>
-</div>
-</div>
-<div class="post-card" style="border-radius:var(--radius);">
-<div style="height:4px;background:var(--surface-3);"></div>
-<div style="padding:18px 20px;">
-<div class="skeleton"
-style="width:50%;height:14px;margin-bottom:10px;"></div>
-<div class="skeleton"
-style="width:90%;height:12px;margin-bottom:6px;"></div>
-<div class="skeleton" style="width:70%;height:12px;"></div>
-</div>
-</div>
-</div>
-</div><!-- /feed-col -->
-<!-- SIDE COLUMN -->
-<div class="side-col">
-<!-- Live Price Ticker (from DB price_alerts) -->
-<div class="side-card fade-up">
-<div class="side-header">📊 Market Prices Today</div>
-<div class="side-body" id="price-ticker">
-<div class="skeleton"
-style="height:12px;margin-bottom:8px;width:80%;"></div>
-<div class="skeleton" style="height:12px;width:60%;"></div>
-</div>
-</div>
-<!-- Active Now --- shows users active in last 15min -->
-<div class="side-card fade-up">
-<div class="side-header">🟢 Active Now</div>
-<div class="side-body" id="active-traders">
-<div class="skeleton"
-style="height:12px;margin-bottom:8px;width:70%;"></div>
-<div class="skeleton" style="height:12px;width:50%;"></div>
-</div>
-</div>
-</div><!-- /side-col -->
-</div><!-- /feed-layout -->
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div id="hamburger-btn">☰</div>
+      <div>
+        <h2>📢 Trader Feed</h2>
+        <p>What traders are sharing today</p>
+      </div>
+    </div>
+    <div class="post-types">
+      <button class="post-type-btn update" onclick="openModal('update')">
+        <span class="btn-icon">✍️</span> Update
+      </button>
+      <button class="post-type-btn price" onclick="openModal('price')">
+        <span class="btn-icon">🚨</span> Price Alert
+      </button>
+      <button class="post-type-btn bulk" onclick="openModal('bulk')">
+        <span class="btn-icon">🤝</span> Bulk Buy
+      </button>
+      <button class="post-type-btn ajo" onclick="openModal('ajo')">
+        <span class="btn-icon">🔄</span> Ajo Invite
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile post fab -->
+  <button id="fab-post" style="
+    display:none; position:fixed; bottom:78px; right:18px; z-index:150;
+    width:52px; height:52px; border-radius:50%; border:none;
+    background:var(--green-deep); color:var(--gold);
+    font-size:24px; cursor:pointer;
+    box-shadow:0 4px 18px rgba(10,46,26,0.35);
+    align-items:center; justify-content:center;
+    transition:transform 0.15s;
+  " onclick="openModal('update')">＋</button>
+
+  <div class="feed-layout">
+
+    <!-- FEED COLUMN -->
+    <div class="feed-col">
+
+      <!-- Filter bar -->
+      <div class="filter-bar" id="filter-bar">
+        <div class="filter-chip active" data-filter="all">
+          <span class="chip-icon">🌍</span> All Posts
+        </div>
+        <div class="filter-chip" data-filter="food">
+          <span class="chip-icon">🍅</span> Food &amp; Produce
+        </div>
+        <div class="filter-chip" data-filter="fabric">
+          <span class="chip-icon">🧵</span> Fabric &amp; Fashion
+        </div>
+        <div class="filter-chip" data-filter="electronics">
+          <span class="chip-icon">📱</span> Electronics
+        </div>
+        <div class="filter-chip" data-filter="cosmetics">
+          <span class="chip-icon">💄</span> Cosmetics
+        </div>
+        <div class="filter-chip" data-filter="building">
+          <span class="chip-icon">🧱</span> Building Materials
+        </div>
+        <div class="filter-chip" data-filter="household">
+          <span class="chip-icon">🏠</span> Household
+        </div>
+        <div class="filter-chip" data-filter="liked">
+          <span class="chip-icon">💬</span> Liked/Commented
+        </div>
+      </div>
+
+      <!-- Feed posts -->
+      <div id="feed-container">
+        <!-- Loading skeletons -->
+        <div class="post-card" style="border-radius:var(--radius);">
+          <div style="height:4px;background:var(--surface-3);"></div>
+          <div style="padding:18px 20px;">
+            <div class="skeleton" style="width:60%;height:14px;margin-bottom:10px;"></div>
+            <div class="skeleton" style="width:100%;height:12px;margin-bottom:6px;"></div>
+            <div class="skeleton" style="width:80%;height:12px;"></div>
+          </div>
+        </div>
+        <div class="post-card" style="border-radius:var(--radius);">
+          <div style="height:4px;background:var(--surface-3);"></div>
+          <div style="padding:18px 20px;">
+            <div class="skeleton" style="width:50%;height:14px;margin-bottom:10px;"></div>
+            <div class="skeleton" style="width:90%;height:12px;margin-bottom:6px;"></div>
+            <div class="skeleton" style="width:70%;height:12px;"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /feed-col -->
+
+    <!-- SIDE COLUMN -->
+    <div class="side-col">
+
+      <!-- Live Price Ticker (from DB price_alerts) -->
+      <div class="side-card fade-up">
+        <div class="side-header">📊 Market Prices Today</div>
+        <div class="side-body" id="price-ticker">
+          <div class="skeleton" style="height:12px;margin-bottom:8px;width:80%;"></div>
+          <div class="skeleton" style="height:12px;width:60%;"></div>
+        </div>
+      </div>
+
+      <!-- Active Now — shows users active in last 15min -->
+      <div class="side-card fade-up">
+        <div class="side-header">🟢 Active Now</div>
+        <div class="side-body" id="active-traders">
+          <div class="skeleton" style="height:12px;margin-bottom:8px;width:70%;"></div>
+          <div class="skeleton" style="height:12px;width:50%;"></div>
+        </div>
+      </div>
+
+    </div><!-- /side-col -->
+
+  </div><!-- /feed-layout -->
+
 </main><!-- /main -->
+
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav" role="navigation">
-<a class="bottom-nav-item" href="/pages/dashboard.html">
-<span class="bn-icon">⊞</span><span
-class="bn-label">Home</span>
-</a>
-<a class="bottom-nav-item"
-href="/pages/sales_and_inventory.html">
-<span class="bn-icon">📦</span><span
-class="bn-label">Sales</span>
-</a>
-<a class="bottom-nav-item" href="/pages/ajo.html">
-<span class="bn-icon">🔄</span><span
-class="bn-label">Ajo</span>
-</a>
-<a class="bottom-nav-item active"
-href="/pages/community.html">
-<span class="bn-icon">🤝</span><span
-class="bn-label">Feed</span>
-</a>
+  <a class="bottom-nav-item" href="/frontend/pages/dashboard.html">
+    <span class="bn-icon">⊞</span><span class="bn-label">Home</span>
+  </a>
+  <a class="bottom-nav-item" href="/frontend/pages/sales_and_inventory.html">
+    <span class="bn-icon">📦</span><span class="bn-label">Sales</span>
+  </a>
+  <a class="bottom-nav-item" href="/frontend/pages/ajo.html">
+    <span class="bn-icon">🔄</span><span class="bn-label">Ajo</span>
+  </a>
+  <a class="bottom-nav-item active" href="/frontend/pages/community.html">
+    <span class="bn-icon">🤝</span><span class="bn-label">Feed</span>
+  </a>
 </nav>
+
 <!-- ══ POST CREATION MODAL ══════════════════════════════════ -->
 <div class="modal-overlay" id="modal-overlay">
-<div class="modal" id="modal">
-<div class="modal-handle"></div>
-<div class="modal-title">What do you want to share?</div>
-<div class="modal-sub">Choose a type, then write your
-message</div>
-<!-- Type pills -->
-<div class="modal-type-pills">
-<div class="modal-pill" id="pill-update"
-onclick="selectType('update')">✍️ Update</div>
-<div class="modal-pill" id="pill-price"
-onclick="selectType('price')">🚨 Price Alert</div>
-<div class="modal-pill" id="pill-bulk"
-onclick="selectType('bulk')">🤝 Bulk Buy</div>
-<div class="modal-pill" id="pill-ajo"
-onclick="selectType('ajo')">🔄 Ajo Invite</div>
+  <div class="modal" id="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">What do you want to share?</div>
+    <div class="modal-sub">Choose a type, then write your message</div>
+
+    <!-- Type pills -->
+    <div class="modal-type-pills">
+      <div class="modal-pill" id="pill-update" onclick="selectType('update')">✍️ Update</div>
+      <div class="modal-pill" id="pill-price"  onclick="selectType('price')">🚨 Price Alert</div>
+      <div class="modal-pill" id="pill-bulk"   onclick="selectType('bulk')">🤝 Bulk Buy</div>
+      <div class="modal-pill" id="pill-ajo"    onclick="selectType('ajo')">🔄 Ajo Invite</div>
+    </div>
+
+    <!-- PRICE ALERT extra fields -->
+    <div class="extra-fields" id="extra-price">
+      <div class="extra-row">
+        <div>
+          <label class="form-label">What item? 🛒</label>
+          <input class="form-input" id="price-item" placeholder="e.g. Tomatoes, Cement bag…"/>
+        </div>
+        <div>
+          <label class="form-label">New price 💰</label>
+          <input class="form-input" id="price-new" placeholder="e.g. ₦2,500 per crate"/>
+        </div>
+      </div>
+      <div class="extra-row">
+        <div>
+          <label class="form-label">Direction 📈</label>
+          <select class="form-select" id="price-dir">
+            <option value="up">↑ Price went UP</option>
+            <option value="down">↓ Price went DOWN</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">By how much? %</label>
+          <input class="form-input" type="number" id="price-pct" placeholder="e.g. 25" min="0" max="999"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- BULK BUY extra fields -->
+    <div class="extra-fields" id="extra-bulk">
+      <div class="extra-row">
+        <div>
+          <label class="form-label">What to buy together? 📦</label>
+          <input class="form-input" id="bulk-item" placeholder="e.g. Tomatoes, Rice bags…"/>
+        </div>
+        <div>
+          <label class="form-label">Price per unit 💵</label>
+          <input class="form-input" id="bulk-price" placeholder="e.g. ₦12,000 per crate"/>
+        </div>
+      </div>
+      <div class="extra-row">
+        <div>
+          <label class="form-label">Minimum quantity 📊</label>
+          <input class="form-input" id="bulk-qty" placeholder="e.g. 20 crates total"/>
+        </div>
+        <div>
+          <label class="form-label">Spots available 👥</label>
+          <input class="form-input" type="number" id="bulk-spots" placeholder="e.g. 5" min="1" max="50"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- AJO INVITE extra fields -->
+    <div class="extra-fields" id="extra-ajo">
+      <div class="extra-row">
+        <div>
+          <label class="form-label">Ajo Group Name 🏷</label>
+          <input class="form-input" id="ajo-name" placeholder="e.g. Market Women Strong Ajo"/>
+        </div>
+        <div>
+          <label class="form-label">Monthly amount 💰</label>
+          <input class="form-input" id="ajo-amount" placeholder="e.g. ₦10,000"/>
+        </div>
+      </div>
+      <div class="extra-row">
+        <div>
+          <label class="form-label">Spots open 👥</label>
+          <input class="form-input" type="number" id="ajo-spots" placeholder="e.g. 4" min="1" max="8"/>
+        </div>
+        <div>
+          <label class="form-label">Your location / market</label>
+          <!-- TEXT INPUT not dropdown — scales beyond Lagos -->
+          <input class="form-input" id="ajo-location" placeholder="e.g. Kasuwa Market, Kaduna"/>
+        </div>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label class="form-label">Who can join?</label>
+        <select class="form-select" id="ajo-open">
+          <option value="public">Open — anyone on SUWE can join instantly</option>
+          <option value="invite">Invite only — I review and approve</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Message box -->
+    <textarea class="post-textarea" id="post-text"
+      placeholder="Write your message here…&#10;&#10;Use simple words. Other traders will read this."></textarea>
+
+    <div class="modal-footer">
+      <select class="modal-cat-select" id="post-category">
+        <option value="food">🍅 Food &amp; Produce</option>
+        <option value="fabric">🧵 Fabric &amp; Fashion</option>
+        <option value="electronics">📱 Electronics</option>
+        <option value="cosmetics">💄 Cosmetics &amp; Beauty</option>
+        <option value="building">🧱 Building Materials</option>
+        <option value="household">🏠 Household Goods</option>
+        <option value="general" selected>🌍 General</option>
+      </select>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <button style="padding:10px 18px; border:1.5px solid var(--border); border-radius:50px; background:none; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; color:var(--text-mid); cursor:pointer;" onclick="closeModal()">Cancel</button>
+        <button class="btn-post" id="btn-post-submit" onclick="submitPost()">Post ✓</button>
+      </div>
+    </div>
+  </div>
 </div>
-<!-- PRICE ALERT extra fields -->
-<div class="extra-fields" id="extra-price">
-<div class="extra-row">
-<div>
-<label class="form-label">What item? 🛒</label>
-<input class="form-input" id="price-item" placeholder="e.g.
-Tomatoes, Cement bag..."/>
-</div>
-<div>
-<label class="form-label">New price 💰</label>
-<input class="form-input" id="price-new" placeholder="e.g. ₦2,500
-per crate"/>
-</div>
-</div>
-<div class="extra-row">
-<div>
-<label class="form-label">Direction 📈</label>
-<select class="form-select" id="price-dir">
-<option value="up">↑ Price went UP</option>
-<option value="down">↓ Price went DOWN</option>
-</select>
-</div>
-<div>
-<label class="form-label">By how much? %</label>
-<input class="form-input" type="number" id="price-pct"
-placeholder="e.g. 25" min="0" max="999"/>
-</div>
-</div>
-</div>
-<!-- BULK BUY extra fields -->
-<div class="extra-fields" id="extra-bulk">
-<div class="extra-row">
-<div>
-<label class="form-label">What to buy together? 📦</label>
-<input class="form-input" id="bulk-item" placeholder="e.g.
-Tomatoes, Rice bags..."/>
-</div>
-<div>
-<label class="form-label">Price per unit 💵</label>
-<input class="form-input" id="bulk-price" placeholder="e.g.
-₦12,000 per crate"/>
-</div>
-</div>
-<div class="extra-row">
-<div>
-<label class="form-label">Minimum quantity 📊</label>
-<input class="form-input" id="bulk-qty" placeholder="e.g. 20
-crates total"/>
-</div>
-<div>
-<label class="form-label">Spots available 👥</label>
-<input class="form-input" type="number" id="bulk-spots"
-placeholder="e.g. 5" min="1" max="50"/>
-</div>
-</div>
-</div>
-<!-- AJO INVITE extra fields -->
-<div class="extra-fields" id="extra-ajo">
-<div class="extra-row">
-<div>
-<label class="form-label">Ajo Group Name 🏷</label>
-<input class="form-input" id="ajo-name" placeholder="e.g. Market
-Women Strong Ajo"/>
-</div>
-<div>
-<label class="form-label">Monthly amount 💰</label>
-<input class="form-input" id="ajo-amount" placeholder="e.g.
-₦10,000"/>
-</div>
-</div>
-<div class="extra-row">
-<div>
-<label class="form-label">Spots open 👥</label>
-<input class="form-input" type="number" id="ajo-spots"
-placeholder="e.g. 4" min="1" max="8"/>
-</div>
-<div>
-<label class="form-label">Your location / market</label>
-<!-- TEXT INPUT not dropdown --- scales beyond Lagos -->
-<input class="form-input" id="ajo-location" placeholder="e.g.
-Kasuwa Market, Kaduna"/>
-</div>
-</div>
-<div style="margin-bottom:14px;">
-<label class="form-label">Who can join?</label>
-<select class="form-select" id="ajo-open">
-<option value="public">Open --- anyone on SUWE can join
-instantly</option>
-<option value="invite">Invite only --- I review and
-approve</option>
-</select>
-</div>
-</div>
-<!-- Message box -->
-<textarea class="post-textarea" id="post-text"
-placeholder="Write your message here...&#10;&#10;Use simple words.
-Other traders will read this."></textarea>
-<div class="modal-footer">
-<select class="modal-cat-select" id="post-category">
-<option value="food">🍅 Food &amp; Produce</option>
-<option value="fabric">🧵 Fabric &amp; Fashion</option>
-<option value="electronics">📱 Electronics</option>
-<option value="cosmetics">💄 Cosmetics &amp; Beauty</option>
-<option value="building">🧱 Building Materials</option>
-<option value="household">🏠 Household Goods</option>
-<option value="general" selected>🌍 General</option>
-</select>
-<div style="display:flex; gap:10px; align-items:center;">
-<button style="padding:10px 18px; border:1.5px solid var(--border);
-border-radius:50px; background:none; font-family:'DM Sans',sans-serif;
-font-size:13px; font-weight:600; color:var(--text-mid);
-cursor:pointer;" onclick="closeModal()">Cancel</button>
-<button class="btn-post" id="btn-post-submit"
-onclick="submitPost()">Post ✓</button>
-</div>
-</div>
-</div>
-</div>
+
 <!-- ══ SCRIPT ════════════════════════════════════════════════ -->
 <script type="module">
 import {
-supabase,
-getCurrentUser,
-getVendorProfile,
-signOut
-} from '/js/supabase.js';
+  supabase,
+  getCurrentUser,
+  getVendorProfile,
+  signOut
+} from '../js/supabase.js';
+
 // ── STATE ─────────────────────────────────────────────────────
-let currentUser = null;
-let vendorProfile = null;
-let activeFilter = 'all';
-let selectedType = 'update';
-let posts = []; // cache of loaded posts
-let likedPostIds = new Set(); // post IDs the user has liked
-let commentedPostIds = new Set(); // post IDs the user has commented on
-let openComments = new Set(); // post IDs with comments panel open
+let currentUser    = null;
+let vendorProfile  = null;
+let activeFilter   = 'all';
+let selectedType   = 'update';
+let posts          = [];           // cache of loaded posts
+let likedPostIds   = new Set();    // post IDs the user has liked
+let commentedPostIds = new Set();  // post IDs the user has commented on
+let openComments   = new Set();    // post IDs with comments panel open
+
 const AVATAR_COLORS = [
-'#c9a84c','#3b7dd8','#1a6637','#e05c4b',
-'#5a4a8a','#d8753b','#4a8a6a','#8a4a5a','#2e7d32'
+  '#c9a84c','#3b7dd8','#1a6637','#e05c4b',
+  '#5a4a8a','#d8753b','#4a8a6a','#8a4a5a','#2e7d32'
 ];
+
 // ── BOOT ──────────────────────────────────────────────────────
 async function boot() {
-currentUser = await getCurrentUser();
-if (!currentUser) { window.location.href = '/index.html';
-return; }
-vendorProfile = await getVendorProfile(currentUser.id);
-if (!vendorProfile?.phone) { window.location.href =
-'/frontend/pages/onboarding.html'; return; }
-setupSidebar();
-setupNav();
-await upsertActiveSession();
-await Promise.all([
-loadFeed(),
-loadPriceTicker(),
-loadActiveTraders()
-]);
-subscribeRealtime();
-hideLoader();
-// Show FAB on mobile
-if (window.innerWidth <= 768) {
-document.getElementById('fab-post').style.display = 'flex';
+  currentUser = await getCurrentUser();
+  if (!currentUser) { window.location.href = '/frontend/index.html'; return; }
+  vendorProfile = await getVendorProfile(currentUser.id);
+  if (!vendorProfile?.phone) { window.location.href = '/frontend/pages/onboarding.html'; return; }
+
+  setupSidebar();
+  setupNav();
+  await upsertActiveSession();
+  await Promise.all([
+    loadFeed(),
+    loadPriceTicker(),
+    loadActiveTraders()
+  ]);
+  subscribeRealtime();
+  hideLoader();
+
+  // Show FAB on mobile
+  if (window.innerWidth <= 768) {
+    document.getElementById('fab-post').style.display = 'flex';
+  }
 }
-}
+
 // ── SIDEBAR ───────────────────────────────────────────────────
 function setupSidebar() {
-const name = vendorProfile.full_name || 'Trader';
-const market = vendorProfile.market_location || '';
-const initials = name.split(' ').map(w =>
-w[0]).join('').toUpperCase().slice(0, 2);
-document.getElementById('sidebar-avatar').textContent = initials;
-document.getElementById('sidebar-name').textContent = name;
-document.getElementById('sidebar-market').textContent = market;
+  const name     = vendorProfile.full_name || 'Trader';
+  const market   = vendorProfile.market_location || '';
+  const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  document.getElementById('sidebar-avatar').textContent = initials;
+  document.getElementById('sidebar-name').textContent   = name;
+  document.getElementById('sidebar-market').textContent = market;
 }
+
 function setupNav() {
-// Sidebar route nav
-document.querySelectorAll('.sidebar
-.nav-item[data-route]').forEach(item => {
-item.addEventListener('click', () => window.location.href =
-item.dataset.route);
-});
-document.getElementById('sign-out-btn').addEventListener('click',
-async () => {
-await signOut();
-window.location.href = '/index.html';
-});
-// Hamburger
-const sidebar = document.getElementById('main-sidebar');
-const back = document.getElementById('sidebar-backdrop');
-document.getElementById('hamburger-btn').addEventListener('click',
-() => {
-sidebar.classList.add('open'); back.classList.add('show');
-});
-back.addEventListener('click', () => {
-sidebar.classList.remove('open'); back.classList.remove('show');
-});
-// Filter chips
-document.getElementById('filter-bar').addEventListener('click', e
-=> {
-const chip = e.target.closest('.filter-chip');
-if (!chip) return;
-document.querySelectorAll('.filter-chip').forEach(c =>
-c.classList.remove('active'));
-chip.classList.add('active');
-activeFilter = chip.dataset.filter;
-renderFeed();
-});
-// Modal close on backdrop
-document.getElementById('modal-overlay').addEventListener('click', e
-=> {
-if (e.target === document.getElementById('modal-overlay'))
-closeModal();
-});
+  // Sidebar route nav
+  document.querySelectorAll('.sidebar .nav-item[data-route]').forEach(item => {
+    item.addEventListener('click', () => window.location.href = item.dataset.route);
+  });
+
+  document.getElementById('sign-out-btn').addEventListener('click', async () => {
+    await signOut();
+    window.location.href = '/frontend/index.html';
+  });
+
+  // Hamburger
+  const sidebar = document.getElementById('main-sidebar');
+  const back    = document.getElementById('sidebar-backdrop');
+  document.getElementById('hamburger-btn').addEventListener('click', () => {
+    sidebar.classList.add('open'); back.classList.add('show');
+  });
+  back.addEventListener('click', () => {
+    sidebar.classList.remove('open'); back.classList.remove('show');
+  });
+
+  // Filter chips
+  document.getElementById('filter-bar').addEventListener('click', e => {
+    const chip = e.target.closest('.filter-chip');
+    if (!chip) return;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activeFilter = chip.dataset.filter;
+    renderFeed();
+  });
+
+  // Modal close on backdrop
+  document.getElementById('modal-overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  });
 }
+
 // ── ACTIVE SESSION (upsert so "Active Now" sidebar works) ──────
 async function upsertActiveSession() {
-try {
-await supabase.from('active_sessions').upsert({
-user_id: currentUser.id,
-last_seen: new Date().toISOString(),
-market_location: vendorProfile.market_location || '',
-full_name: vendorProfile.full_name || ''
-}, { onConflict: 'user_id' });
-} catch {}
+  try {
+    await supabase.from('active_sessions').upsert({
+      user_id:         currentUser.id,
+      last_seen:       new Date().toISOString(),
+      market_location: vendorProfile.market_location || '',
+      full_name:       vendorProfile.full_name || ''
+    }, { onConflict: 'user_id' });
+  } catch {}
 }
+
 // ── LOAD FEED ─────────────────────────────────────────────────
 async function loadFeed() {
-try {
-// Load posts via feed_posts view (joins author info + counts)
-const { data: feedData, error } = await supabase
-.from('feed_posts')
-.select('*')
-.order('created_at', { ascending: false })
-.limit(50);
-if (error) throw error;
-posts = feedData || [];
-// Load user's likes (to know which posts they liked)
-const { data: userLikes } = await supabase
-.from('likes')
-.select('post_id')
-.eq('user_id', currentUser.id);
-likedPostIds = new Set((userLikes || []).map(l => l.post_id));
-// Load user's comments (to know which posts they commented on)
-const { data: userComments } = await supabase
-.from('comments')
-.select('post_id')
-.eq('author_id', currentUser.id)
-.eq('deleted', false);
-commentedPostIds = new Set((userComments || []).map(c =>
-c.post_id));
-renderFeed();
-} catch (err) {
-document.getElementById('feed-container').innerHTML = `
-<div class="empty-state">
-<div class="empty-icon">⚠️</div>
-<h4>Could not load posts</h4>
-<p>${err.message}</p>
-</div>`;
+  try {
+    // Load posts via feed_posts view (joins author info + counts)
+    const { data: feedData, error } = await supabase
+      .from('feed_posts')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (error) throw error;
+    posts = feedData || [];
+
+    // Load user's likes (to know which posts they liked)
+    const { data: userLikes } = await supabase
+      .from('likes')
+      .select('post_id')
+      .eq('user_id', currentUser.id);
+    likedPostIds = new Set((userLikes || []).map(l => l.post_id));
+
+    // Load user's comments (to know which posts they commented on)
+    const { data: userComments } = await supabase
+      .from('comments')
+      .select('post_id')
+      .eq('author_id', currentUser.id)
+      .eq('deleted', false);
+    commentedPostIds = new Set((userComments || []).map(c => c.post_id));
+
+    renderFeed();
+  } catch (err) {
+    document.getElementById('feed-container').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">⚠️</div>
+        <h4>Could not load posts</h4>
+        <p>${err.message}</p>
+      </div>`;
+  }
 }
-}
+
 // ── RENDER FEED ───────────────────────────────────────────────
 function renderFeed() {
-const container = document.getElementById('feed-container');
-// Filter posts based on activeFilter
-const filtered = posts.filter(p => {
-if (activeFilter === 'all') return true;
-if (activeFilter === 'liked') return likedPostIds.has(p.id) ||
-commentedPostIds.has(p.id);
-if (activeFilter === 'food') return p.category === 'food';
-if (activeFilter === 'fabric') return p.category === 'fabric';
-if (activeFilter === 'electronics')return p.category ===
-'electronics';
-if (activeFilter === 'cosmetics') return p.category === 'cosmetics';
-if (activeFilter === 'building') return p.category === 'building';
-if (activeFilter === 'household') return p.category === 'household';
-return true;
-});
-if (!filtered.length) {
-container.innerHTML = `
-<div class="empty-state fade-up">
-<div class="empty-icon">📭</div>
-<h4>${activeFilter === 'liked' ? 'No liked or commented posts
-yet' : 'No posts in this category yet'}</h4>
-<p>Be the first to post something for other traders to see!</p>
-</div>`;
-return;
+  const container = document.getElementById('feed-container');
+
+  // Filter posts based on activeFilter
+  const filtered = posts.filter(p => {
+    if (activeFilter === 'all')        return true;
+    if (activeFilter === 'liked')      return likedPostIds.has(p.id) || commentedPostIds.has(p.id);
+    if (activeFilter === 'food')       return p.category === 'food';
+    if (activeFilter === 'fabric')     return p.category === 'fabric';
+    if (activeFilter === 'electronics')return p.category === 'electronics';
+    if (activeFilter === 'cosmetics')  return p.category === 'cosmetics';
+    if (activeFilter === 'building')   return p.category === 'building';
+    if (activeFilter === 'household')  return p.category === 'household';
+    return true;
+  });
+
+  if (!filtered.length) {
+    container.innerHTML = `
+      <div class="empty-state fade-up">
+        <div class="empty-icon">📭</div>
+        <h4>${activeFilter === 'liked' ? 'No liked or commented posts yet' : 'No posts in this category yet'}</h4>
+        <p>Be the first to post something for other traders to see!</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map((p, i) => buildPostCard(p, i)).join('');
+
+  // Wire up interactions
+  container.querySelectorAll('[data-like]').forEach(btn => {
+    btn.addEventListener('click', () => toggleLike(btn.dataset.like, btn));
+  });
+  container.querySelectorAll('[data-comment-toggle]').forEach(btn => {
+    btn.addEventListener('click', () => toggleComments(btn.dataset.commentToggle));
+  });
+  container.querySelectorAll('[data-bulk-join]').forEach(btn => {
+    btn.addEventListener('click', () => joinBulk(btn.dataset.bulkJoin));
+  });
+  container.querySelectorAll('[data-ajo-join]').forEach(btn => {
+    btn.addEventListener('click', () => joinAjo(btn.dataset.ajoJoin, btn));
+  });
+  container.querySelectorAll('[data-comment-send]').forEach(btn => {
+    btn.addEventListener('click', () => sendComment(btn.dataset.commentSend));
+  });
+  container.querySelectorAll('[data-comment-input]').forEach(input => {
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendComment(input.dataset.commentInput);
+      }
+    });
+  });
 }
-container.innerHTML = filtered.map((p, i) => buildPostCard(p,
-i)).join('');
-// Wire up interactions
-container.querySelectorAll('[data-like]').forEach(btn => {
-btn.addEventListener('click', () => toggleLike(btn.dataset.like,
-btn));
-});
-container.querySelectorAll('[data-comment-toggle]').forEach(btn =>
-{
-btn.addEventListener('click', () =>
-toggleComments(btn.dataset.commentToggle));
-});
-container.querySelectorAll('[data-bulk-join]').forEach(btn => {
-btn.addEventListener('click', () => joinBulk(btn.dataset.bulkJoin));
-});
-container.querySelectorAll('[data-ajo-join]').forEach(btn => {
-btn.addEventListener('click', () => joinAjo(btn.dataset.ajoJoin,
-btn));
-});
-container.querySelectorAll('[data-comment-send]').forEach(btn => {
-btn.addEventListener('click', () =>
-sendComment(btn.dataset.commentSend));
-});
-container.querySelectorAll('[data-comment-input]').forEach(input =>
-{
-input.addEventListener('keydown', e => {
-if (e.key === 'Enter' && !e.shiftKey) {
-e.preventDefault();
-sendComment(input.dataset.commentInput);
-}
-});
-});
-}
+
 // ── BUILD POST CARD HTML ──────────────────────────────────────
 function buildPostCard(p, idx) {
-const meta = p.meta || {};
-const authorName = p.author_name || 'Trader';
-const authorMkt = p.author_market || '';
-const initials = authorName.split(' ').map(w =>
-w[0]).join('').toUpperCase().slice(0, 2);
-const avatarColor = p.avatar_color ||
-AVATAR_COLORS[authorName.charCodeAt(0) % AVATAR_COLORS.length];
-const avatarTc = p.avatar_tc || '#fff';
-const timeAgo = timeSince(new Date(p.created_at));
-const likeCount = parseInt(p.like_count) || 0;
-const cCount = parseInt(p.comment_count) || 0;
-const isLiked = likedPostIds.has(p.id);
-const commOpen = openComments.has(p.id);
-const badgeClass = { update:'badge-update', price:'badge-price',
-bulk:'badge-bulk', ajo:'badge-ajo' }[p.type] ||
-'badge-update';
-const badgeLabel = { update:'Update', price:'🚨 Price Alert',
-bulk:'🤝 Bulk Buy', ajo:'🔄 Ajo Invite' }[p.type] || 'Post';
-// ── Special content block by type
-let specialBlock = '';
-if (p.type === 'price') {
-const dir = meta.direction || 'up';
-const arrow = dir === 'up' ? '↑' : (dir === 'down' ? '↓' :
-'~');
-const cls = dir === 'up' ? 'price-up' : (dir === 'down' ?
-'price-down' : '');
-const pct = meta.pct_change || '0';
-const newPrc = meta.new_price || '';
-const item = meta.item || 'Item';
-const unit = meta.price_unit ? ` (${meta.price_unit})` : '';
-specialBlock = `
-<div class="price-alert-box">
-<div class="price-alert-icon">${dir === 'up' ? '🚨' :
-'📉'}</div>
-<div class="price-alert-info">
-<div class="price-alert-item">${escHtml(item)}${unit}</div>
-<div class="price-alert-change ${cls}">${arrow} ${pct}% --- now
-${escHtml(newPrc)}</div>
-<div class="price-alert-detail">${escHtml(authorMkt)} ·
-${timeAgo}</div>
-</div>
-</div>`;
+  const meta        = p.meta || {};
+  const authorName  = p.author_name || 'Trader';
+  const authorMkt   = p.author_market || '';
+  const initials    = authorName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  const avatarColor = p.avatar_color || AVATAR_COLORS[authorName.charCodeAt(0) % AVATAR_COLORS.length];
+  const avatarTc    = p.avatar_tc || '#fff';
+  const timeAgo     = timeSince(new Date(p.created_at));
+  const likeCount   = parseInt(p.like_count)    || 0;
+  const cCount      = parseInt(p.comment_count) || 0;
+  const isLiked     = likedPostIds.has(p.id);
+  const commOpen    = openComments.has(p.id);
+
+  const badgeClass = { update:'badge-update', price:'badge-price', bulk:'badge-bulk', ajo:'badge-ajo' }[p.type] || 'badge-update';
+  const badgeLabel = { update:'Update', price:'🚨 Price Alert', bulk:'🤝 Bulk Buy', ajo:'🔄 Ajo Invite' }[p.type] || 'Post';
+
+  // ── Special content block by type
+  let specialBlock = '';
+
+  if (p.type === 'price') {
+    const dir     = meta.direction || 'up';
+    const arrow   = dir === 'up' ? '↑' : (dir === 'down' ? '↓' : '~');
+    const cls     = dir === 'up' ? 'price-up' : (dir === 'down' ? 'price-down' : '');
+    const pct     = meta.pct_change || '0';
+    const newPrc  = meta.new_price  || '';
+    const item    = meta.item       || 'Item';
+    const unit    = meta.price_unit ? ` (${meta.price_unit})` : '';
+    specialBlock = `
+      <div class="price-alert-box">
+        <div class="price-alert-icon">${dir === 'up' ? '🚨' : '📉'}</div>
+        <div class="price-alert-info">
+          <div class="price-alert-item">${escHtml(item)}${unit}</div>
+          <div class="price-alert-change ${cls}">${arrow} ${pct}% — now ${escHtml(newPrc)}</div>
+          <div class="price-alert-detail">${escHtml(authorMkt)} · ${timeAgo}</div>
+        </div>
+      </div>`;
+  }
+
+  if (p.type === 'bulk') {
+    const total  = parseInt(meta.spots_total)  || 5;
+    const filled = parseInt(meta.spots_filled) || 0;
+    const open   = Math.max(0, total - filled);
+    const fillPct= total > 0 ? Math.round((filled / total) * 100) : 0;
+    specialBlock = `
+      <div class="bulk-box">
+        <div class="bulk-product">📦 ${escHtml(meta.item || 'Item')}</div>
+        <div class="bulk-details">
+          <div class="bulk-stat">
+            <span class="bulk-stat-label">Price</span>
+            <span class="bulk-stat-val">${escHtml(meta.price_per_unit || '—')}</span>
+          </div>
+          <div class="bulk-stat">
+            <span class="bulk-stat-label">Minimum</span>
+            <span class="bulk-stat-val">${escHtml(meta.min_qty || '—')}</span>
+          </div>
+          <div class="bulk-stat">
+            <span class="bulk-stat-label">Spots left</span>
+            <span class="bulk-stat-val" style="color:var(--blue)">${open} of ${total}</span>
+          </div>
+        </div>
+        <div class="bulk-spots">
+          <div class="bulk-spots-track">
+            <div class="bulk-spots-fill" style="width:${fillPct}%"></div>
+          </div>
+          <div class="bulk-spots-label">${filled} trader${filled !== 1 ? 's' : ''} joined · ${open} spot${open !== 1 ? 's' : ''} remaining</div>
+        </div>
+      </div>`;
+  }
+
+  if (p.type === 'ajo') {
+    const total    = parseInt(meta.spots_total)  || 5;
+    const filled   = parseInt(meta.spots_filled) || 0;
+    const open     = Math.max(0, total - filled);
+    let spots = '';
+    for (let i = 0; i < total; i++) {
+      spots += i < filled
+        ? `<div class="ajo-spot filled">${String.fromCharCode(65 + i)}</div>`
+        : `<div class="ajo-spot open">?</div>`;
+    }
+    specialBlock = `
+      <div class="ajo-box">
+        <div class="ajo-box-name">🔄 ${escHtml(meta.group_name || 'Ajo Group')}</div>
+        <div class="ajo-box-details">
+          <div class="ajo-box-stat">
+            <span class="ajo-box-label">Monthly</span>
+            <span class="ajo-box-val">${escHtml(meta.monthly_amount || '—')}</span>
+          </div>
+          <div class="ajo-box-stat">
+            <span class="ajo-box-label">Members</span>
+            <span class="ajo-box-val">${total} total</span>
+          </div>
+          <div class="ajo-box-stat">
+            <span class="ajo-box-label">Spots left</span>
+            <span class="ajo-box-val" style="color:var(--gold)">${open} open</span>
+          </div>
+          ${meta.visibility === 'public' ? '<div class="ajo-box-stat"><span class="ajo-box-label">Type</span><span class="ajo-box-val" style="color:var(--green-light)">🔓 Public</span></div>' : '<div class="ajo-box-stat"><span class="ajo-box-label">Type</span><span class="ajo-box-val" style="color:var(--red)">🔒 Invite only</span></div>'}
+        </div>
+        <div class="ajo-spots-row">${spots}</div>
+      </div>`;
+  }
+
+  // ── Join button
+  let joinBtn = '';
+  if (p.type === 'bulk') {
+    const total  = parseInt(meta.spots_total)  || 5;
+    const filled = parseInt(meta.spots_filled) || 0;
+    const full   = filled >= total;
+    joinBtn = `<button class="join-btn bulk-join" data-bulk-join="${p.id}" ${full ? 'disabled' : ''}>${full ? 'Full' : 'Join Bulk Buy'}</button>`;
+  }
+  if (p.type === 'ajo') {
+    const total  = parseInt(meta.spots_total)  || 5;
+    const filled = parseInt(meta.spots_filled) || 0;
+    const full   = filled >= total;
+    joinBtn = `<button class="join-btn ajo-join" data-ajo-join="${p.id}" ${full ? 'disabled' : ''}>${full ? 'Group Full' : 'Join Ajo Group'}</button>`;
+  }
+
+  return `
+    <div class="post-card type-${p.type} fade-up" style="animation-delay:${idx * 0.05}s" data-post-id="${p.id}">
+      <div class="post-inner">
+        <div class="post-header">
+          <div class="post-author">
+            <div class="p-avatar" style="background:${avatarColor}; color:${avatarTc}">${escHtml(initials)}</div>
+            <div>
+              <div class="p-name">${escHtml(authorName)} <span class="p-verified">✓</span></div>
+              <div class="p-meta">
+                ${authorMkt ? `📍 ${escHtml(authorMkt)}` : ''}
+                <span class="dot">•</span>
+                ${timeAgo}
+              </div>
+            </div>
+          </div>
+          <div class="post-type-badge ${badgeClass}">${badgeLabel}</div>
+        </div>
+        ${specialBlock}
+        <div class="post-body">${escHtml(p.body)}</div>
+        <div class="post-footer">
+          <button class="reaction-btn${isLiked ? ' liked' : ''}" data-like="${p.id}">
+            <span class="r-icon">${isLiked ? '❤️' : '👍'}</span>
+            <span class="r-count" id="like-count-${p.id}">${likeCount}</span>
+          </button>
+          <button class="reaction-btn" data-comment-toggle="${p.id}">
+            <span class="r-icon">💬</span>
+            <span class="r-count">${cCount}</span>
+          </button>
+          <div class="spacer"></div>
+          ${joinBtn}
+        </div>
+      </div>
+      <div class="comments-section${commOpen ? ' open' : ''}" id="comments-${p.id}">
+        <div id="comments-list-${p.id}"></div>
+        <div class="comment-input-row">
+          <div class="c-avatar-sm" style="background:${vendorProfile.avatar_color || '#1a6637'}; color:${vendorProfile.avatar_tc || '#c9a84c'}">${initials2(vendorProfile.full_name)}</div>
+          <input class="comment-input"
+            id="comment-input-${p.id}"
+            data-comment-input="${p.id}"
+            placeholder="Write a reply…"/>
+          <button class="comment-send" data-comment-send="${p.id}">➤</button>
+        </div>
+      </div>
+    </div>`;
 }
-if (p.type === 'bulk') {
-const total = parseInt(meta.spots_total) || 5;
-const filled = parseInt(meta.spots_filled) || 0;
-const open = Math.max(0, total - filled);
-const fillPct= total > 0 ? Math.round((filled / total) * 100) : 0;
-specialBlock = `
-<div class="bulk-box">
-<div class="bulk-product">📦 ${escHtml(meta.item ||
-'Item')}</div>
-<div class="bulk-details">
-<div class="bulk-stat">
-<span class="bulk-stat-label">Price</span>
-<span class="bulk-stat-val">${escHtml(meta.price_per_unit ||
-'---')}</span>
-</div>
-<div class="bulk-stat">
-<span class="bulk-stat-label">Minimum</span>
-<span class="bulk-stat-val">${escHtml(meta.min_qty ||
-'---')}</span>
-</div>
-<div class="bulk-stat">
-<span class="bulk-stat-label">Spots left</span>
-<span class="bulk-stat-val" style="color:var(--blue)">${open} of
-${total}</span>
-</div>
-</div>
-<div class="bulk-spots">
-<div class="bulk-spots-track">
-<div class="bulk-spots-fill" style="width:${fillPct}%"></div>
-</div>
-<div class="bulk-spots-label">${filled} trader${filled !== 1 ?
-'s' : ''} joined · ${open} spot${open !== 1 ? 's' : ''}
-remaining</div>
-</div>
-</div>`;
-}
-if (p.type === 'ajo') {
-const total = parseInt(meta.spots_total) || 5;
-const filled = parseInt(meta.spots_filled) || 0;
-const open = Math.max(0, total - filled);
-let spots = '';
-for (let i = 0; i < total; i++) {
-spots += i < filled
-? `<div class="ajo-spot filled">${String.fromCharCode(65 +
-i)}</div>`
-: `<div class="ajo-spot open">?</div>`;
-}
-specialBlock = `
-<div class="ajo-box">
-<div class="ajo-box-name">🔄 ${escHtml(meta.group_name || 'Ajo
-Group')}</div>
-<div class="ajo-box-details">
-<div class="ajo-box-stat">
-<span class="ajo-box-label">Monthly</span>
-<span class="ajo-box-val">${escHtml(meta.monthly_amount ||
-'---')}</span>
-</div>
-<div class="ajo-box-stat">
-<span class="ajo-box-label">Members</span>
-<span class="ajo-box-val">${total} total</span>
-</div>
-<div class="ajo-box-stat">
-<span class="ajo-box-label">Spots left</span>
-<span class="ajo-box-val" style="color:var(--gold)">${open}
-open</span>
-</div>
-${meta.visibility === 'public' ? '<div
-class="ajo-box-stat"><span
-class="ajo-box-label">Type</span><span class="ajo-box-val"
-style="color:var(--green-light)">🔓 Public</span></div>' :
-'<div class="ajo-box-stat"><span
-class="ajo-box-label">Type</span><span class="ajo-box-val"
-style="color:var(--red)">🔒 Invite only</span></div>'}
-</div>
-<div class="ajo-spots-row">${spots}</div>
-</div>`;
-}
-// ── Join button
-let joinBtn = '';
-if (p.type === 'bulk') {
-const total = parseInt(meta.spots_total) || 5;
-const filled = parseInt(meta.spots_filled) || 0;
-const full = filled >= total;
-joinBtn = `<button class="join-btn bulk-join"
-data-bulk-join="${p.id}" ${full ? 'disabled' : ''}>${full ?
-'Full' : 'Join Bulk Buy'}</button>`;
-}
-if (p.type === 'ajo') {
-const total = parseInt(meta.spots_total) || 5;
-const filled = parseInt(meta.spots_filled) || 0;
-const full = filled >= total;
-joinBtn = `<button class="join-btn ajo-join"
-data-ajo-join="${p.id}" ${full ? 'disabled' : ''}>${full ?
-'Group Full' : 'Join Ajo Group'}</button>`;
-}
-return `
-<div class="post-card type-${p.type} fade-up"
-style="animation-delay:${idx * 0.05}s" data-post-id="${p.id}">
-<div class="post-inner">
-<div class="post-header">
-<div class="post-author">
-<div class="p-avatar" style="background:${avatarColor};
-color:${avatarTc}">${escHtml(initials)}</div>
-<div>
-<div class="p-name">${escHtml(authorName)} <span
-class="p-verified">✓</span></div>
-<div class="p-meta">
-${authorMkt ? `📍 ${escHtml(authorMkt)}` : ''}
-<span class="dot">•</span>
-${timeAgo}
-</div>
-</div>
-</div>
-<div class="post-type-badge ${badgeClass}">${badgeLabel}</div>
-</div>
-${specialBlock}
-<div class="post-body">${escHtml(p.body)}</div>
-<div class="post-footer">
-<button class="reaction-btn${isLiked ? ' liked' : ''}"
-data-like="${p.id}">
-<span class="r-icon">${isLiked ? '❤️' : '👍'}</span>
-<span class="r-count"
-id="like-count-${p.id}">${likeCount}</span>
-</button>
-<button class="reaction-btn" data-comment-toggle="${p.id}">
-<span class="r-icon">💬</span>
-<span class="r-count">${cCount}</span>
-</button>
-<div class="spacer"></div>
-${joinBtn}
-</div>
-</div>
-<div class="comments-section${commOpen ? ' open' : ''}"
-id="comments-${p.id}">
-<div id="comments-list-${p.id}"></div>
-<div class="comment-input-row">
-<div class="c-avatar-sm"
-style="background:${vendorProfile.avatar_color || '#1a6637'};
-color:${vendorProfile.avatar_tc ||
-'#c9a84c'}">${initials2(vendorProfile.full_name)}</div>
-<input class="comment-input"
-id="comment-input-${p.id}"
-data-comment-input="${p.id}"
-placeholder="Write a reply..."/>
-<button class="comment-send"
-data-comment-send="${p.id}">➤</button>
-</div>
-</div>
-</div>`;
-}
+
 // ── TOGGLE LIKE ───────────────────────────────────────────────
 async function toggleLike(postId, btn) {
-const isLiked = likedPostIds.has(postId);
-const countEl = document.getElementById(`like-count-${postId}`);
-const current = parseInt(countEl?.textContent) || 0;
-// Optimistic UI
-if (isLiked) {
-likedPostIds.delete(postId);
-btn.classList.remove('liked');
-btn.querySelector('.r-icon').textContent = '👍';
-if (countEl) countEl.textContent = Math.max(0, current - 1);
-await supabase.from('likes').delete().eq('post_id',
-postId).eq('user_id', currentUser.id);
-} else {
-likedPostIds.add(postId);
-btn.classList.add('liked');
-btn.querySelector('.r-icon').textContent = '❤️';
-if (countEl) countEl.textContent = current + 1;
-await supabase.from('likes').insert({ post_id: postId, user_id:
-currentUser.id })
-.on('conflict', 'do-nothing');
+  const isLiked = likedPostIds.has(postId);
+  const countEl = document.getElementById(`like-count-${postId}`);
+  const current = parseInt(countEl?.textContent) || 0;
+
+  // Optimistic UI
+  if (isLiked) {
+    likedPostIds.delete(postId);
+    btn.classList.remove('liked');
+    btn.querySelector('.r-icon').textContent = '👍';
+    if (countEl) countEl.textContent = Math.max(0, current - 1);
+    await supabase.from('likes').delete().eq('post_id', postId).eq('user_id', currentUser.id);
+  } else {
+    likedPostIds.add(postId);
+    btn.classList.add('liked');
+    btn.querySelector('.r-icon').textContent = '❤️';
+    if (countEl) countEl.textContent = current + 1;
+    await supabase.from('likes').insert({ post_id: postId, user_id: currentUser.id })
+      .on('conflict', 'do-nothing');
+  }
 }
-}
+
 // ── TOGGLE COMMENTS ───────────────────────────────────────────
 async function toggleComments(postId) {
-const sec = document.getElementById(`comments-${postId}`);
-if (!sec) return;
-if (openComments.has(postId)) {
-openComments.delete(postId);
-sec.classList.remove('open');
-} else {
-openComments.add(postId);
-sec.classList.add('open');
-await loadComments(postId);
-setTimeout(() =>
-document.getElementById(`comment-input-${postId}`)?.focus(), 100);
+  const sec = document.getElementById(`comments-${postId}`);
+  if (!sec) return;
+
+  if (openComments.has(postId)) {
+    openComments.delete(postId);
+    sec.classList.remove('open');
+  } else {
+    openComments.add(postId);
+    sec.classList.add('open');
+    await loadComments(postId);
+    setTimeout(() => document.getElementById(`comment-input-${postId}`)?.focus(), 100);
+  }
 }
-}
+
 // ── LOAD COMMENTS ─────────────────────────────────────────────
 async function loadComments(postId) {
-const listEl = document.getElementById(`comments-list-${postId}`);
-if (!listEl) return;
-const { data: commentsData } = await supabase
-.from('comments')
-.select(`id, body, created_at, author_id, users:author_id(full_name,
-avatar_color, avatar_tc)`)
-.eq('post_id', postId)
-.eq('deleted', false)
-.order('created_at', { ascending: true });
-if (!commentsData?.length) {
-listEl.innerHTML = '<div
-style="font-size:13px;color:var(--text-soft);padding:6px 0 10px;">No
-replies yet. Be the first!</div>';
-return;
+  const listEl = document.getElementById(`comments-list-${postId}`);
+  if (!listEl) return;
+
+  const { data: commentsData } = await supabase
+    .from('comments')
+    .select(`id, body, created_at, author_id, users:author_id(full_name, avatar_color, avatar_tc)`)
+    .eq('post_id', postId)
+    .eq('deleted', false)
+    .order('created_at', { ascending: true });
+
+  if (!commentsData?.length) {
+    listEl.innerHTML = '<div style="font-size:13px;color:var(--text-soft);padding:6px 0 10px;">No replies yet. Be the first!</div>';
+    return;
+  }
+
+  listEl.innerHTML = commentsData.map(c => {
+    const name     = c.users?.full_name || 'Trader';
+    const color    = c.users?.avatar_color || '#1a6637';
+    const tc       = c.users?.avatar_tc    || '#fff';
+    const inits    = initials2(name);
+    const timeAgoC = timeSince(new Date(c.created_at));
+    return `
+      <div class="comment-item">
+        <div class="c-avatar-sm" style="background:${color}; color:${tc}">${inits}</div>
+        <div class="c-bubble">
+          <div class="c-bubble-name">${escHtml(name)}</div>
+          <div class="c-bubble-text">${escHtml(c.body)}</div>
+          <div class="c-bubble-time">${timeAgoC}</div>
+        </div>
+      </div>`;
+  }).join('');
 }
-listEl.innerHTML = commentsData.map(c => {
-const name = c.users?.full_name || 'Trader';
-const color = c.users?.avatar_color || '#1a6637';
-const tc = c.users?.avatar_tc || '#fff';
-const inits = initials2(name);
-const timeAgoC = timeSince(new Date(c.created_at));
-return `
-<div class="comment-item">
-<div class="c-avatar-sm" style="background:${color};
-color:${tc}">${inits}</div>
-<div class="c-bubble">
-<div class="c-bubble-name">${escHtml(name)}</div>
-<div class="c-bubble-text">${escHtml(c.body)}</div>
-<div class="c-bubble-time">${timeAgoC}</div>
-</div>
-</div>`;
-}).join('');
-}
+
 // ── SEND COMMENT ──────────────────────────────────────────────
 async function sendComment(postId) {
-const input = document.getElementById(`comment-input-${postId}`);
-const text = input?.value.trim();
-if (!text) return;
-input.value = '';
-input.disabled = true;
-try {
-const { error } = await supabase.from('comments').insert({
-post_id: postId,
-author_id: currentUser.id,
-body: text
-});
-if (error) throw error;
-// Track for "Liked/Commented" filter
-commentedPostIds.add(postId);
-// Reload comments
-await loadComments(postId);
-// Increment comment count in the button
-const commentBtn =
-document.querySelector(`[data-comment-toggle="${postId}"]
-.r-count`);
-if (commentBtn) commentBtn.textContent = parseInt(commentBtn.textContent
-|| 0) + 1;
-} catch (err) {
-showToast('Could not send reply: ' + err.message);
-} finally {
-input.disabled = false;
-input.focus();
+  const input = document.getElementById(`comment-input-${postId}`);
+  const text  = input?.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.disabled = true;
+
+  try {
+    const { error } = await supabase.from('comments').insert({
+      post_id:   postId,
+      author_id: currentUser.id,
+      body:      text
+    });
+    if (error) throw error;
+
+    // Track for "Liked/Commented" filter
+    commentedPostIds.add(postId);
+
+    // Reload comments
+    await loadComments(postId);
+
+    // Increment comment count in the button
+    const commentBtn = document.querySelector(`[data-comment-toggle="${postId}"] .r-count`);
+    if (commentBtn) commentBtn.textContent = parseInt(commentBtn.textContent || 0) + 1;
+  } catch (err) {
+    showToast('Could not send reply: ' + err.message);
+  } finally {
+    input.disabled = false;
+    input.focus();
+  }
 }
-}
+
 // ── JOIN BULK BUY ─────────────────────────────────────────────
 async function joinBulk(postId) {
-const btn =
-document.querySelector(`[data-bulk-join="${postId}"]`);
-if (btn) { btn.disabled = true; btn.textContent = 'Joining...'; }
-try {
-const { error } = await supabase.from('bulk_participants').insert({
-post_id: postId,
-user_id: currentUser.id
-});
-if (error) throw error;
-// Update local cache
-const p = posts.find(x => x.id === postId);
-if (p) {
-p.meta = { ...(p.meta || {}), spots_filled:
-(parseInt(p.meta?.spots_filled) || 0) + 1 };
+  const btn = document.querySelector(`[data-bulk-join="${postId}"]`);
+  if (btn) { btn.disabled = true; btn.textContent = 'Joining…'; }
+
+  try {
+    const { error } = await supabase.from('bulk_participants').insert({
+      post_id: postId,
+      user_id: currentUser.id
+    });
+    if (error) throw error;
+
+    // Update local cache
+    const p = posts.find(x => x.id === postId);
+    if (p) {
+      p.meta = { ...(p.meta || {}), spots_filled: (parseInt(p.meta?.spots_filled) || 0) + 1 };
+    }
+
+    showToast('✅ You joined the bulk buy!');
+    renderFeed();
+  } catch (err) {
+    showToast(err.message.includes('full') ? 'This bulk buy is already full.' : 'Could not join: ' + err.message);
+    if (btn) { btn.disabled = false; btn.textContent = 'Join Bulk Buy'; }
+  }
 }
-showToast('✅ You joined the bulk buy!');
-renderFeed();
-} catch (err) {
-showToast(err.message.includes('full') ? 'This bulk buy is already
-full.' : 'Could not join: ' + err.message);
-if (btn) { btn.disabled = false; btn.textContent = 'Join Bulk Buy'; }
-}
-}
+
 // ── JOIN AJO GROUP (from feed post) ──────────────────────────
 async function joinAjo(postId, btn) {
-if (btn) { btn.disabled = true; btn.textContent = 'Checking...'; }
-try {
-const p = posts.find(x => x.id === postId);
-const meta = p?.meta || {};
-// Insert ajo_request → trigger handles auto-admit for public groups
-const { error } = await supabase.from('ajo_requests').insert({
-post_id: postId,
-group_id: meta.group_id || null,
-requester_id: currentUser.id
-});
-if (error) {
-// Parse trigger exceptions
-if (error.message.includes('2 ajo groups')) throw new Error('You are
-already in 2 ajo groups. You cannot join another.');
-if (error.message.includes('already full')) throw new Error('This ajo
-group is already full.');
-if (error.message.includes('already a member')) throw new Error('You
-are already a member of this group.');
-throw error;
+  if (btn) { btn.disabled = true; btn.textContent = 'Checking…'; }
+
+  try {
+    const p    = posts.find(x => x.id === postId);
+    const meta = p?.meta || {};
+
+    // Insert ajo_request → trigger handles auto-admit for public groups
+    const { error } = await supabase.from('ajo_requests').insert({
+      post_id:      postId,
+      group_id:     meta.group_id || null,
+      requester_id: currentUser.id
+    });
+
+    if (error) {
+      // Parse trigger exceptions
+      if (error.message.includes('2 ajo groups'))     throw new Error('You are already in 2 ajo groups. You cannot join another.');
+      if (error.message.includes('already full'))     throw new Error('This ajo group is already full.');
+      if (error.message.includes('already a member')) throw new Error('You are already a member of this group.');
+      throw error;
+    }
+
+    // Check if group is public (auto-admitted) or invite-only (pending)
+    const isPublic = (meta.visibility || 'public') === 'public';
+
+    if (isPublic) {
+      // Update local post meta immediately
+      if (p) {
+        p.meta = { ...(p.meta || {}), spots_filled: (parseInt(p.meta?.spots_filled) || 0) + 1 };
+      }
+      showToast('🎉 You joined the ajo group!');
+    } else {
+      showToast('📨 Request sent! The admin will review your application.');
+    }
+
+    renderFeed();
+  } catch (err) {
+    showToast('⚠️ ' + err.message);
+    if (btn) { btn.disabled = false; btn.textContent = 'Join Ajo Group'; }
+  }
 }
-// Check if group is public (auto-admitted) or invite-only (pending)
-const isPublic = (meta.visibility || 'public') === 'public';
-if (isPublic) {
-// Update local post meta immediately
-if (p) {
-p.meta = { ...(p.meta || {}), spots_filled:
-(parseInt(p.meta?.spots_filled) || 0) + 1 };
-}
-showToast('🎉 You joined the ajo group!');
-} else {
-showToast('📨 Request sent! The admin will review your application.');
-}
-renderFeed();
-} catch (err) {
-showToast('⚠️ ' + err.message);
-if (btn) { btn.disabled = false; btn.textContent = 'Join Ajo Group'; }
-}
-}
+
 // ── SUBMIT POST ───────────────────────────────────────────────
 window.submitPost = async function() {
-const text = document.getElementById('post-text').value.trim();
-const category = document.getElementById('post-category').value;
-const submitBtn= document.getElementById('btn-post-submit');
-if (!text) {
-document.getElementById('post-text').focus();
-return;
-}
-// Build meta object based on post type
-let meta = {};
-let validationError = null;
-if (selectedType === 'price') {
-const item = document.getElementById('price-item').value.trim();
-const newP = document.getElementById('price-new').value.trim();
-const dir = document.getElementById('price-dir').value;
-const pct = parseFloat(document.getElementById('price-pct').value)
-|| 0;
-if (!item) { validationError = 'Please enter the item name.'; }
-meta = { item, new_price: newP, direction: dir, pct_change: pct };
-}
-if (selectedType === 'bulk') {
-const item = document.getElementById('bulk-item').value.trim();
-const priceU = document.getElementById('bulk-price').value.trim();
-const minQty = document.getElementById('bulk-qty').value.trim();
-const spots = parseInt(document.getElementById('bulk-spots').value)
-|| 5;
-if (!item) { validationError = 'Please enter the item for bulk buy.';
-}
-meta = { item, price_per_unit: priceU, min_qty: minQty, spots_total:
-spots, spots_filled: 0 };
-}
-if (selectedType === 'ajo') {
-const gName = document.getElementById('ajo-name').value.trim();
-const amount = document.getElementById('ajo-amount').value.trim();
-const spots = parseInt(document.getElementById('ajo-spots').value)
-|| 4;
-const vis = document.getElementById('ajo-open').value;
-const location = document.getElementById('ajo-location').value.trim();
-if (!gName) { validationError = 'Please enter an ajo group name.'; }
-if (spots < 1 || spots > 8) { validationError = 'Spots must be
-between 1 and 8.'; }
-meta = { group_name: gName, monthly_amount: amount, spots_total: spots,
-spots_filled: 0, visibility: vis, location };
-}
-if (validationError) { showToast('⚠️ ' + validationError); return; }
-submitBtn.disabled = true;
-submitBtn.textContent = 'Posting...';
-try {
-const { data: newPost, error } = await supabase.from('posts').insert({
-author_id: currentUser.id,
-type: selectedType,
-body: text,
-category,
-location: vendorProfile.market_location || '',
-meta
-}).select().single();
-if (error) throw error;
-closeModal();
-resetModalForm();
-showToast('✅ Post shared with all traders!');
-// Prepend to local posts cache and re-render
-const enriched = {
-...newPost,
-author_name: vendorProfile.full_name || '',
-author_market: vendorProfile.market_location || '',
-avatar_color: vendorProfile.avatar_color || '#1a6637',
-avatar_tc: vendorProfile.avatar_tc || '#c9a84c',
-credit_score: vendorProfile.bcs_score || 0,
-like_count: 0,
-comment_count: 0
+  const text     = document.getElementById('post-text').value.trim();
+  const category = document.getElementById('post-category').value;
+  const submitBtn= document.getElementById('btn-post-submit');
+
+  if (!text) {
+    document.getElementById('post-text').focus();
+    return;
+  }
+
+  // Build meta object based on post type
+  let meta = {};
+  let validationError = null;
+
+  if (selectedType === 'price') {
+    const item = document.getElementById('price-item').value.trim();
+    const newP = document.getElementById('price-new').value.trim();
+    const dir  = document.getElementById('price-dir').value;
+    const pct  = parseFloat(document.getElementById('price-pct').value) || 0;
+    if (!item) { validationError = 'Please enter the item name.'; }
+    meta = { item, new_price: newP, direction: dir, pct_change: pct };
+  }
+
+  if (selectedType === 'bulk') {
+    const item    = document.getElementById('bulk-item').value.trim();
+    const priceU  = document.getElementById('bulk-price').value.trim();
+    const minQty  = document.getElementById('bulk-qty').value.trim();
+    const spots   = parseInt(document.getElementById('bulk-spots').value) || 5;
+    if (!item) { validationError = 'Please enter the item for bulk buy.'; }
+    meta = { item, price_per_unit: priceU, min_qty: minQty, spots_total: spots, spots_filled: 0 };
+  }
+
+  if (selectedType === 'ajo') {
+    const gName    = document.getElementById('ajo-name').value.trim();
+    const amount   = document.getElementById('ajo-amount').value.trim();
+    const spots    = parseInt(document.getElementById('ajo-spots').value) || 4;
+    const vis      = document.getElementById('ajo-open').value;
+    const location = document.getElementById('ajo-location').value.trim();
+    if (!gName) { validationError = 'Please enter an ajo group name.'; }
+    if (spots < 1 || spots > 8) { validationError = 'Spots must be between 1 and 8.'; }
+    meta = { group_name: gName, monthly_amount: amount, spots_total: spots, spots_filled: 0, visibility: vis, location };
+  }
+
+  if (validationError) { showToast('⚠️ ' + validationError); return; }
+
+  submitBtn.disabled    = true;
+  submitBtn.textContent = 'Posting…';
+
+  try {
+    const { data: newPost, error } = await supabase.from('posts').insert({
+      author_id: currentUser.id,
+      type:      selectedType,
+      body:      text,
+      category,
+      location:  vendorProfile.market_location || '',
+      meta
+    }).select().single();
+
+    if (error) throw error;
+
+    closeModal();
+    resetModalForm();
+    showToast('✅ Post shared with all traders!');
+
+    // Prepend to local posts cache and re-render
+    const enriched = {
+      ...newPost,
+      author_name:   vendorProfile.full_name || '',
+      author_market: vendorProfile.market_location || '',
+      avatar_color:  vendorProfile.avatar_color || '#1a6637',
+      avatar_tc:     vendorProfile.avatar_tc    || '#c9a84c',
+      credit_score:  vendorProfile.bcs_score    || 0,
+      like_count:    0,
+      comment_count: 0
+    };
+    posts.unshift(enriched);
+    activeFilter = 'all';
+    document.querySelectorAll('.filter-chip').forEach((c, i) => c.classList.toggle('active', i === 0));
+    renderFeed();
+
+    // Reload ticker if it was a price post
+    if (selectedType === 'price') {
+      setTimeout(loadPriceTicker, 1500);
+    }
+  } catch (err) {
+    showToast('Could not post: ' + err.message);
+  } finally {
+    submitBtn.disabled    = false;
+    submitBtn.textContent = 'Post ✓';
+  }
 };
-posts.unshift(enriched);
-activeFilter = 'all';
-document.querySelectorAll('.filter-chip').forEach((c, i) =>
-c.classList.toggle('active', i === 0));
-renderFeed();
-// Reload ticker if it was a price post
-if (selectedType === 'price') {
-setTimeout(loadPriceTicker, 1500);
-}
-} catch (err) {
-showToast('Could not post: ' + err.message);
-} finally {
-submitBtn.disabled = false;
-submitBtn.textContent = 'Post ✓';
-}
-};
+
 // ── LOAD PRICE TICKER ─────────────────────────────────────────
 async function loadPriceTicker() {
-const el = document.getElementById('price-ticker');
-try {
-const { data, error } = await supabase
-.from('active_price_alerts')
-.select('*')
-.order('last_post_at', { ascending: false })
-.limit(7);
-if (error) throw error;
-if (!data?.length) {
-el.innerHTML = `<div class="ticker-empty">No price alerts in the
-last 24 hours.<br>Post a price alert to update this!</div>`;
-return;
+  const el = document.getElementById('price-ticker');
+  try {
+    const { data, error } = await supabase
+      .from('active_price_alerts')
+      .select('*')
+      .order('last_post_at', { ascending: false })
+      .limit(7);
+
+    if (error) throw error;
+
+    if (!data?.length) {
+      el.innerHTML = `<div class="ticker-empty">No price alerts in the last 24 hours.<br>Post a price alert to update this!</div>`;
+      return;
+    }
+
+    el.innerHTML = data.map(a => {
+      const dir    = a.direction;
+      const arrow  = dir === 'up' ? '↑' : (dir === 'down' ? '↓' : '~');
+      const cls    = dir === 'up' ? 'up-change' : (dir === 'down' ? 'down-change' : 'mixed-change');
+      const pct    = parseFloat(a.avg_pct_change).toFixed(1);
+      const posts_ = a.post_count;
+      return `
+        <div class="ticker-item">
+          <div class="ticker-name">${escHtml(a.display_name)}</div>
+          <div class="ticker-right">
+            <div class="ticker-price">${escHtml(a.latest_price)}</div>
+            <span class="ticker-change ${cls}">${arrow} ${pct}%</span>
+            <div class="ticker-posts">${posts_} report${posts_ > 1 ? 's' : ''}</div>
+          </div>
+        </div>`;
+    }).join('');
+  } catch {
+    el.innerHTML = `<div class="ticker-empty">Price data unavailable.</div>`;
+  }
 }
-el.innerHTML = data.map(a => {
-const dir = a.direction;
-const arrow = dir === 'up' ? '↑' : (dir === 'down' ? '↓' :
-'~');
-const cls = dir === 'up' ? 'up-change' : (dir === 'down' ?
-'down-change' : 'mixed-change');
-const pct = parseFloat(a.avg_pct_change).toFixed(1);
-const posts_ = a.post_count;
-return `
-<div class="ticker-item">
-<div class="ticker-name">${escHtml(a.display_name)}</div>
-<div class="ticker-right">
-<div class="ticker-price">${escHtml(a.latest_price)}</div>
-<span class="ticker-change ${cls}">${arrow} ${pct}%</span>
-<div class="ticker-posts">${posts_} report${posts_ > 1 ? 's'
-: ''}</div>
-</div>
-</div>`;
-}).join('');
-} catch {
-el.innerHTML = `<div class="ticker-empty">Price data
-unavailable.</div>`;
-}
-}
+
 // ── LOAD ACTIVE TRADERS ───────────────────────────────────────
 async function loadActiveTraders() {
-const el = document.getElementById('active-traders');
-try {
-// Active = last_seen within 15 minutes
-const cutoff = new Date(Date.now() - 15 * 60 * 1000).toISOString();
-const { data, error } = await supabase
-.from('active_sessions')
-.select('user_id, full_name, market_location, last_seen')
-.gt('last_seen', cutoff)
-.neq('user_id', currentUser.id)
-.order('last_seen', { ascending: false })
-.limit(8);
-if (error) throw error;
-if (!data?.length) {
-el.innerHTML = '<div
-style="font-size:13px;color:var(--text-soft);padding:8px 0;">No one
-else is online right now.</div>';
-return;
+  const el = document.getElementById('active-traders');
+  try {
+    // Active = last_seen within 15 minutes
+    const cutoff = new Date(Date.now() - 15 * 60 * 1000).toISOString();
+    const { data, error } = await supabase
+      .from('active_sessions')
+      .select('user_id, full_name, market_location, last_seen')
+      .gt('last_seen', cutoff)
+      .neq('user_id', currentUser.id)
+      .order('last_seen', { ascending: false })
+      .limit(8);
+
+    if (error) throw error;
+
+    if (!data?.length) {
+      el.innerHTML = '<div style="font-size:13px;color:var(--text-soft);padding:8px 0;">No one else is online right now.</div>';
+      return;
+    }
+
+    el.innerHTML = data.map(u => {
+      const name    = u.full_name || 'Trader';
+      const market  = u.market_location || '';
+      const inits   = initials2(name);
+      const color   = AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length];
+      return `
+        <div class="active-trader">
+          <div class="at-avatar" style="background:${color}; color:white">
+            ${escHtml(inits)}
+            <div class="online-dot"></div>
+          </div>
+          <div class="at-info">
+            <div class="at-name">${escHtml(name)}</div>
+            <div class="at-market">${escHtml(market)}</div>
+          </div>
+        </div>`;
+    }).join('');
+  } catch {
+    el.innerHTML = '<div style="font-size:13px;color:var(--text-soft);padding:8px 0;">Could not load active traders.</div>';
+  }
 }
-el.innerHTML = data.map(u => {
-const name = u.full_name || 'Trader';
-const market = u.market_location || '';
-const inits = initials2(name);
-const color = AVATAR_COLORS[name.charCodeAt(0) %
-AVATAR_COLORS.length];
-return `
-<div class="active-trader">
-<div class="at-avatar" style="background:${color}; color:white">
-${escHtml(inits)}
-<div class="online-dot"></div>
-</div>
-<div class="at-info">
-<div class="at-name">${escHtml(name)}</div>
-<div class="at-market">${escHtml(market)}</div>
-</div>
-</div>`;
-}).join('');
-} catch {
-el.innerHTML = '<div
-style="font-size:13px;color:var(--text-soft);padding:8px 0;">Could
-not load active traders.</div>';
-}
-}
+
 // ── REALTIME SUBSCRIPTIONS ────────────────────────────────────
 function subscribeRealtime() {
-// New posts → prepend to feed
-supabase.channel('community-posts')
-.on('postgres_changes', { event: 'INSERT', schema: 'public',
-table: 'posts' }, async payload => {
-const newPost = payload.new;
-// Fetch author info
-const { data: user } = await supabase
-.from('users')
-.select('full_name, market_location, avatar_color, avatar_tc,
-bcs_score')
-.eq('id', newPost.author_id)
-.single();
-const enriched = {
-...newPost,
-author_name: user?.full_name || '',
-author_market: user?.market_location || '',
-avatar_color: user?.avatar_color || '#1a6637',
-avatar_tc: user?.avatar_tc || '#fff',
-credit_score: user?.bcs_score || 0,
-like_count: 0,
-comment_count: 0
-};
-// Only prepend if not already ours (we already added it)
-if (newPost.author_id !== currentUser.id) {
-posts.unshift(enriched);
-renderFeed();
-showToast('📢 New post from ' + (user?.full_name || 'a trader'));
+  // New posts → prepend to feed
+  supabase.channel('community-posts')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, async payload => {
+      const newPost = payload.new;
+      // Fetch author info
+      const { data: user } = await supabase
+        .from('users')
+        .select('full_name, market_location, avatar_color, avatar_tc, bcs_score')
+        .eq('id', newPost.author_id)
+        .single();
+      const enriched = {
+        ...newPost,
+        author_name:   user?.full_name    || '',
+        author_market: user?.market_location || '',
+        avatar_color:  user?.avatar_color || '#1a6637',
+        avatar_tc:     user?.avatar_tc    || '#fff',
+        credit_score:  user?.bcs_score    || 0,
+        like_count:    0,
+        comment_count: 0
+      };
+      // Only prepend if not already ours (we already added it)
+      if (newPost.author_id !== currentUser.id) {
+        posts.unshift(enriched);
+        renderFeed();
+        showToast('📢 New post from ' + (user?.full_name || 'a trader'));
+      }
+    })
+    .subscribe();
+
+  // Likes count changes → update in-place
+  supabase.channel('community-likes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'likes' }, payload => {
+      const postId = payload.new?.post_id || payload.old?.post_id;
+      if (!postId) return;
+      const countEl = document.getElementById(`like-count-${postId}`);
+      if (!countEl) return;
+      const current = parseInt(countEl.textContent) || 0;
+      if (payload.eventType === 'INSERT') countEl.textContent = current + 1;
+      if (payload.eventType === 'DELETE') countEl.textContent = Math.max(0, current - 1);
+    })
+    .subscribe();
+
+  // Price alerts → refresh ticker
+  supabase.channel('community-prices')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'price_alerts' }, () => {
+      loadPriceTicker();
+    })
+    .subscribe();
+
+  // Active sessions → refresh sidebar
+  supabase.channel('community-sessions')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'active_sessions' }, () => {
+      loadActiveTraders();
+    })
+    .subscribe();
 }
-})
-.subscribe();
-// Likes count changes → update in-place
-supabase.channel('community-likes')
-.on('postgres_changes', { event: '*', schema: 'public', table:
-'likes' }, payload => {
-const postId = payload.new?.post_id || payload.old?.post_id;
-if (!postId) return;
-const countEl = document.getElementById(`like-count-${postId}`);
-if (!countEl) return;
-const current = parseInt(countEl.textContent) || 0;
-if (payload.eventType === 'INSERT') countEl.textContent = current + 1;
-if (payload.eventType === 'DELETE') countEl.textContent = Math.max(0,
-current - 1);
-})
-.subscribe();
-// Price alerts → refresh ticker
-supabase.channel('community-prices')
-.on('postgres_changes', { event: '*', schema: 'public', table:
-'price_alerts' }, () => {
-loadPriceTicker();
-})
-.subscribe();
-// Active sessions → refresh sidebar
-supabase.channel('community-sessions')
-.on('postgres_changes', { event: '*', schema: 'public', table:
-'active_sessions' }, () => {
-loadActiveTraders();
-})
-.subscribe();
-}
+
 // ── MODAL CONTROLS ─────────────────────────────────────────────
 window.openModal = function(type) {
-document.getElementById('modal-overlay').classList.add('open');
-selectType(type);
+  document.getElementById('modal-overlay').classList.add('open');
+  selectType(type);
 };
+
 window.closeModal = function() {
-document.getElementById('modal-overlay').classList.remove('open');
+  document.getElementById('modal-overlay').classList.remove('open');
 };
+
 window.selectType = function(type) {
-selectedType = type;
-const placeholders = {
-update: 'Write your message here...\\n\\nUse simple words. Other
-traders will read this.',
-price: 'Tell traders about the price change. Where did you see it? Any
-advice for them?',
-bulk: 'Tell people why this is a good deal. Who is the supplier? When
-does it expire?',
-ajo: 'Tell traders about your ajo group. What kind of traders should
-join? What are your rules?'
+  selectedType = type;
+  const placeholders = {
+    update: 'Write your message here…\n\nUse simple words. Other traders will read this.',
+    price:  'Tell traders about the price change. Where did you see it? Any advice for them?',
+    bulk:   'Tell people why this is a good deal. Who is the supplier? When does it expire?',
+    ajo:    'Tell traders about your ajo group. What kind of traders should join? What are your rules?'
+  };
+  document.getElementById('post-text').placeholder = placeholders[type] || placeholders.update;
+
+  ['update','price','bulk','ajo'].forEach(t => {
+    const pill  = document.getElementById(`pill-${t}`);
+    const extra = document.getElementById(`extra-${t}`);
+    if (pill)  pill.className  = `modal-pill${type === t ? ` selected-${t}` : ''}`;
+    if (extra) extra.className = `extra-fields${type === t ? ' show' : ''}`;
+  });
 };
-document.getElementById('post-text').placeholder =
-placeholders[type] || placeholders.update;
-['update','price','bulk','ajo'].forEach(t => {
-const pill = document.getElementById(`pill-${t}`);
-const extra = document.getElementById(`extra-${t}`);
-if (pill) pill.className = `modal-pill${type === t ? `
-selected-${t}` : ''}`;
-if (extra) extra.className = `extra-fields${type === t ? ' show' :
-''}`;
-});
-};
+
 function resetModalForm() {
-document.getElementById('post-text').value = '';
-['price-item','price-new','price-pct','bulk-item','bulk-price','bulk-qty','bulk-spots',
-'ajo-name','ajo-amount','ajo-spots','ajo-location'].forEach(id
-=> {
-const el = document.getElementById(id);
-if (el) el.value = '';
-});
-document.getElementById('price-dir').value = 'up';
-document.getElementById('ajo-open').value = 'public';
-document.getElementById('post-category').value = 'general';
+  document.getElementById('post-text').value = '';
+  ['price-item','price-new','price-pct','bulk-item','bulk-price','bulk-qty','bulk-spots',
+   'ajo-name','ajo-amount','ajo-spots','ajo-location'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('price-dir').value  = 'up';
+  document.getElementById('ajo-open').value   = 'public';
+  document.getElementById('post-category').value = 'general';
 }
+
 // ── UTILITIES ─────────────────────────────────────────────────
 function escHtml(str) {
-return String(str || '')
-.replace(/&/g,'&amp;')
-.replace(/</g,'&lt;')
-.replace(/>/g,'&gt;')
-.replace(/"/g,'&quot;');
+  return String(str || '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
 }
+
 function initials2(name) {
-return (name || 'T').split(' ').map(w =>
-w[0]).join('').toUpperCase().slice(0, 2) || 'T';
+  return (name || 'T').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || 'T';
 }
+
 function timeSince(date) {
-const s = Math.floor((new Date() - date) / 1000);
-if (s < 60) return 'just now';
-if (s < 3600) return Math.floor(s / 60) + 'm ago';
-if (s < 86400) return Math.floor(s / 3600) + 'h ago';
-return Math.floor(s / 86400) + 'd ago';
+  const s = Math.floor((new Date() - date) / 1000);
+  if (s < 60)    return 'just now';
+  if (s < 3600)  return Math.floor(s / 60) + 'm ago';
+  if (s < 86400) return Math.floor(s / 3600) + 'h ago';
+  return Math.floor(s / 86400) + 'd ago';
 }
+
 let toastTimer;
 function showToast(msg) {
-const el = document.getElementById('toast');
-el.textContent = msg;
-el.classList.add('show');
-clearTimeout(toastTimer);
-toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
 }
+
 function hideLoader() {
-const el = document.getElementById('page-loader');
-if (!el) return;
-el.style.transition = 'opacity 0.3s';
-el.style.opacity = '0';
-setTimeout(() => el.style.display = 'none', 350);
+  const el = document.getElementById('page-loader');
+  if (!el) return;
+  el.style.transition = 'opacity 0.3s';
+  el.style.opacity    = '0';
+  setTimeout(() => el.style.display = 'none', 350);
 }
+
+
 // ── START ──────────────────────────────────────────────────────
 boot();
 </script>
-<!-- Mobile post FAB -->
-<button id="mobile-fab"
-style="display:none;position:fixed;bottom:20px;right:20px;z-index:150;
-width:56px;height:56px;border-radius:50%;background:var(--green-deep);
-border:none;color:var(--gold);font-size:26px;cursor:pointer;
-box-shadow:0 6px 20px
-rgba(10,46,26,0.35);align-items:center;justify-content:center;"
-onclick="openModal('update')">✍️</button>
-<style>
-@media (max-width: 768px) {
-#mobile-fab { display: flex !important; }
-}
-</style>
+
+<!-- Mobile post FAB (only shows on mobile, hidden on desktop via CSS) -->
+  <button id="mobile-fab"
+    style="display:none;position:fixed;bottom:20px;right:20px;z-index:150;
+           width:56px;height:56px;border-radius:50%;background:var(--green-deep);
+           border:none;color:var(--gold);font-size:26px;cursor:pointer;
+           box-shadow:0 6px 20px rgba(10,46,26,0.35);align-items:center;justify-content:center;"
+    onclick="openModal('update')">✍️</button>
+
+  <style>
+    @media (max-width: 768px) {
+      #mobile-fab { display: flex !important; }
+    }
+  </style>
 </body>
 </html>
