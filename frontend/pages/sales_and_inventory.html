@@ -1222,7 +1222,7 @@ async function loadMarketInsights() {
  
   try {
     const threeMonthSales = await (async () => {
-      const { getThreeMonthSales } = await import('../js/supabase.js');
+      const { getThreeMonthSales } = await import('/js/supabase.js');
       return getThreeMonthSales(currentUser.id);
     })();
  
