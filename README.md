@@ -9,7 +9,7 @@
 
 SUWE helps market traders — pepper sellers, fabric vendors, food traders — do three things:
 
-1. **Track their business** — log sales, see real profit, get AI restock suggestions
+1. **Track their business** — log sales, see real profit, get Personalized suggestions
 2. **Save together** — digital Ajo groups with Interswitch-protected payments
 3. **Connect** — community feed for price alerts, bulk buying, and trade news
 
@@ -81,7 +81,6 @@ BBS--SUWE/
 | Email + Password signup | ✅ Working |
 | Email + Password login | ✅ Working |
 | Google OAuth | ✅ Working |
-| Facebook OAuth | ❌ Not added |
 
 Auth is handled in `frontend/js/supabase.js`. No email confirmation step — users go straight from signup → onboarding → dashboard.
 
@@ -96,11 +95,25 @@ Returning user → dashboard.html (straight in)
 
 ---
 
-## Payments — Interswitch
+## Integrated API'S
 
-Interswitch integration has been started for Ajo group contributions. Handles automatic monthly collection and distribution so no member ever touches cash directly.
+1.BVN full Details API from interswitch's market place was intagrated for Identity verfication
+2.A Large Language model (Claude) is integrated into the backend for sugggestions based on a large datset of information concerning Nigerian traders (Please note that we used the free tier of Claude's API and as such the Ai suggestions used is limited tokens for testing
+3. Utilization of Hugging face model Illama
+4. Interswitches Payment Gateway (IPG) API from Quickteller was integrated Ajo group contributions. Handles automatic monthly collection and distribution so no member ever touches cash directly. (Note: Our quickteller dashboard was not allowed to go live so we use sandbox mode)
 
 Integration lives in `backend/server.js`.
+
+---
+
+---
+
+## Team
+
+| Role | Work done |
+|------|-----------|
+| Frontend | Landing page, Dashboard, Feed, Ajo, Credit Score page designs + logic |
+| Backend | Auth (Supabase), Onboarding, Sales & Inventory, server.js, Interswitch, Vercel deployment |
 
 ---
 
@@ -203,36 +216,11 @@ git push
 
 Vercel detects the push and auto-deploys in about 60 seconds. No manual steps.
 
----
-
-## Troubleshooting
-
-| Problem | Likely cause | Fix |
-|---------|-------------|-----|
-| Vercel 404 after login | Redirect URL path is wrong | Check `redirectTo` in `supabase.js` matches actual file path |
-| `localhost:3000` in URL | Supabase Site URL not updated | Set Site URL to Vercel URL in Supabase Auth settings |
-| Supabase connection error | Project paused | Go to Supabase dashboard → click Resume |
-| Real-time feed not updating | Tables not in realtime publication | Re-run the realtime section of `suwe_schema.sql` |
-| Blank page after sign in | `window.location.href` missing in signup | Add manual redirect in `supabase.js` after successful signup |
-
----
-
 ## In Progress / Known Issues
 
-- [ ] Facebook OAuth — not added yet
-- [ ] Claude AI credit score — API integration fix for live deployment
-- [ ] Interswitch — complete payment flow for Ajo contributions
-- [ ] Email signup redirect — ensure `supabase.js` redirects to `onboarding.html` correctly
+- [ ] Claude AI credit score — API integration fix for live deployment (Paid token dependent)
+- [ ] Interswitch — complete payment flow for Ajo contributions (sand box mode)
 
----
 
-## Team
-
-| Role | Work done |
-|------|-----------|
-| Frontend | Landing page, Dashboard, Feed, Ajo, Credit Score page designs + logic |
-| Backend | Auth (Supabase), Onboarding, Sales & Inventory, server.js, Interswitch, Vercel deployment |
-
----
 
 *SUWE — Built for the market. Built for Nigeria.*
