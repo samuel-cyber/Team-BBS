@@ -721,17 +721,17 @@ class="loader-fill"></div></div>
 market</span></div>
 <div class="nav-section">
 <div class="nav-label">Main</div>
-<div class="nav-item" data-route="/frontend/pages/dashboard.html">
+<div class="nav-item" data-route="/pages/dashboard.html">
 <span class="icon">⊞</span> Dashboard
 </div>
 <div class="nav-item"
-data-route="/frontend/pages/sales_and_inventory.html">
+data-route="/pages/sales_and_inventory.html">
 <span class="icon">📦</span> Sales &amp; Inventory
 </div>
 </div>
 <div class="nav-section">
 <div class="nav-label">Community</div>
-<div class="nav-item" data-route="/frontend/pages/ajo.html">
+<div class="nav-item" data-route="/pages/ajo.html">
 <span class="icon">🔄</span> My Ajo
 </div>
 <div class="nav-item active">
@@ -872,21 +872,21 @@ style="height:12px;margin-bottom:8px;width:70%;"></div>
 </main><!-- /main -->
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav" role="navigation">
-<a class="bottom-nav-item" href="/frontend/pages/dashboard.html">
+<a class="bottom-nav-item" href="/pages/dashboard.html">
 <span class="bn-icon">⊞</span><span
 class="bn-label">Home</span>
 </a>
 <a class="bottom-nav-item"
-href="/frontend/pages/sales_and_inventory.html">
+href="/pages/sales_and_inventory.html">
 <span class="bn-icon">📦</span><span
 class="bn-label">Sales</span>
 </a>
-<a class="bottom-nav-item" href="/frontend/pages/ajo.html">
+<a class="bottom-nav-item" href="/pages/ajo.html">
 <span class="bn-icon">🔄</span><span
 class="bn-label">Ajo</span>
 </a>
 <a class="bottom-nav-item active"
-href="/frontend/pages/community.html">
+href="/pages/community.html">
 <span class="bn-icon">🤝</span><span
 class="bn-label">Feed</span>
 </a>
@@ -1034,7 +1034,7 @@ supabase,
 getCurrentUser,
 getVendorProfile,
 signOut
-} from '../js/supabase.js';
+} from '/js/supabase.js';
 // ── STATE ─────────────────────────────────────────────────────
 let currentUser = null;
 let vendorProfile = null;
@@ -1051,7 +1051,7 @@ const AVATAR_COLORS = [
 // ── BOOT ──────────────────────────────────────────────────────
 async function boot() {
 currentUser = await getCurrentUser();
-if (!currentUser) { window.location.href = '/frontend/index.html';
+if (!currentUser) { window.location.href = '/index.html';
 return; }
 vendorProfile = await getVendorProfile(currentUser.id);
 if (!vendorProfile?.phone) { window.location.href =
@@ -1091,7 +1091,7 @@ item.dataset.route);
 document.getElementById('sign-out-btn').addEventListener('click',
 async () => {
 await signOut();
-window.location.href = '/frontend/index.html';
+window.location.href = '/index.html';
 });
 // Hamburger
 const sidebar = document.getElementById('main-sidebar');
