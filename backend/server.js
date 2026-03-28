@@ -8,7 +8,17 @@ const { createClient } = require('@supabase/supabase-js');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors({ origin: '*' }));
+app.use(cors({
+  origin: [
+    'https://team-bbs-sandy.vercel.app',
+    'https://bbs-suwe.vercel.app',
+    'http://localhost:5500',
+    'http://127.0.0.1:5500'
+  ],
+  credentials: true
+}));
+
+//app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
