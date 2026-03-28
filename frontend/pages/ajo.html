@@ -265,7 +265,7 @@
       .next-due-strip{flex-direction:column;align-items:flex-start;}
       .btn-pay-now{width:100%;}
     }
-        /* ── MOBILE MODAL FIX ── */
+        /* ── MOBILE MODAL FIX ── 
     @media (max-width: 768px) {
       .modal-overlay.show {
         display: flex;
@@ -280,29 +280,13 @@
         overflow-y: auto;
         padding: 28px 20px;
       }
-      /* Prevent the mobile-menu from sitting on top of the modal */
+      Prevent the mobile-menu from sitting on top of the modal
       .nav-actions.mobile-menu {
         z-index: 100;
       }
-    }
+    }*/
  
- 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-FILE 2: frontend/pages/ajo.html
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- 
-CHANGE 1 — Remove Settings from sidebar
-Find and DELETE this entire block from the sidebar <aside>:
- 
-    <div class="nav-section">
-      <div class="nav-label">Account</div>
-      <div class="nav-item"><span class="icon">⚙️</span> Settings</div>
-    </div>
- 
- 
-CHANGE 2 — Add these CSS rules inside the existing <style> block,
-just before the closing </style> tag:
- 
+
     /* ── AJO PAGE MOBILE FIXES ── */
     @media (max-width: 768px) {
       /* Page header stacks cleanly */
