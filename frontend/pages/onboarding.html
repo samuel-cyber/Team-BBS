@@ -2,606 +2,520 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,
-initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>SUWE --- Complete Your Profile</title>
-<link
-href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap"
-rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root {
---green-dark: #0b3d20;
---green-mid: #145a32;
---green-bright: #1a7a3f;
---gold: #d4a843;
---gold-light: #f0c96a;
---cream: #f5f0e8;
---text-muted: rgba(245,240,232,0.55);
---text-dim: rgba(245,240,232,0.35);
---card-border: rgba(255,255,255,0.09);
---card-bg: rgba(255,255,255,0.045);
+  --green-dark: #0b3d20;
+  --green-mid: #145a32;
+  --green-bright: #1a7a3f;
+  --gold: #d4a843;
+  --gold-light: #f0c96a;
+  --cream: #f5f0e8;
+  --text-muted: rgba(245,240,232,0.55);
+  --text-dim: rgba(245,240,232,0.35);
+  --card-border: rgba(255,255,255,0.09);
+  --card-bg: rgba(255,255,255,0.045);
 }
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box;
-}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 body {
-font-family: 'DM Sans', sans-serif;
-background: var(--green-dark);
-color: var(--cream);
-min-height: 100vh;
-display: flex;
-align-items: center;
-justify-content: center;
-padding: 40px 20px;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--green-dark);
+  color: var(--cream);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
 }
 body::before {
-content: '';
-position: fixed;
-inset: 0;
-background-image:
-linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-background-size: 60px 60px;
-pointer-events: none;
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
 }
 .container {
-position: relative;
-width: 100%;
-max-width: 560px;
-animation: fadeUp 0.5s ease both;
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  animation: fadeUp 0.5s ease both;
 }
-/* ── Logo ── */
 .logo {
-display: flex;
-align-items: flex-end;
-gap: 8px;
-margin-bottom: 32px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 32px;
 }
 .logo-tile {
-width: 42px; height: 42px;
-background: linear-gradient(135deg, var(--gold), var(--gold-light));
-border-radius: 12px;
-display: flex; align-items: center; justify-content: center;
-position: relative;
+  width: 42px; height: 42px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
 }
 .logo-tile .s {
-font-family: 'Playfair Display', serif;
-font-size: 26px; font-weight: 900;
-color: var(--green-dark);
+  font-family: 'Playfair Display', serif;
+  font-size: 26px; font-weight: 900;
+  color: var(--green-dark);
 }
 .logo-tile .coin {
-position: absolute;
-bottom: -5px; right: -5px;
-width: 18px; height: 18px;
-background: var(--green-bright);
-border-radius: 50%;
-border: 2px solid var(--green-dark);
-display: flex; align-items: center; justify-content: center;
-font-size: 10px;
+  position: absolute;
+  bottom: -5px; right: -5px;
+  width: 18px; height: 18px;
+  background: var(--green-bright);
+  border-radius: 50%;
+  border: 2px solid var(--green-dark);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px;
 }
 .logo-text {
-font-family: 'Playfair Display', serif;
-font-size: 24px; font-weight: 700;
-color: var(--cream);
+  font-family: 'Playfair Display', serif;
+  font-size: 24px; font-weight: 700;
+  color: var(--cream);
 }
-/* ── Progress bar ── */
-.progress-wrap {
-margin-bottom: 28px;
-}
+.progress-wrap { margin-bottom: 28px; }
 .progress-label {
-display: flex;
-justify-content: space-between;
-font-size: 12px;
-color: var(--text-muted);
-margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
 }
 .progress-track {
-height: 4px;
-background: var(--card-border);
-border-radius: 2px;
-overflow: hidden;
+  height: 4px;
+  background: var(--card-border);
+  border-radius: 2px;
+  overflow: hidden;
 }
 .progress-fill {
-height: 100%;
-background: linear-gradient(90deg, var(--gold), var(--gold-light));
-border-radius: 2px;
-transition: width 0.5s ease;
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 2px;
+  transition: width 0.5s ease;
 }
-/* ── Card ── */
 .card {
-background: var(--card-bg);
-border: 1px solid var(--card-border);
-border-radius: 24px;
-padding: 40px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 40px;
 }
 .card h2 {
-font-family: 'Playfair Display', serif;
-font-size: 26px;
-font-weight: 700;
-color: var(--cream);
-margin-bottom: 6px;
+  font-family: 'Playfair Display', serif;
+  font-size: 26px; font-weight: 700;
+  color: var(--cream);
+  margin-bottom: 6px;
 }
 .card-sub {
-font-size: 14px;
-color: var(--text-muted);
-margin-bottom: 30px;
-line-height: 1.6;
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 30px;
+  line-height: 1.6;
 }
-/* ── Steps ── */
-.step { display: none; }
-.step.active { display: block; animation: fadeUp 0.3s ease both; }
-/* ── Form elements ── */
 .form-group { margin-bottom: 20px; }
 .form-group label {
-display: block;
-font-size: 13px;
-font-weight: 500;
-color: var(--text-muted);
-margin-bottom: 7px;
+  display: block;
+  font-size: 13px; font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 7px;
 }
 .form-group input,
 .form-group select,
 .form-group textarea {
-width: 100%;
-background: rgba(0,0,0,0.25);
-border: 1px solid var(--card-border);
-border-radius: 12px;
-padding: 13px 16px;
-font-size: 15px;
-font-family: 'DM Sans', sans-serif;
-color: var(--cream);
-outline: none;
-transition: border-color 0.2s;
-appearance: none;
+  width: 100%;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 13px 16px;
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--cream);
+  outline: none;
+  transition: border-color 0.2s;
+  appearance: none;
 }
-.form-group select option { background: var(--green-mid); color:
-var(--cream); }
+.form-group select option { background: var(--green-mid); color: var(--cream); }
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus { border-color: var(--gold); }
 .form-group input::placeholder,
 .form-group textarea::placeholder { color: var(--text-dim); }
-.form-row {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 16px;
-}
-.field-note {
-font-size: 12px;
-color: var(--text-dim);
-margin-top: 6px;
-line-height: 1.5;
-}
-/* Category checkboxes */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .category-grid {
-display: grid;
-grid-template-columns: repeat(3, 1fr);
-gap: 10px;
-margin-top: 4px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 4px;
 }
 .cat-option {
-display: flex;
-align-items: center;
-gap: 8px;
-background: rgba(0,0,0,0.2);
-border: 1px solid var(--card-border);
-border-radius: 10px;
-padding: 10px 12px;
-cursor: pointer;
-transition: border-color 0.2s, background 0.2s;
-font-size: 13px;
-color: var(--text-muted);
-user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  font-size: 13px;
+  color: var(--text-muted);
+  user-select: none;
 }
-.cat-option input[type="checkbox"] { display: none; }
 .cat-option.checked {
-border-color: var(--gold);
-background: rgba(212,168,67,0.1);
-color: var(--gold-light);
+  border-color: var(--gold);
+  background: rgba(212,168,67,0.1);
+  color: var(--gold-light);
 }
-/* ── Buttons ── */
 .btn-row {
-display: flex;
-gap: 12px;
-margin-top: 28px;
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
 }
-.btn-back {
-flex: 0 0 auto;
-background: transparent;
-border: 1px solid var(--card-border);
-color: var(--text-muted);
-padding: 14px 22px;
-border-radius: 50px;
-font-size: 14px;
-font-family: 'DM Sans', sans-serif;
-cursor: pointer;
-transition: border-color 0.2s;
-}
-.btn-back:hover { border-color: var(--gold); color: var(--cream); }
 .btn-next {
-flex: 1;
-background: var(--gold);
-color: var(--green-dark);
-border: none;
-padding: 14px;
-border-radius: 50px;
-font-size: 15px;
-font-weight: 700;
-font-family: 'DM Sans', sans-serif;
-cursor: pointer;
-transition: transform 0.2s, box-shadow 0.2s;
+  flex: 1;
+  background: var(--gold);
+  color: var(--green-dark);
+  border: none;
+  padding: 14px;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 .btn-next:hover {
-transform: translateY(-2px);
-box-shadow: 0 8px 24px rgba(212,168,67,0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(212,168,67,0.35);
 }
 .btn-next:disabled {
-opacity: 0.5;
-cursor: not-allowed;
-transform: none;
-box-shadow: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
-/* ── Error box ── */
 .error-box {
-background: rgba(226,75,74,0.12);
-border: 1px solid rgba(226,75,74,0.3);
-border-radius: 10px;
-padding: 10px 14px;
-font-size: 13px;
-color: #f09595;
-margin-bottom: 18px;
-display: none;
+  background: rgba(226,75,74,0.12);
+  border: 1px solid rgba(226,75,74,0.3);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #f09595;
+  margin-bottom: 18px;
+  display: none;
 }
 .error-box.show { display: block; }
-/* ── Success state ── */
-.success-wrap {
-text-align: center;
-padding: 20px 0;
-}
-.success-icon {
-font-size: 52px;
-margin-bottom: 20px;
-}
-.success-wrap h2 {
-font-family: 'Playfair Display', serif;
-font-size: 28px;
-margin-bottom: 12px;
-}
-.success-wrap p {
-font-size: 15px;
-color: var(--text-muted);
-line-height: 1.7;
-margin-bottom: 28px;
-}
-/* ── Loading overlay ── */
 #loading {
-display: none;
-position: fixed;
-inset: 0;
-background: rgba(7,28,15,0.9);
-z-index: 999;
-justify-content: center;
-align-items: center;
-flex-direction: column;
-gap: 16px;
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(7,28,15,0.9);
+  z-index: 999;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 16px;
 }
 #loading.show { display: flex; }
 .spinner {
-width: 40px; height: 40px;
-border: 3px solid rgba(212,168,67,0.2);
-border-top-color: var(--gold);
-border-radius: 50%;
-animation: spin 0.75s linear infinite;
+  width: 40px; height: 40px;
+  border: 3px solid rgba(212,168,67,0.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
 }
 @keyframes fadeUp {
-from { opacity: 0; transform: translateY(20px); }
-to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 560px) {
+  .card { padding: 28px 20px; }
+  .form-row { grid-template-columns: 1fr; }
+  .category-grid { grid-template-columns: repeat(2, 1fr); }
+}
 </style>
 </head>
 <body>
+
 <div id="loading">
-<div class="spinner"></div>
-<p style="color:var(--text-muted);font-size:14px;">Saving your
-profile...</p>
+  <div class="spinner"></div>
+  <p style="color:var(--text-muted);font-size:14px;">Saving your profile...</p>
 </div>
+
 <div class="container">
-<!-- Logo -->
-<div class="logo">
-<div class="logo-tile">
-<span class="s">S</span>
-<div class="coin">₦</div>
+  <div class="logo">
+    <div class="logo-tile">
+      <span class="s">S</span>
+      <div class="coin">₦</div>
+    </div>
+    <span class="logo-text">UWE</span>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>Complete your profile</span>
+      <span>Almost there!</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" style="width:60%"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="error-box" id="error-box"></div>
+
+    <h2>Complete your vendor profile</h2>
+    <p class="card-sub">Fill all required fields so SUWE can personalise your dashboard and enable savings features.</p>
+
+    <div class="form-group">
+      <label>Full name</label>
+      <input type="text" id="full-name" placeholder="Amaka Okonkwo"/>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Phone number</label>
+        <input type="tel" id="phone" placeholder="08012345678"/>
+      </div>
+      <div class="form-group">
+        <label>State</label>
+        <select id="state">
+          <option value="">Select state</option>
+          <option>Lagos</option><option>Abuja (FCT)</option>
+          <option>Kano</option><option>Rivers</option>
+          <option>Oyo</option><option>Anambra</option>
+          <option>Delta</option><option>Enugu</option>
+          <option>Kaduna</option><option>Imo</option>
+          <option>Ogun</option><option>Osun</option>
+          <option>Edo</option><option>Kwara</option>
+          <option>Cross River</option><option>Ondo</option>
+          <option>Ekiti</option><option>Benue</option>
+          <option>Plateau</option><option>Kogi</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Market / Business location</label>
+      <input type="text" id="market-location" placeholder="e.g. Oshodi Market, Lagos"/>
+    </div>
+
+    <div class="form-group">
+      <label>What do you sell?</label>
+      <div class="category-grid" id="category-grid">
+        <div class="cat-option" data-value="Food & Provisions">🍅 Food & Provisions</div>
+        <div class="cat-option" data-value="Clothing & Fabric">👗 Clothing & Fabric</div>
+        <div class="cat-option" data-value="Electronics">📱 Electronics</div>
+        <div class="cat-option" data-value="Building Materials">🧱 Building Materials</div>
+        <div class="cat-option" data-value="Cosmetics & Beauty">💄 Cosmetics</div>
+        <div class="cat-option" data-value="Household Items">🏠 Household Items</div>
+        <div class="cat-option" data-value="Spare Parts">🔧 Spare Parts</div>
+        <div class="cat-option" data-value="Farm Produce">🌽 Farm Produce</div>
+        <div class="cat-option" data-value="Other">📦 Other</div>
+      </div>
+      <div class="form-group" id="other-category-group" style="display:none; margin-top:10px;">
+        <label>Please specify</label>
+        <input type="text" id="other-category" placeholder="e.g. Fashion Accessories"/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>How long have you been trading?</label>
+      <select id="trading-years">
+        <option value="">Select</option>
+        <option value="Less than 1 year">Less than 1 year</option>
+        <option value="1-3 years">1–3 years</option>
+        <option value="3-5 years">3–5 years</option>
+        <option value="5-10 years">5–10 years</option>
+        <option value="Over 10 years">Over 10 years</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Bank Verification Number (BVN)</label>
+      <input type="text" id="bvn" placeholder="11-digit BVN" maxlength="11" inputmode="numeric"/>
+    </div>
+
+    <div class="form-group">
+      <label>Referral code <span style="color:var(--text-dim)">(optional)</span></label>
+      <input type="text" id="referral" placeholder="Enter code if you have one"/>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-next" id="proceed-btn">Proceed to dashboard →</button>
+    </div>
+  </div>
 </div>
-<span class="logo-text">UWE</span>
-</div>
-<!-- Progress -->
-<div class="progress-wrap">
-<div class="progress-label">
-<span id="step-label">Step 1 of 3</span>
-<span id="step-pct">33%</span>
-</div>
-<div class="progress-track">
-<div class="progress-fill" id="progress-fill"
-style="width:33%"></div>
-</div>
-</div>
-<!-- Card -->
-<div class="card">
-<div class="error-box" id="error-box"></div>
-<!-- ── ONBOARDING FORM (single page) ── -->
-<div class="step active" id="onboarding-form">
-<h2>Complete your vendor profile</h2>
-<p class="card-sub">
-Fill all required fields below so SUWE can personalize your dashboard
-and enable savings features.
-</p>
-<div class="form-group">
-<label>Full name</label>
-<input type="text" id="full-name" placeholder="Amaka Okonkwo" />
-</div>
-<div class="form-row">
-<div class="form-group">
-<label>Phone number</label>
-<input type="tel" id="phone" placeholder="08012345678" />
-</div>
-<div class="form-group">
-<label>State</label>
-<select id="state">
-<option value="">Select state</option>
-<option>Lagos</option><option>Abuja (FCT)</option>
-<option>Kano</option><option>Rivers</option>
-<option>Oyo</option><option>Anambra</option>
-<option>Delta</option><option>Enugu</option>
-<option>Kaduna</option><option>Imo</option>
-<option>Ogun</option><option>Osun</option>
-<option>Edo</option><option>Kwara</option>
-<option>Cross River</option><option>Ondo</option>
-<option>Ekiti</option><option>Benue</option>
-<option>Plateau</option><option>Kogi</option>
-<option>Other</option>
-</select>
-</div>
-</div>
-<div class="form-group">
-<label>Market / Business location</label>
-<input type="text" id="market-location" placeholder="e.g. Oshodi
-Market, Lagos" />
-</div>
-<div class="form-group">
-<label>What do you sell?</label>
-<div class="category-grid" id="category-grid">
-<div class="cat-option" data-value="Food & Provisions">🍅 Food &
-Provisions</div>
-<div class="cat-option" data-value="Clothing & Fabric">👗 Clothing
-& Fabric</div>
-<div class="cat-option" data-value="Electronics">📱
-Electronics</div>
-<div class="cat-option" data-value="Building Materials">🧱
-Building Materials</div>
-<div class="cat-option" data-value="Cosmetics & Beauty">💄
-Cosmetics</div>
-<div class="cat-option" data-value="Household Items">🏠 Household
-Items</div>
-<div class="cat-option" data-value="Spare Parts">🔧 Spare
-Parts</div>
-<div class="cat-option" data-value="Farm Produce">🌽 Farm
-Produce</div>
-<div class="cat-option" data-value="Other">📦 Other</div>
-</div>
-<div class="form-group" id="other-category-group"
-style="display:none; margin-top: 10px;">
-<label>Please specify if Other</label>
-<input type="text" id="other-category" placeholder="e.g. Fashion
-Accessories" />
-</div>
-</div>
-<div class="form-group" style="margin-top: 20px;">
-<label>How long have you been trading?</label>
-<select id="trading-years">
-<option value="">Select</option>
-<option value="Less than 1 year">Less than 1 year</option>
-<option value="1--3 years">1--3 years</option>
-<option value="3--5 years">3--5 years</option>
-<option value="5--10 years">5--10 years</option>
-<option value="Over 10 years">Over 10 years</option>
-</select>
-</div>
-<div class="form-group">
-<label>Bank Verification Number (BVN)</label>
-<input type="text" id="bvn" placeholder="11-digit BVN"
-maxlength="11" inputmode="numeric" />
-</div>
-<div class="form-group">
-<label>Referral code <span
-style="color:var(--text-dim)">(optional)</span></label>
-<input type="text" id="referral" placeholder="Enter code if you
-have one" />
-</div>
-<div class="btn-row">
-<button class="btn-next" id="proceed-btn">Proceed to
-dashboard</button>
-</div>
-</div>
-</div>
-</div>
+
 <script type="module">
-import { createClient } from
-'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-const SUPABASE_URL = 'https://jqfmybadioqbmrkrsvbl.supabase.co';
-const SUPABASE_ANON_KEY =
-'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpxZm15YmFkaW9xYm1ya3JzdmJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNjczMTIsImV4cCI6MjA4OTg0MzMxMn0.R58UVPxWfNoyOwKB3qIelhp35zcmNcVMhgWwSEpDkE4';
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+const SUPABASE_URL      = 'https://jqfmybadioqbmrkrsvbl.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpxZm15YmFkaW9xYm1ya3JzdmJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNjczMTIsImV4cCI6MjA4OTg0MzMxMn0.R58UVPxWfNoyOwKB3qIelhp35zcmNcVMhgWwSEpDkE4';
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-// ── Helpers ──────────────────────────────────────
-const $ = id => document.getElementById(id);
-const showError = msg => {
-$('error-box').textContent = msg;
-$('error-box').classList.add('show');
-};
-const hideError = () => $('error-box').classList.remove('show');
+
+// ── Correct paths (Vercel root = frontend) ────────
+const DASHBOARD = '/pages/dashboard.html';
+
+// ── Helpers ───────────────────────────────────────
+const $         = id => document.getElementById(id);
+const showError = msg => { $('error-box').textContent = msg; $('error-box').classList.add('show'); };
+const hideError = ()  => $('error-box').classList.remove('show');
 const showLoading = () => $('loading').classList.add('show');
 const hideLoading = () => $('loading').classList.remove('show');
-// ── Gate: check session on page load ─────────────
-// Checks if user is logged in and redirects only if profile is
-complete.
-// If not logged in, we keep them on onboarding so they can complete it
-// after authentication completes (or manual login).
+
+// ── Session check & prefill ───────────────────────
 async function checkAndPrefill() {
-const { data: { user }, error: authError } = await
-supabase.auth.getUser();
-if (authError) {
-console.warn('Supabase auth check error:', authError.message);
-}
-if (!user) {
-// Not logged in yet --- stay on onboarding and allow user to continue
-console.warn('No user in session; staying on onboarding page.');
-return;
-}
-// They are logged in --- check if profile already complete
-const { data: profile, error: profileError } = await supabase
-.from('users')
-.select('*')
-.or(`id.eq.${user.id},email.eq.${user.email}`)
-.single();
-if (profileError) {
-console.warn('Profile lookup error:', profileError.message);
-}
-if (profile) {
-// Profile exists --- skip onboarding
-window.location.href = '/frontend/pages/dashboard.html';
-return;
-}
-// If user logged in and no profile row exists yet, create one early.
-if (user.id) {
-await supabase.from('users').upsert({
-id: user.id,
-email: user.email,
-full_name: user.user_metadata?.full_name || null
-}, { onConflict: 'id' });
-}
-// Pre-fill whatever Supabase already knows
-if (user.user_metadata?.full_name) {
-$('full-name').value = user.user_metadata.full_name;
-}
-if (user.email) {
-window._userEmail = user.email;
-}
-window._userId = user.id;
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    // Not logged in — stay on page, they may have just signed up
+    console.warn('No active session on onboarding page.');
+    return;
+  }
+
+  // Check if profile already complete (has phone)
+  const { data: profile } = await supabase
+    .from('users')
+    .select('id, phone')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (profile && profile.phone) {
+    // Already done onboarding — go straight to dashboard
+    window.location.href = DASHBOARD;
+    return;
+  }
+
+  // Upsert early row so the id exists
+  await supabase.from('users').upsert({
+    id:        user.id,
+    email:     user.email,
+    full_name: user.user_metadata?.full_name || null
+  }, { onConflict: 'id' });
+
+  // Pre-fill name if Google provided it
+  if (user.user_metadata?.full_name) {
+    $('full-name').value = user.user_metadata.full_name;
+  }
+
+  window._userId    = user.id;
+  window._userEmail = user.email;
 }
 checkAndPrefill();
+
 // ── Category checkbox logic ───────────────────────
-const selectedCategories = new Set();
-const otherCategoryGroup = $('other-category-group');
-const otherCategoryInput = $('other-category');
+const selectedCategories  = new Set();
+const otherCategoryGroup  = $('other-category-group');
+const otherCategoryInput  = $('other-category');
+
 document.querySelectorAll('.cat-option').forEach(opt => {
-opt.addEventListener('click', () => {
-const val = opt.dataset.value;
-if (selectedCategories.has(val)) {
-selectedCategories.delete(val);
-opt.classList.remove('checked');
-if (val === 'Other') {
-otherCategoryGroup.style.display = 'none';
-otherCategoryInput.value = '';
-}
-} else {
-selectedCategories.add(val);
-opt.classList.add('checked');
-if (val === 'Other') {
-otherCategoryGroup.style.display = 'block';
-otherCategoryInput.focus();
-}
-}
+  opt.addEventListener('click', () => {
+    const val = opt.dataset.value;
+    if (selectedCategories.has(val)) {
+      selectedCategories.delete(val);
+      opt.classList.remove('checked');
+      if (val === 'Other') { otherCategoryGroup.style.display = 'none'; otherCategoryInput.value = ''; }
+    } else {
+      selectedCategories.add(val);
+      opt.classList.add('checked');
+      if (val === 'Other') { otherCategoryGroup.style.display = 'block'; otherCategoryInput.focus(); }
+    }
+  });
 });
-});
-// ── ONBOARDING FORM SUBMIT ────────────────────────
-document.getElementById('proceed-btn').addEventListener('click',
-async (event) => {
-event.preventDefault();
-hideError();
-const name = $('full-name').value.trim();
-const phoneRaw = $('phone').value.trim();
-const state = $('state').value;
-const location = $('market-location').value.trim();
-const tradingYears = $('trading-years').value;
-const bvn = $('bvn').value.trim();
-const referral = $('referral').value.trim();
-if (!name || !phoneRaw || !state || !location || !tradingYears
-|| !bvn) {
-showError('Please fill in all required fields to continue.');
-return;
-}
-let normalizedPhone = phoneRaw.replace(/[^0-9+]/g, '');
-if (normalizedPhone.startsWith('+234')) {
-normalizedPhone = '0' + normalizedPhone.slice(4);
-} else if (normalizedPhone.startsWith('234')) {
-normalizedPhone = '0' + normalizedPhone.slice(3);
-}
-normalizedPhone = normalizedPhone.replace(/\\D/g, '');
-if (normalizedPhone.length === 10 && !normalizedPhone.startsWith('0'))
-{
-// Allow bare 10-digit numbers (e.g. 8012345678)
-normalizedPhone = '0' + normalizedPhone;
-}
-// Valid Nigerian 11-digit format starts with 0 and 11 digits total
-if (!/^0[0-9]{10}$/.test(normalizedPhone)) {
-showError('Please enter a valid Nigerian phone number (e.g. 08012345678
-or +2348012345678).');
-return;
-}
-if (bvn.length !== 11 || !/^\\d+$/.test(bvn)) {
-showError('Please enter a valid 11-digit BVN.');
-return;
-}
-if (selectedCategories.size === 0) {
-if (!confirm('No product category selected. Continue with this
-anyway?')) {
-showError('Please select at least one product category.');
-return;
-}
-}
-if (selectedCategories.has('Other')) {
-const other = otherCategoryInput.value.trim();
-if (!other) {
-showError('Please enter what you sell for "Other" category.');
-return;
-}
-}
-showLoading();
-try {
-const chosenCategories = Array.from(selectedCategories);
-if (selectedCategories.has('Other')) {
-const other = otherCategoryInput.value.trim();
-if (other) {
-chosenCategories[chosenCategories.indexOf('Other')] = other;
-}
-}
-const profileData = {
-id: window._userId,
-email: window._userEmail || '',
-full_name: name,
-phone: normalizedPhone,
-market_location: `${location}, ${state}`,
-product_categories: chosenCategories.join(', '),
-trading_years: tradingYears,
-bvn_submitted: true,
-identity_verified: false,
-referral_code: referral || null
-};
-const { error } = await supabase
-.from('users')
-.upsert(profileData, { onConflict: 'id' });
-hideLoading();
-if (error) {
-console.error('Supabase upsert error:', error);
-showError('Failed to save profile, please retry.');
-return;
-}
-window.location.href = '/frontend/pages/dashboard.html';
-} catch (err) {
-hideLoading();
-console.error(err);
-showError('An unexpected error occurred. Please try again.');
-}
+
+// ── Form submit ───────────────────────────────────
+$('proceed-btn').addEventListener('click', async () => {
+  hideError();
+
+  const name         = $('full-name').value.trim();
+  const phoneRaw     = $('phone').value.trim();
+  const state        = $('state').value;
+  const location     = $('market-location').value.trim();
+  const tradingYears = $('trading-years').value;
+  const bvn          = $('bvn').value.trim();
+  const referral     = $('referral').value.trim();
+
+  // Required field check
+  if (!name || !phoneRaw || !state || !location || !tradingYears || !bvn) {
+    showError('Please fill in all required fields to continue.');
+    return;
+  }
+
+  // Normalise phone number
+  let phone = phoneRaw.replace(/[^\d+]/g, '');
+  if (phone.startsWith('+234')) phone = '0' + phone.slice(4);
+  else if (phone.startsWith('234')) phone = '0' + phone.slice(3);
+  if (phone.length === 10 && !phone.startsWith('0')) phone = '0' + phone;
+
+  if (!/^0[0-9]{10}$/.test(phone)) {
+    showError('Please enter a valid Nigerian phone number (e.g. 08012345678).');
+    return;
+  }
+
+  // BVN check
+  if (bvn.length !== 11 || !/^\d+$/.test(bvn)) {
+    showError('Please enter a valid 11-digit BVN.');
+    return;
+  }
+
+  // Category check
+  if (selectedCategories.size === 0) {
+    showError('Please select at least one product category.');
+    return;
+  }
+
+  if (selectedCategories.has('Other') && !otherCategoryInput.value.trim()) {
+    showError('Please specify what you sell under "Other".');
+    return;
+  }
+
+  // Build categories array
+  const categories = Array.from(selectedCategories).map(c =>
+    c === 'Other' ? otherCategoryInput.value.trim() : c
+  );
+
+  showLoading();
+
+  try {
+    const { error } = await supabase.from('users').upsert({
+      id:                  window._userId,
+      email:               window._userEmail || '',
+      full_name:           name,
+      phone:               phone,
+      market_location:     `${location}, ${state}`,
+      product_categories:  categories.join(', '),
+      trading_years:       tradingYears,
+      bvn_submitted:       true,
+      identity_verified:   false,
+      referral_code:       referral || null
+    }, { onConflict: 'id' });
+
+    hideLoading();
+
+    if (error) {
+      console.error('Supabase upsert error:', error);
+      showError('Failed to save profile. Please try again.');
+      return;
+    }
+
+    // Success — go to dashboard
+    window.location.href = DASHBOARD;
+
+  } catch (err) {
+    hideLoading();
+    console.error(err);
+    showError('An unexpected error occurred. Please try again.');
+  }
 });
 </script>
+
 </body>
 </html>
