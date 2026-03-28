@@ -2,12 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,
-initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>SUWE --- Built for the Market</title>
-<link
-href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap"
-rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root {
 --green-dark: #0b3d20;
@@ -24,8 +21,7 @@ rel="stylesheet"/>
 --card-border: rgba(255,255,255,0.09);
 --overlay-bg: rgba(7,28,15,0.96);
 }
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box;
-}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 body {
 font-family: 'DM Sans', sans-serif;
 background: var(--green-dark);
@@ -33,7 +29,6 @@ color: var(--cream);
 min-height: 100vh;
 overflow-x: hidden;
 }
-/* ── Subtle grid texture ── */
 body::before {
 content: '';
 position: fixed;
@@ -45,7 +40,6 @@ background-size: 60px 60px;
 pointer-events: none;
 z-index: 0;
 }
-/* ── Glow orb behind hero ── */
 body::after {
 content: '';
 position: fixed;
@@ -54,17 +48,14 @@ left: 50%;
 transform: translateX(-50%);
 width: 700px;
 height: 700px;
-background: radial-gradient(circle, rgba(34,160,80,0.18) 0%, transparent
-70%);
+background: radial-gradient(circle, rgba(34,160,80,0.18) 0%, transparent 70%);
 pointer-events: none;
 z-index: 0;
 }
-/* everything sits above the pseudo-elements */
-nav, .hero, .stats, .features, .footer-note,
+nav, .hero, .stats, .features-wrap, .footer-note,
 #loading-overlay, .modal-overlay { position: relative; z-index: 1; }
-/* ══════════════════════════════════════════
-NAVIGATION
-══════════════════════════════════════════ */
+
+/* ── NAVIGATION ── */
 nav {
 display: flex;
 justify-content: space-between;
@@ -72,7 +63,6 @@ align-items: center;
 padding: 22px 60px;
 border-bottom: 1px solid var(--card-border);
 }
-/* ── LOGO ── */
 .nav-logo {
 display: flex;
 align-items: flex-end;
@@ -80,7 +70,6 @@ gap: 2px;
 cursor: default;
 user-select: none;
 }
-/* Big decorative S with coin icon */
 .logo-s-wrap {
 position: relative;
 display: flex;
@@ -88,8 +77,7 @@ align-items: center;
 justify-content: center;
 width: 52px;
 height: 52px;
-background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light)
-100%);
+background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
 border-radius: 14px;
 box-shadow: 0 4px 20px rgba(212,168,67,0.35);
 margin-right: 8px;
@@ -101,19 +89,14 @@ font-weight: 900;
 color: var(--green-dark);
 line-height: 1;
 }
-/* tiny coin badge on corner of the S tile */
 .logo-coin {
 position: absolute;
-bottom: -5px;
-right: -5px;
-width: 20px;
-height: 20px;
+bottom: -5px; right: -5px;
+width: 20px; height: 20px;
 background: var(--green-bright);
 border-radius: 50%;
 border: 2px solid var(--green-dark);
-display: flex;
-align-items: center;
-justify-content: center;
+display: flex; align-items: center; justify-content: center;
 font-size: 11px;
 }
 .logo-uwe {
@@ -125,7 +108,6 @@ letter-spacing: 1px;
 line-height: 1;
 padding-bottom: 2px;
 }
-/* ── Nav right side buttons ── */
 .nav-actions {
 display: flex;
 align-items: center;
@@ -143,10 +125,7 @@ font-family: 'DM Sans', sans-serif;
 cursor: pointer;
 transition: border-color 0.2s, background 0.2s;
 }
-.btn-nav-login:hover {
-border-color: var(--gold);
-background: rgba(212,168,67,0.08);
-}
+.btn-nav-login:hover { border-color: var(--gold); background: rgba(212,168,67,0.08); }
 .btn-nav-signup {
 background: var(--gold);
 border: none;
@@ -159,13 +138,9 @@ font-family: 'DM Sans', sans-serif;
 cursor: pointer;
 transition: transform 0.2s, box-shadow 0.2s;
 }
-.btn-nav-signup:hover {
-transform: translateY(-1px);
-box-shadow: 0 6px 20px rgba(212,168,67,0.35);
-}
-/* ══════════════════════════════════════════
-HERO
-══════════════════════════════════════════ */
+.btn-nav-signup:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(212,168,67,0.35); }
+
+/* ── HERO ── */
 .hero {
 display: flex;
 flex-direction: column;
@@ -198,7 +173,6 @@ margin-bottom: 24px;
 animation: fadeSlideDown 0.7s 0.15s ease both;
 }
 .hero h1 .gold { color: var(--gold); }
-/* Main description paragraph */
 .hero-desc {
 font-size: 17px;
 color: var(--text-muted);
@@ -207,7 +181,6 @@ line-height: 1.75;
 margin-bottom: 16px;
 animation: fadeSlideDown 0.7s 0.25s ease both;
 }
-/* Secondary paragraph with more context */
 .hero-desc-2 {
 font-size: 15px;
 color: var(--text-dim);
@@ -216,7 +189,6 @@ line-height: 1.7;
 margin-bottom: 48px;
 animation: fadeSlideDown 0.7s 0.32s ease both;
 }
-/* ── Auth Buttons Group ── */
 .auth-buttons {
 display: flex;
 flex-direction: column;
@@ -241,39 +213,21 @@ font-family: 'DM Sans', sans-serif;
 cursor: pointer;
 transition: transform 0.2s, box-shadow 0.2s;
 }
-.btn-google {
-background: #ffffff;
-color: #1a1a1a;
-}
-.btn-google:hover {
-transform: translateY(-2px);
-box-shadow: 0 10px 28px rgba(0,0,0,0.3);
-}
-.btn-facebook {
-background: #1877F2;
-color: #ffffff;
-}
-.btn-facebook:hover {
-transform: translateY(-2px);
-box-shadow: 0 10px 28px rgba(24,119,242,0.4);
-}
+.btn-google { background: #ffffff; color: #1a1a1a; }
+.btn-google:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,0.3); }
 .auth-divider {
 display: flex;
 align-items: center;
 gap: 12px;
 width: 100%;
 }
-.auth-divider::before,
-.auth-divider::after {
+.auth-divider::before, .auth-divider::after {
 content: '';
 flex: 1;
 height: 1px;
 background: var(--card-border);
 }
-.auth-divider span {
-font-size: 12px;
-color: var(--text-dim);
-}
+.auth-divider span { font-size: 12px; color: var(--text-dim); }
 .btn-email-signup {
 display: flex;
 align-items: center;
@@ -291,19 +245,10 @@ font-family: 'DM Sans', sans-serif;
 cursor: pointer;
 transition: border-color 0.2s, background 0.2s, transform 0.2s;
 }
-.btn-email-signup:hover {
-border-color: var(--gold);
-background: rgba(212,168,67,0.06);
-transform: translateY(-1px);
-}
-.auth-note {
-font-size: 12px;
-color: var(--text-dim);
-margin-top: 4px;
-}
-/* ══════════════════════════════════════════
-STATS
-══════════════════════════════════════════ */
+.btn-email-signup:hover { border-color: var(--gold); background: rgba(212,168,67,0.06); transform: translateY(-1px); }
+.auth-note { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+
+/* ── STATS ── */
 .stats {
 display: flex;
 justify-content: center;
@@ -319,23 +264,15 @@ font-size: 30px;
 font-weight: 700;
 color: var(--gold);
 }
-.stat-label {
-font-size: 13px;
-color: var(--text-muted);
-margin-top: 4px;
-}
-/* ══════════════════════════════════════════
-FEATURE CARDS
-══════════════════════════════════════════ */
+.stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+/* ── FEATURES ── */
 .features-wrap {
 max-width: 1100px;
 margin: 0 auto;
 padding: 70px 60px;
 }
-.features-heading {
-text-align: center;
-margin-bottom: 40px;
-}
+.features-heading { text-align: center; margin-bottom: 40px; }
 .features-heading h2 {
 font-family: 'Playfair Display', serif;
 font-size: 32px;
@@ -343,77 +280,42 @@ font-weight: 700;
 color: var(--cream);
 margin-bottom: 12px;
 }
-.features-heading p {
-font-size: 15px;
-color: var(--text-muted);
-max-width: 500px;
-margin: 0 auto;
-line-height: 1.7;
-}
-.features {
-display: grid;
-grid-template-columns: repeat(3, 1fr);
-gap: 22px;
-}
+.features-heading p { font-size: 15px; color: var(--text-muted); max-width: 500px; margin: 0 auto; line-height: 1.7; }
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
 .feature-card {
 background: var(--card-bg);
 border: 1px solid var(--card-border);
 border-radius: 20px;
 padding: 32px 26px;
 cursor: default;
-/* bounce-in animation on load */
 opacity: 0;
 transform: translateY(40px) scale(0.96);
 animation: bounceIn 0.6s ease forwards;
-transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
-box-shadow 0.3s ease,
-border-color 0.3s ease;
+transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease, border-color 0.3s ease;
 }
-/* stagger each card */
 .feature-card:nth-child(1) { animation-delay: 0.15s; }
 .feature-card:nth-child(2) { animation-delay: 0.28s; }
 .feature-card:nth-child(3) { animation-delay: 0.41s; }
-.feature-card:hover {
-transform: translateY(-8px) scale(1.02);
-box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-border-color: rgba(212,168,67,0.3);
-}
+.feature-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 50px rgba(0,0,0,0.35); border-color: rgba(212,168,67,0.3); }
 .feature-icon {
-width: 50px;
-height: 50px;
+width: 50px; height: 50px;
 border-radius: 14px;
-display: flex;
-align-items: center;
-justify-content: center;
+display: flex; align-items: center; justify-content: center;
 font-size: 24px;
 margin-bottom: 18px;
 }
 .icon-purple { background: rgba(127,119,221,0.15); }
-.icon-green { background: rgba(29,158,117,0.15); }
-.icon-amber { background: rgba(186,117,23,0.15); }
-.feature-title {
-font-size: 17px;
-font-weight: 600;
-color: var(--white);
-margin-bottom: 10px;
-}
-.feature-desc {
-font-size: 14px;
-color: var(--text-muted);
-line-height: 1.65;
-}
-/* description under each card */
+.icon-green  { background: rgba(29,158,117,0.15); }
+.icon-amber  { background: rgba(186,117,23,0.15); }
+.feature-title { font-size: 17px; font-weight: 600; color: var(--white); margin-bottom: 10px; }
+.feature-desc  { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
 .feature-extra {
-font-size: 12px;
-color: var(--text-dim);
-line-height: 1.6;
-margin-top: 12px;
-padding-top: 12px;
+font-size: 12px; color: var(--text-dim); line-height: 1.6;
+margin-top: 12px; padding-top: 12px;
 border-top: 1px solid var(--card-border);
 }
-/* ══════════════════════════════════════════
-FOOTER NOTE
-══════════════════════════════════════════ */
+
+/* ── FOOTER ── */
 .footer-note {
 text-align: center;
 padding: 30px;
@@ -422,39 +324,31 @@ color: var(--text-dim);
 border-top: 1px solid var(--card-border);
 }
 .footer-note span { color: var(--gold); }
-/* ══════════════════════════════════════════
-LOADING OVERLAY
-══════════════════════════════════════════ */
+
+/* ── LOADING ── */
 #loading-overlay {
 display: none;
-position: fixed;
-inset: 0;
+position: fixed; inset: 0;
 background: var(--overlay-bg);
-justify-content: center;
-align-items: center;
-flex-direction: column;
-gap: 18px;
+justify-content: center; align-items: center;
+flex-direction: column; gap: 18px;
 z-index: 999;
 }
 #loading-overlay.show { display: flex; }
 .spinner {
-width: 44px;
-height: 44px;
+width: 44px; height: 44px;
 border: 3px solid rgba(212,168,67,0.2);
 border-top-color: var(--gold);
 border-radius: 50%;
 animation: spin 0.75s linear infinite;
 }
-/* ══════════════════════════════════════════
-MODAL --- shared base styles
-══════════════════════════════════════════ */
+
+/* ── MODALS ── */
 .modal-overlay {
 display: none;
-position: fixed;
-inset: 0;
+position: fixed; inset: 0;
 background: var(--overlay-bg);
-justify-content: center;
-align-items: center;
+justify-content: center; align-items: center;
 z-index: 900;
 padding: 20px;
 }
@@ -466,50 +360,22 @@ border-radius: 24px;
 padding: 40px;
 width: 100%;
 max-width: 420px;
+position: relative;
 animation: modalPop 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
 }
-.modal-logo {
-display: flex;
-align-items: flex-end;
-gap: 6px;
-margin-bottom: 24px;
-}
+.modal-logo { display: flex; align-items: flex-end; gap: 6px; margin-bottom: 24px; }
 .modal-logo-tile {
 width: 36px; height: 36px;
-background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light)
-100%);
+background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
 border-radius: 10px;
 display: flex; align-items: center; justify-content: center;
 }
-.modal-logo-tile span {
-font-family: 'Playfair Display', serif;
-font-size: 22px; font-weight: 900; color: var(--green-dark);
-}
-.modal-logo-text {
-font-family: 'Playfair Display', serif;
-font-size: 20px; font-weight: 700; color: var(--cream);
-}
-.modal h2 {
-font-family: 'Playfair Display', serif;
-font-size: 24px;
-font-weight: 700;
-color: var(--cream);
-margin-bottom: 6px;
-}
-.modal-sub {
-font-size: 14px;
-color: var(--text-muted);
-margin-bottom: 28px;
-line-height: 1.5;
-}
+.modal-logo-tile span { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; color: var(--green-dark); }
+.modal-logo-text { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--cream); }
+.modal h2 { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--cream); margin-bottom: 6px; }
+.modal-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.5; }
 .form-group { margin-bottom: 18px; }
-.form-group label {
-display: block;
-font-size: 13px;
-font-weight: 500;
-color: var(--text-muted);
-margin-bottom: 7px;
-}
+.form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 7px; }
 .form-group input {
 width: 100%;
 background: rgba(0,0,0,0.25);
@@ -524,65 +390,21 @@ transition: border-color 0.2s;
 }
 .form-group input:focus { border-color: var(--gold); }
 .form-group input::placeholder { color: var(--text-dim); }
-/* Two-column form layout for name and email */
-.form-row {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 12px;
-}
-.form-row .form-group {
-margin-bottom: 0;
-}
-@media (max-width: 480px) {
-.form-row {
-grid-template-columns: 1fr;
-gap: 12px;
-}
-}
-.password-min-length {
-display: none;
-color: #f09595;
-font-size: 12px;
-margin-top: 5px;
-}
-.password-min-length.show {
-display: block;
-}
-.password-input-wrapper {
-position: relative;
-display: flex;
-align-items: center;
-}
-.password-input-wrapper input {
-width: 100%;
-padding-right: 40px;
-}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-row .form-group { margin-bottom: 0; }
+.password-min-length { display: none; color: #f09595; font-size: 12px; margin-top: 5px; }
+.password-min-length.show { display: block; }
+.password-input-wrapper { position: relative; display: flex; align-items: center; }
+.password-input-wrapper input { width: 100%; padding-right: 40px; }
 .password-toggle {
-position: absolute;
-right: 12px;
-background: none;
-border: none;
-color: var(--text-muted);
-cursor: pointer;
-font-size: 18px;
-transition: color 0.2s;
-padding: 4px;
+position: absolute; right: 12px;
+background: none; border: none;
+color: var(--text-muted); cursor: pointer;
+font-size: 18px; transition: color 0.2s; padding: 4px;
 }
-.password-toggle:hover {
-color: var(--gold);
-}
-.form-group.password-group .form-group {
-margin-bottom: 15px;
-}
-.password-mismatch {
-display: none;
-color: #f09595;
-font-size: 12px;
-margin-top: 5px;
-}
-.password-mismatch.show {
-display: block;
-}
+.password-toggle:hover { color: var(--gold); }
+.password-mismatch { display: none; color: #f09595; font-size: 12px; margin-top: 5px; }
+.password-mismatch.show { display: block; }
 .btn-modal-submit {
 width: 100%;
 background: var(--gold);
@@ -597,31 +419,17 @@ cursor: pointer;
 margin-top: 6px;
 transition: transform 0.2s, box-shadow 0.2s;
 }
-.btn-modal-submit:hover {
-transform: translateY(-2px);
-box-shadow: 0 8px 24px rgba(212,168,67,0.35);
-}
-.modal-switch {
-text-align: center;
-margin-top: 18px;
-font-size: 14px;
-color: var(--text-muted);
-}
-.modal-switch a {
-color: var(--gold-light);
-cursor: pointer;
-text-decoration: none;
-font-weight: 500;
-}
+.btn-modal-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,168,67,0.35); }
+.btn-modal-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.modal-switch { text-align: center; margin-top: 18px; font-size: 14px; color: var(--text-muted); }
+.modal-switch a { color: var(--gold-light); cursor: pointer; text-decoration: none; font-weight: 500; }
 .modal-switch a:hover { text-decoration: underline; }
 .modal-close {
-position: absolute;
-top: 16px; right: 20px;
+position: absolute; top: 16px; right: 20px;
 background: none; border: none;
 color: var(--text-muted); font-size: 22px;
 cursor: pointer; line-height: 1;
 }
-.modal { position: relative; }
 .modal-error {
 background: rgba(226,75,74,0.12);
 border: 1px solid rgba(226,75,74,0.3);
@@ -633,25 +441,8 @@ margin-bottom: 16px;
 display: none;
 }
 .modal-error.show { display: block; }
-/* ══════════════════════════════════════════
-ANIMATIONS
-══════════════════════════════════════════ */
-@keyframes fadeSlideDown {
-from { opacity: 0; transform: translateY(-16px); }
-to { opacity: 1; transform: translateY(0); }
-}
-@keyframes bounceIn {
-from { opacity: 0; transform: translateY(40px) scale(0.96); }
-to { opacity: 1; transform: translateY(0) scale(1); }
-}
-@keyframes modalPop {
-from { opacity: 0; transform: scale(0.88) translateY(20px); }
-to { opacity: 1; transform: scale(1) translateY(0); }
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-/* ══════════════════════════════════════════
-MODAL SIDE ANIMATIONS - Nigerian Market Theme
-══════════════════════════════════════════ */
+
+/* ── MODAL DECORATIONS ── */
 @keyframes bounce {
 0%, 100% { transform: translateY(0) rotate(0deg); }
 25% { transform: translateY(-20px) rotate(-5deg); }
@@ -671,45 +462,22 @@ MODAL SIDE ANIMATIONS - Nigerian Market Theme
 75% { transform: translateX(-5px) translateY(-10px) rotate(-3deg); }
 }
 .modal-decoration-container {
-position: absolute;
-width: 100px;
-height: 100%;
-top: 0;
-display: flex;
-flex-direction: column;
-justify-content: space-around;
-align-items: center;
+position: absolute; width: 100px; height: 100%; top: 0;
+display: flex; flex-direction: column;
+justify-content: space-around; align-items: center;
 pointer-events: none;
 }
-.modal-decoration-left {
-left: -80px;
-}
-.modal-decoration-right {
-right: -80px;
-}
-.decoration-item {
-font-size: 48px;
-opacity: 0.7;
-filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-}
-.decoration-item:nth-child(1) { animation: bounce 3s infinite
-ease-in-out; }
-.decoration-item:nth-child(2) { animation: float 4s infinite ease-in-out
-0.5s; }
-.decoration-item:nth-child(3) { animation: sway 3.5s infinite
-ease-in-out 1s; }
-.decoration-item:nth-child(4) { animation: bounce 3.2s infinite
-ease-in-out 1.5s; }
-.decoration-item:nth-child(5) { animation: float 3.8s infinite
-ease-in-out 2s; }
-@media (max-width: 768px) {
-.modal-decoration-container {
-display: none;
-}
-}
-/* ══════════════════════════════════════════
-HAMBURGER MENU (hidden on desktop)
-══════════════════════════════════════════ */
+.modal-decoration-left  { left: -80px; }
+.modal-decoration-right { right: -80px; }
+.decoration-item { font-size: 48px; opacity: 0.7; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); }
+.decoration-item:nth-child(1) { animation: bounce 3s infinite ease-in-out; }
+.decoration-item:nth-child(2) { animation: float 4s infinite ease-in-out 0.5s; }
+.decoration-item:nth-child(3) { animation: sway 3.5s infinite ease-in-out 1s; }
+.decoration-item:nth-child(4) { animation: bounce 3.2s infinite ease-in-out 1.5s; }
+.decoration-item:nth-child(5) { animation: float 3.8s infinite ease-in-out 2s; }
+@media (max-width: 768px) { .modal-decoration-container { display: none; } }
+
+/* ── HAMBURGER ── */
 .hamburger-menu {
 display: none;
 flex-direction: column;
@@ -719,1095 +487,546 @@ background: none;
 border: none;
 padding: 8px;
 }
-.hamburger-menu span {
-width: 24px;
-height: 2.5px;
-background: var(--cream);
-border-radius: 2px;
-transition: all 0.3s ease;
-}
-.hamburger-menu.active span:nth-child(1) {
-transform: rotate(45deg) translate(8px, 8px);
-}
-.hamburger-menu.active span:nth-child(2) {
-opacity: 0;
-}
-.hamburger-menu.active span:nth-child(3) {
-transform: rotate(-45deg) translate(8px, -8px);
-}
-/* Mobile menu dropdown */
+.hamburger-menu span { width: 24px; height: 2.5px; background: var(--cream); border-radius: 2px; transition: all 0.3s ease; }
+.hamburger-menu.active span:nth-child(1) { transform: rotate(45deg) translate(8px, 8px); }
+.hamburger-menu.active span:nth-child(2) { opacity: 0; }
+.hamburger-menu.active span:nth-child(3) { transform: rotate(-45deg) translate(8px, -8px); }
 .nav-actions.mobile-menu {
 display: none;
 flex-direction: column;
 position: absolute;
-top: 70px;
-right: 20px;
+top: 70px; right: 20px;
 background: var(--green-mid);
 border: 1px solid var(--card-border);
 border-radius: 16px;
-padding: 16px;
-gap: 10px;
-z-index: 100;
-width: 200px;
+padding: 16px; gap: 10px;
+z-index: 100; width: 200px;
 animation: slideDown 0.3s ease;
 }
-.nav-actions.mobile-menu.show {
-display: flex;
-}
+.nav-actions.mobile-menu.show { display: flex; }
 @keyframes slideDown {
-from {
-opacity: 0;
-transform: translateY(-10px);
+from { opacity: 0; transform: translateY(-10px); }
+to   { opacity: 1; transform: translateY(0); }
 }
-to {
-opacity: 1;
-transform: translateY(0);
+
+/* ── ANIMATIONS ── */
+@keyframes fadeSlideDown {
+from { opacity: 0; transform: translateY(-16px); }
+to   { opacity: 1; transform: translateY(0); }
 }
+@keyframes bounceIn {
+from { opacity: 0; transform: translateY(40px) scale(0.96); }
+to   { opacity: 1; transform: translateY(0) scale(1); }
 }
-/* ══════════════════════════════════════════
-TABLET RESPONSIVENESS (768px and below)
-══════════════════════════════════════════ */
+@keyframes modalPop {
+from { opacity: 0; transform: scale(0.88) translateY(20px); }
+to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── RESPONSIVE ── */
 @media (max-width: 768px) {
-nav {
-padding: 16px 5%;
+  nav { padding: 16px 5%; }
+  .logo-s-wrap { width: 44px; height: 44px; }
+  .logo-s-wrap .big-s { font-size: 26px; }
+  .logo-uwe { font-size: 22px; }
+  .hamburger-menu { display: flex; }
+  .nav-actions:not(.mobile-menu) { display: none; }
+  .hero { padding: 60px 5% 50px; }
+  .hero h1 { font-size: 48px; max-width: 100%; }
+  .hero-desc { font-size: 16px; max-width: 100%; padding: 0 5%; }
+  .hero-desc-2 { font-size: 14px; max-width: 100%; padding: 0 5%; }
+  .auth-buttons { max-width: 90%; }
+  .stats { padding: 30px 5%; gap: 40px; flex-wrap: wrap; justify-content: space-around; }
+  .features-wrap { padding: 50px 5%; }
+  .features-heading h2 { font-size: 28px; }
+  .features { grid-template-columns: 1fr; gap: 18px; }
+  .feature-card { padding: 24px 20px; }
+  .modal-overlay.show { z-index: 9999; padding: 16px; }
+  .modal { max-width: 100%; max-height: 90vh; overflow-y: auto; padding: 28px 20px; }
 }
-.logo-s-wrap {
-width: 44px;
-height: 44px;
-}
-.logo-s-wrap .big-s {
-font-size: 26px;
-}
-.logo-uwe {
-font-size: 22px;
-}
-/* Show hamburger on tablet */
-.hamburger-menu {
-display: flex;
-}
-/* Hide nav-actions on tablet */
-.nav-actions {
-display: none;
-}
-.nav-actions.mobile-menu {
-width: 180px;
-}
-.btn-nav-login, .btn-nav-signup {
-width: 100%;
-padding: 12px 16px;
-font-size: 14px;
-}
-/* Hero adjustments */
-.hero {
-padding: 60px 5% 50px;
-}
-.hero h1 {
-font-size: 48px;
-max-width: 100%;
-}
-.hero-desc {
-font-size: 16px;
-max-width: 100%;
-padding: 0 5%;
-}
-.hero-desc-2 {
-font-size: 14px;
-max-width: 100%;
-padding: 0 5%;
-}
-.auth-buttons {
-max-width: 90%;
-}
-/* Stats adjustments */
-.stats {
-padding: 30px 5%;
-gap: 40px;
-flex-wrap: wrap;
-justify-content: space-around;
-}
-.stat-number {
-font-size: 26px;
-}
-.stat-label {
-font-size: 12px;
-}
-/* Features adjustments */
-.features-wrap {
-padding: 50px 5%;
-}
-.features-heading h2 {
-font-size: 28px;
-}
-.features {
-grid-template-columns: 1fr;
-gap: 18px;
-}
-.feature-card {
-padding: 24px 20px;
-}
-}
-/* ══════════════════════════════════════════
-MOBILE RESPONSIVENESS (640px and below)
-══════════════════════════════════════════ */
 @media (max-width: 640px) {
-nav {
-padding: 14px 4%;
-border-bottom: 1px solid var(--card-border);
+  nav { padding: 14px 4%; }
+  .logo-s-wrap { width: 40px; height: 40px; }
+  .logo-s-wrap .big-s { font-size: 22px; }
+  .logo-uwe { font-size: 18px; }
+  .hero { padding: 50px 4% 40px; }
+  .hero h1 { font-size: 36px; line-height: 1.2; }
+  .hero-badge { font-size: 11px; padding: 6px 14px; }
+  .hero-desc { font-size: 15px; padding: 0; }
+  .hero-desc-2 { font-size: 13px; padding: 0; }
+  .auth-buttons { max-width: 100%; width: 90%; }
+  .btn-oauth { padding: 12px 20px; font-size: 14px; }
+  .btn-email-signup { padding: 12px 20px; font-size: 14px; }
+  .stats { padding: 24px 4%; gap: 20px; flex-direction: column; }
+  .stat-item { padding: 12px 0; border-bottom: 1px solid var(--card-border); }
+  .stat-item:last-child { border-bottom: none; }
+  .features-wrap { padding: 40px 4%; }
+  .features-heading h2 { font-size: 24px; }
+  .feature-card { padding: 20px 16px; }
+  .footer-note { padding: 24px 4%; font-size: 12px; }
+  .modal { padding: 30px 24px; }
+  .form-row { grid-template-columns: 1fr; }
 }
-.nav-logo {
-gap: 4px;
-}
-.logo-s-wrap {
-width: 40px;
-height: 40px;
-}
-.logo-s-wrap .big-s {
-font-size: 22px;
-}
-.logo-uwe {
-font-size: 18px;
-letter-spacing: 0.5px;
-}
-.logo-coin {
-width: 16px;
-height: 16px;
-font-size: 9px;
-bottom: -3px;
-right: -3px;
-}
-/* Hamburger button adjustments */
-.hamburger-menu {
-padding: 4px;
-}
-.hamburger-menu span {
-width: 20px;
-height: 2px;
-}
-.nav-actions.mobile-menu {
-top: 65px;
-right: 4%;
-width: 160px;
-padding: 12px;
-}
-/* Hero section */
-.hero {
-padding: 50px 4% 40px;
-text-align: center;
-}
-.hero h1 {
-font-size: 36px;
-line-height: 1.2;
-margin-bottom: 20px;
-}
-.hero-badge {
-font-size: 11px;
-padding: 6px 14px;
-margin-bottom: 24px;
-}
-.hero-desc {
-font-size: 15px;
-line-height: 1.65;
-max-width: 100%;
-padding: 0;
-margin-bottom: 12px;
-}
-.hero-desc-2 {
-font-size: 13px;
-line-height: 1.6;
-max-width: 100%;
-padding: 0;
-margin-bottom: 36px;
-}
-.auth-buttons {
-max-width: 100%;
-width: 90%;
-}
-.btn-oauth {
-padding: 12px 20px;
-font-size: 14px;
-}
-.btn-oauth svg {
-width: 18px;
-height: 18px;
-}
-.btn-email-signup {
-padding: 12px 20px;
-font-size: 14px;
-}
-.auth-note {
-font-size: 11px;
-margin-top: 8px;
-}
-/* Stats section - vertical layout */
-.stats {
-padding: 24px 4%;
-gap: 20px;
-flex-direction: column;
-border-top: 1px solid var(--card-border);
-border-bottom: 1px solid var(--card-border);
-}
-.stat-item {
-padding: 12px 0;
-text-align: center;
-border-bottom: 1px solid var(--card-border);
-}
-.stat-item:last-child {
-border-bottom: none;
-}
-.stat-number {
-font-size: 24px;
-}
-.stat-label {
-font-size: 11px;
-margin-top: 6px;
-}
-/* Features section - vertical layout */
-.features-wrap {
-padding: 40px 4%;
-}
-.features-heading {
-margin-bottom: 32px;
-}
-.features-heading h2 {
-font-size: 24px;
-margin-bottom: 12px;
-}
-.features-heading p {
-font-size: 13px;
-max-width: 100%;
-line-height: 1.6;
-}
-.features {
-display: flex;
-flex-direction: column;
-gap: 16px;
-}
-.feature-card {
-padding: 20px 16px;
-transform: none !important;
-}
-.feature-card:hover {
-transform: none;
-box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-}
-.feature-icon {
-width: 44px;
-height: 44px;
-font-size: 22px;
-margin-bottom: 14px;
-}
-.feature-title {
-font-size: 16px;
-margin-bottom: 8px;
-}
-.feature-desc {
-font-size: 13px;
-line-height: 1.6;
-}
-.feature-extra {
-font-size: 11px;
-line-height: 1.5;
-margin-top: 10px;
-padding-top: 10px;
-}
-/* Footer */
-.footer-note {
-padding: 24px 4%;
-font-size: 12px;
-line-height: 1.5;
-}
-/* Modal adjustments */
-.modal {
-max-width: 90%;
-padding: 30px 24px;
-}
-.modal h2 {
-font-size: 22px;
-}
-.modal-sub {
-font-size: 13px;
-}
-.form-group input {
-padding: 11px 14px;
-font-size: 14px;
-}
-.btn-modal-submit {
-padding: 12px;
-font-size: 14px;
-}
-}
-/* ══════════════════════════════════════════
-SMALL PHONE (480px and below)
-══════════════════════════════════════════ */
 @media (max-width: 480px) {
-nav {
-padding: 12px 3%;
-}
-.logo-s-wrap {
-width: 36px;
-height: 36px;
-margin-right: 6px;
-}
-.logo-s-wrap .big-s {
-font-size: 18px;
-}
-.logo-uwe {
-font-size: 16px;
-}
-.hamburger-menu span {
-width: 18px;
-}
-.nav-actions.mobile-menu {
-right: 3%;
-width: 140px;
-}
-.hero h1 {
-font-size: 28px;
-line-height: 1.25;
-}
-.hero-desc {
-font-size: 14px;
-}
-.hero-desc-2 {
-font-size: 12px;
-}
-.stats {
-padding: 20px 3%;
-gap: 16px;
-}
-.stat-number {
-font-size: 20px;
-}
-.features-wrap {
-padding: 30px 3%;
-}
-.features-heading h2 {
-font-size: 20px;
-}
-.features-heading p {
-font-size: 12px;
-}
-.feature-card {
-padding: 16px 12px;
-}
-.footer-note {
-padding: 20px 3%;
-font-size: 11px;
-}
-.modal {
-padding: 24px 20px;
-}
-}
-/* ── MOBILE MODAL FIX ── */
-@media (max-width: 768px) {
-.modal-overlay.show {
-display: flex;
-z-index: 9999;
-padding: 16px;
-align-items: center;
-justify-content: center;
-}
-.modal {
-max-width: 100%;
-max-height: 90vh;
-overflow-y: auto;
-padding: 28px 20px;
-}
-/* Prevent the mobile-menu from sitting on top of the modal */
-.nav-actions.mobile-menu {
-z-index: 100;
-}
+  nav { padding: 12px 3%; }
+  .logo-s-wrap { width: 36px; height: 36px; }
+  .logo-s-wrap .big-s { font-size: 18px; }
+  .logo-uwe { font-size: 16px; }
+  .hero h1 { font-size: 28px; }
+  .stats { padding: 20px 3%; }
+  .features-wrap { padding: 30px 3%; }
+  .modal { padding: 24px 20px; }
 }
 </style>
 </head>
 <body>
-<!-- ══ LOADING OVERLAY ══ -->
+
+<!-- LOADING OVERLAY -->
 <div id="loading-overlay">
-<div class="spinner"></div>
-<p style="color:var(--text-muted); font-size:14px;">Connecting your
-account...</p>
+  <div class="spinner"></div>
+  <p style="color:var(--text-muted); font-size:14px;">Connecting your account...</p>
 </div>
-<!-- ══ LOGIN MODAL ══ -->
+
+<!-- LOGIN MODAL -->
 <div class="modal-overlay" id="login-modal">
-<div class="modal">
-<!-- Left side decorations -->
-<div class="modal-decoration-container modal-decoration-left">
-<div class="decoration-item">₦</div>
-<div class="decoration-item">💵</div>
-<div class="decoration-item">👩‍🍳</div>
-<div class="decoration-item">💰</div>
-<div class="decoration-item">🏪</div>
+  <div class="modal">
+    <div class="modal-decoration-container modal-decoration-left">
+      <div class="decoration-item">₦</div>
+      <div class="decoration-item">💵</div>
+      <div class="decoration-item">👩‍🍳</div>
+      <div class="decoration-item">💰</div>
+      <div class="decoration-item">🏪</div>
+    </div>
+    <div class="modal-decoration-container modal-decoration-right">
+      <div class="decoration-item">💵</div>
+      <div class="decoration-item">₦</div>
+      <div class="decoration-item">🛍️</div>
+      <div class="decoration-item">👨‍🍳</div>
+      <div class="decoration-item">💳</div>
+    </div>
+    <button class="modal-close" id="close-login">✕</button>
+    <div class="modal-logo">
+      <div class="modal-logo-tile"><span>S</span></div>
+      <div class="modal-logo-text">UWE</div>
+    </div>
+    <h2>Welcome back</h2>
+    <p class="modal-sub">Sign in to your SUWE account to continue where you left off.</p>
+    <div class="modal-error" id="login-error"></div>
+    <button class="btn-oauth btn-google" id="login-google-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      Continue with Google
+    </button>
+    <div class="auth-divider"><span>or</span></div>
+    <div class="form-group">
+      <label>Email address</label>
+      <input type="email" id="login-email" placeholder="you@example.com"/>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <div class="password-input-wrapper">
+        <input type="password" id="login-password" placeholder="Your password"/>
+        <button type="button" class="password-toggle" id="login-password-toggle">👁️</button>
+      </div>
+    </div>
+    <button class="btn-modal-submit" id="login-submit">Sign in</button>
+    <div class="modal-switch">Don't have an account? <a id="switch-to-signup">Create one</a></div>
+  </div>
 </div>
-<!-- Right side decorations -->
-<div class="modal-decoration-container modal-decoration-right">
-<div class="decoration-item">💵</div>
-<div class="decoration-item">₦</div>
-<div class="decoration-item">🛍️</div>
-<div class="decoration-item">👨‍🍳</div>
-<div class="decoration-item">💳</div>
-</div>
-<button class="modal-close" id="close-login">✕</button>
-<div class="modal-logo">
-<div class="modal-logo-tile"><span>S</span></div>
-<div class="modal-logo-text">UWE</div>
-</div>
-<h2>Welcome back</h2>
-<p class="modal-sub">Sign in to your SUWE account to continue where
-you left off.</p>
-<div class="modal-error" id="login-error"></div>
-<button class="btn-oauth btn-google" id="login-google-btn">
-<svg width="20" height="20" viewBox="0 0 24 24"
-xmlns="http://www.w3.org/2000/svg">
-<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26
-1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-fill="#4285F4"/>
-<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23
-1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12
-23z" fill="#34A853"/>
-<path d="M5.84
-14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1
-10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97
-1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-fill="#EA4335"/>
-</svg>
-Continue with Google
-</button>
-<div class="auth-divider"><span>or</span></div>
-<div class="form-group">
-<label>Email address</label>
-<input type="email" id="login-email"
-placeholder="you@example.com"/>
-</div>
-<div class="form-group">
-<label>Password</label>
-<div class="password-input-wrapper">
-<input type="password" id="login-password" placeholder="Your
-password"/>
-<button type="button" class="password-toggle"
-id="login-password-toggle">👁️</button>
-</div>
-</div>
-<button class="btn-modal-submit" id="login-submit">Sign
-in</button>
-<div class="modal-switch">
-Don't have an account? <a id="switch-to-signup">Create one</a>
-</div>
-</div>
-</div>
-<!-- ══ SIGNUP MODAL ══ -->
+
+<!-- SIGNUP MODAL -->
 <div class="modal-overlay" id="signup-modal">
-<div class="modal">
-<!-- Left side decorations -->
-<div class="modal-decoration-container modal-decoration-left">
-<div class="decoration-item">💰</div>
-<div class="decoration-item">💵</div>
-<div class="decoration-item">🛒</div>
-<div class="decoration-item">₦</div>
-<div class="decoration-item">🏬</div>
+  <div class="modal">
+    <div class="modal-decoration-container modal-decoration-left">
+      <div class="decoration-item">💰</div>
+      <div class="decoration-item">💵</div>
+      <div class="decoration-item">🛒</div>
+      <div class="decoration-item">₦</div>
+      <div class="decoration-item">🏬</div>
+    </div>
+    <div class="modal-decoration-container modal-decoration-right">
+      <div class="decoration-item">👩‍🎨</div>
+      <div class="decoration-item">💳</div>
+      <div class="decoration-item">💎</div>
+      <div class="decoration-item">🛍️</div>
+      <div class="decoration-item">📦</div>
+    </div>
+    <button class="modal-close" id="close-signup">✕</button>
+    <div class="modal-logo">
+      <div class="modal-logo-tile"><span>S</span></div>
+      <div class="modal-logo-text">UWE</div>
+    </div>
+    <h2>Join SUWE</h2>
+    <p class="modal-sub">Create your free account and start running your market business smarter.</p>
+    <div class="modal-error" id="signup-error"></div>
+    <button class="btn-oauth btn-google" id="signup-google-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      Continue with Google
+    </button>
+    <div class="auth-divider"><span>or</span></div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Full name</label>
+        <input type="text" id="signup-name" placeholder="Amaka Okonkwo"/>
+      </div>
+      <div class="form-group">
+        <label>Email address</label>
+        <input type="email" id="signup-email" placeholder="you@example.com"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <div class="password-input-wrapper">
+        <input type="password" id="signup-password" placeholder="At least 8 characters"/>
+        <button type="button" class="password-toggle" id="signup-password-toggle">👁️</button>
+      </div>
+      <div class="password-min-length" id="password-min-length-error">Password must be at least 8 characters</div>
+    </div>
+    <div class="form-group">
+      <label>Confirm Password</label>
+      <div class="password-input-wrapper">
+        <input type="password" id="signup-password-confirm" placeholder="Re-enter your password"/>
+        <button type="button" class="password-toggle" id="signup-password-confirm-toggle">👁️</button>
+      </div>
+      <div class="password-mismatch" id="password-mismatch-error">Passwords do not match</div>
+    </div>
+    <button class="btn-modal-submit" id="signup-submit">Create account</button>
+    <div class="modal-switch">Already have an account? <a id="switch-to-login">Sign in</a></div>
+  </div>
 </div>
-<!-- Right side decorations -->
-<div class="modal-decoration-container modal-decoration-right">
-<div class="decoration-item">👩‍🎨</div>
-<div class="decoration-item">💳</div>
-<div class="decoration-item">💎</div>
-<div class="decoration-item">🛍️</div>
-<div class="decoration-item">📦</div>
-</div>
-<button class="modal-close" id="close-signup">✕</button>
-<div class="modal-logo">
-<div class="modal-logo-tile"><span>S</span></div>
-<div class="modal-logo-text">UWE</div>
-</div>
-<h2>Join SUWE</h2>
-<p class="modal-sub">Create your free account and start running your
-market business smarter.</p>
-<div class="modal-error" id="signup-error"></div>
-<button class="btn-oauth btn-google" id="signup-google-btn">
-<svg width="20" height="20" viewBox="0 0 24 24"
-xmlns="http://www.w3.org/2000/svg">
-<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26
-1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-fill="#4285F4"/>
-<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23
-1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12
-23z" fill="#34A853"/>
-<path d="M5.84
-14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1
-10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97
-1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-fill="#EA4335"/>
-</svg>
-Continue with Google
-</button>
-<div class="auth-divider"><span>or</span></div>
-<div class="form-row">
-<div class="form-group">
-<label>Full name</label>
-<input type="text" id="signup-name" placeholder="Amaka
-Okonkwo"/>
-</div>
-<div class="form-group">
-<label>Email address</label>
-<input type="email" id="signup-email"
-placeholder="you@example.com"/>
-</div>
-</div>
-<div class="form-group password-group">
-<div class="form-group">
-<label>Password</label>
-<div class="password-input-wrapper">
-<input type="password" id="signup-password" placeholder="At least
-8 characters"/>
-<button type="button" class="password-toggle"
-id="signup-password-toggle">👁️</button>
-</div>
-<div class="password-min-length"
-id="password-min-length-error">Password must be at least 8
-characters</div>
-</div>
-<div class="form-group">
-<label>Confirm Password</label>
-<div class="password-input-wrapper">
-<input type="password" id="signup-password-confirm"
-placeholder="Re-enter your password"/>
-<button type="button" class="password-toggle"
-id="signup-password-confirm-toggle">👁️</button>
-</div>
-<div class="password-mismatch"
-id="password-mismatch-error">Passwords do not match</div>
-</div>
-</div>
-<button class="btn-modal-submit" id="signup-submit">Create
-account</button>
-<div class="modal-switch">
-Already have an account? <a id="switch-to-login">Sign in</a>
-</div>
-</div>
-</div>
-<!-- ══ NAVIGATION ══ -->
+
+<!-- NAVIGATION -->
 <nav>
-<div class="nav-logo">
-<div class="logo-s-wrap">
-<span class="big-s">S</span>
-<div class="logo-coin">₦</div>
-</div>
-<span class="logo-uwe">UWE</span>
-</div>
-<div class="nav-actions">
-<button class="btn-nav-login" id="nav-login-btn">Log in</button>
-<button class="btn-nav-signup" id="nav-signup-btn">Sign up
-free</button>
-</div>
-<!-- Hamburger Menu Button (for mobile) -->
-<button class="hamburger-menu" id="hamburger-toggle">
-<span></span>
-<span></span>
-<span></span>
-</button>
-<!-- Mobile Menu Dropdown -->
-<div class="nav-actions mobile-menu" id="mobile-menu">
-<button class="btn-nav-login" id="mobile-login-btn"
-onclick="event.stopPropagation();
-document.getElementById('mobile-menu').classList.remove('show');
-document.getElementById('hamburger-toggle').classList.remove('active');
-document.getElementById('login-modal').classList.add('show');">Log
-in</button>
-<button class="btn-nav-signup" id="mobile-signup-btn"
-onclick="event.stopPropagation();
-document.getElementById('mobile-menu').classList.remove('show');
-document.getElementById('hamburger-toggle').classList.remove('active');
-document.getElementById('signup-modal').classList.add('show');">Sign
-up free</button>
-</div>
+  <div class="nav-logo">
+    <div class="logo-s-wrap">
+      <span class="big-s">S</span>
+      <div class="logo-coin">₦</div>
+    </div>
+    <span class="logo-uwe">UWE</span>
+  </div>
+  <div class="nav-actions" id="desktop-nav">
+    <button class="btn-nav-login" id="nav-login-btn">Log in</button>
+    <button class="btn-nav-signup" id="nav-signup-btn">Sign up free</button>
+  </div>
+  <button class="hamburger-menu" id="hamburger-toggle">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-actions mobile-menu" id="mobile-menu">
+    <button class="btn-nav-login" id="mobile-login-btn">Log in</button>
+    <button class="btn-nav-signup" id="mobile-signup-btn">Sign up free</button>
+  </div>
 </nav>
-<!-- ══ HERO ══ -->
+
+<!-- HERO -->
 <section class="hero">
-<div class="hero-badge">🌱 Now open for vendors across
-Africa</div>
-<h1>Your market.<br/>Your money.<br/><span class="gold">Your
-future.</span></h1>
-<p class="hero-desc">
-SUWE is the first platform built specifically for Africans market
-traders ---
-combining AI business intelligence, a trusted digital ajo savings
-system,
-and a trade community network in one place.
-</p>
-<p class="hero-desc-2">
-Whether you sell tomatoes in Oshodi, fabric in Onitsha, or electronics
-on Lagos Island --- SUWE helps you understand your real profit, save
-with
-people you can trust, and connect with vendors who can help you grow.
-No spreadsheets. No handshake agreements. Just clarity.
-</p>
-<div class="auth-buttons">
-<!-- Google -->
-<button class="btn-oauth btn-google" id="google-btn">
-<svg width="20" height="20" viewBox="0 0 24 24"
-xmlns="http://www.w3.org/2000/svg">
-<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26
-1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-fill="#4285F4"/>
-<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23
-1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12
-23z" fill="#34A853"/>
-<path d="M5.84
-14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1
-10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97
-1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-fill="#EA4335"/>
-</svg>
-Continue with Google
-</button>
-<div class="auth-divider"><span>or</span></div>
-<!-- Email signup -->
-<button class="btn-email-signup" id="email-signup-btn">
-✉ Sign up with email
-</button>
-<p class="auth-note">Free forever. No credit card required.</p>
-</div>
+  <div class="hero-badge">🌱 Now open for vendors across Africa</div>
+  <h1>Your market.<br/>Your money.<br/><span class="gold">Your future.</span></h1>
+  <p class="hero-desc">
+    SUWE is the first platform built specifically for African market traders —
+    combining AI business intelligence, a trusted digital ajo savings system,
+    and a trade community network in one place.
+  </p>
+  <p class="hero-desc-2">
+    Whether you sell tomatoes in Oshodi, fabric in Onitsha, or electronics on Lagos Island —
+    SUWE helps you understand your real profit, save with people you can trust,
+    and connect with vendors who can help you grow. No spreadsheets. No handshake agreements. Just clarity.
+  </p>
+  <div class="auth-buttons">
+    <button class="btn-oauth btn-google" id="google-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      Continue with Google
+    </button>
+    <div class="auth-divider"><span>or</span></div>
+    <button class="btn-email-signup" id="email-signup-btn">✉ Sign up with email</button>
+    <p class="auth-note">Free forever. No credit card required.</p>
+  </div>
 </section>
-<!-- ══ STATS ══ -->
+
+<!-- STATS -->
 <div class="stats">
-<div class="stat-item">
-<div class="stat-number">40M+</div>
-<div class="stat-label">Informal traders in Nigeria</div>
+  <div class="stat-item">
+    <div class="stat-number">40M+</div>
+    <div class="stat-label">Informal traders in Nigeria</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">₦0</div>
+    <div class="stat-label">Cost to join SUWE</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">3</div>
+    <div class="stat-label">Tools in one platform</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">100%</div>
+    <div class="stat-label">Interswitch-secured funds</div>
+  </div>
 </div>
-<div class="stat-item">
-<div class="stat-number">₦0</div>
-<div class="stat-label">Cost to join SUWE</div>
-</div>
-<div class="stat-item">
-<div class="stat-number">3</div>
-<div class="stat-label">Tools in one platform</div>
-</div>
-<div class="stat-item">
-<div class="stat-number">100%</div>
-<div class="stat-label">Interswitch-secured funds</div>
-</div>
-</div>
-<!-- ══ FEATURES ══ -->
+
+<!-- FEATURES -->
 <div class="features-wrap">
-<div class="features-heading">
-<h2>Everything your business needs</h2>
-<p>Three powerful tools working together --- because your business,
-your savings, and your community should never be separated.</p>
+  <div class="features-heading">
+    <h2>Everything your business needs</h2>
+    <p>Three powerful tools working together — because your business, your savings, and your community should never be separated.</p>
+  </div>
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon icon-purple">🧠</div>
+      <div class="feature-title">AI Business Tracker</div>
+      <div class="feature-desc">Log what you sold today and let SUWE's AI calculate your real profit, spot which products are actually making you money, and predict price movements in your local market for the next 2 to 4 weeks.</div>
+      <div class="feature-extra">Most market traders confuse revenue with profit. SUWE shows you the real number — so you stop guessing and start growing.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon icon-green">🔄</div>
+      <div class="feature-title">Trusted Ajo System</div>
+      <div class="feature-desc">Join rotating savings groups matched by a Business Credit Score built from your actual trading activity — not just a name or phone number. Every naira is managed exclusively by Interswitch.</div>
+      <div class="feature-extra">No more ajo groups collapsing because of one bad actor. SUWE only matches you with vendors whose businesses back up their word.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon icon-amber">🤝</div>
+      <div class="feature-title">Trade Community</div>
+      <div class="feature-desc">Connect with vendors across your market for bulk buying, price coordination, and supplier recommendations through a structured trade board built for market traders.</div>
+      <div class="feature-extra">10 traders buying fertilizer together pay 37% less than buying alone. SUWE makes that coordination effortless.</div>
+    </div>
+  </div>
 </div>
-<div class="features">
-<div class="feature-card">
-<div class="feature-icon icon-purple">🧠</div>
-<div class="feature-title">AI Business Tracker</div>
-<div class="feature-desc">
-Log what you sold today and let SUWE's AI calculate your real profit,
-spot which products are actually making you money, and predict
-price movements in your local market for the next 2 to 4 weeks.
-</div>
-<div class="feature-extra">
-Most market traders confuse revenue with profit. SUWE shows you the real
-number --- so you stop guessing and start growing.
-</div>
-</div>
-<div class="feature-card">
-<div class="feature-icon icon-green">🔄</div>
-<div class="feature-title">Trusted Ajo System</div>
-<div class="feature-desc">
-Join rotating savings groups matched by a Business Credit Score
-built from your actual trading activity --- not just a name or phone
-number. Every naira is managed exclusively by Interswitch.
-</div>
-<div class="feature-extra">
-No more ajo groups collapsing because of one bad actor. SUWE only
-matches you with vendors whose businesses back up their word.
-</div>
-</div>
-<div class="feature-card">
-<div class="feature-icon icon-amber">🤝</div>
-<div class="feature-title">Trade Community</div>
-<div class="feature-desc">
-Connect with vendors across your market for bulk buying,
-price coordination, and supplier recommendations through
-a structured trade board built for market traders.
-</div>
-<div class="feature-extra">
-10 traders buying fertilizer together pay 37% less than
-buying alone. SUWE makes that coordination effortless.
-</div>
-</div>
-</div>
-</div>
-<!-- ══ FOOTER ══ -->
+
+<!-- FOOTER -->
 <div class="footer-note">
-Payments powered by <span>Interswitch</span> · Built with care for
-Nigeria's 40 million market traders
+  Payments powered by <span>Interswitch</span> · Built with care for Nigeria's 40 million market traders
 </div>
-<!-- ══ JAVASCRIPT ══ -->
+
 <script type="module">
-import { createClient } from
-'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-// ── Replace these with your actual Supabase credentials ──
-const SUPABASE_URL = 'https://jqfmybadioqbmrkrsvbl.supabase.co';
-const SUPABASE_ANON_KEY =
-'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpxZm15YmFkaW9xYm1ya3JzdmJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNjczMTIsImV4cCI6MjA4OTg0MzMxMn0.R58UVPxWfNoyOwKB3qIelhp35zcmNcVMhgWwSEpDkE4';
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+const SUPABASE_URL      = 'https://jqfmybadioqbmrkrsvbl.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpxZm15YmFkaW9xYm1ya3JzdmJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNjczMTIsImV4cCI6MjA4OTg0MzMxMn0.R58UVPxWfNoyOwKB3qIelhp35zcmNcVMhgWwSEpDkE4';
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-// ─────────────────────────────────────────────────
-// Get correct redirect URL for OAuth
-// ─────────────────────────────────────────────────
-function getOnboardingRedirectURL() {
-  return window.location.origin + '/frontend/pages/onboarding.html';
-}
-// ─────────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────────
-const showLoading = () =>
-document.getElementById('loading-overlay').classList.add('show');
-const hideLoading = () =>
-document.getElementById('loading-overlay').classList.remove('show');
-const showModal = id =>
-document.getElementById(id).classList.add('show');
-const hideModal = id =>
-document.getElementById(id).classList.remove('show');
-const showError = (id, msg) => {
-const el = document.getElementById(id);
-el.textContent = msg;
-el.classList.add('show');
-};
-const hideError = id =>
-document.getElementById(id).classList.remove('show');
-// ─────────────────────────────────────────────────
-// Check session — handle OAuth callbacks correctly
+
+// ── Helpers ──────────────────────────────────────────
+const showLoading = () => document.getElementById('loading-overlay').classList.add('show');
+const hideLoading = () => document.getElementById('loading-overlay').classList.remove('show');
+const showModal   = id => document.getElementById(id).classList.add('show');
+const hideModal   = id => document.getElementById(id).classList.remove('show');
+const showError   = (id, msg) => { const el = document.getElementById(id); el.textContent = msg; el.classList.add('show'); };
+const hideError   = id => document.getElementById(id).classList.remove('show');
+
+// ── Redirect helpers ──────────────────────────────────
+const ONBOARDING = '/frontend/pages/onboarding.html';
+const DASHBOARD  = '/frontend/pages/dashboard.html';
+
+// ── Session check on page load ────────────────────────
 async function checkSession() {
   try {
-    // Detect if arriving from Google OAuth redirect
     const hasOAuthParams =
       window.location.hash.includes('access_token') ||
       window.location.search.includes('code=');
 
-    // Plain landing page visit (no OAuth) — sign out and show homepage
     if (!hasOAuthParams) {
       await supabase.auth.signOut();
       return;
     }
 
-    // OAuth redirect — let Supabase exchange the code for a session
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    // Check if user has a completed profile (phone = completed onboarding)
     const { data: profile } = await supabase
       .from('users')
-      .select('id, email, phone')
+      .select('id, phone')
       .or(`id.eq.${user.id},email.eq.${user.email}`)
       .maybeSingle();
 
     if (!profile || !profile.phone) {
-      window.location.href = '/frontend/pages/onboarding.html';
+      window.location.href = ONBOARDING;
       return;
     }
 
-    // Sync Google account to existing email account if ids differ
-    if (profile.id !== user.id) {
-      await supabase.from('users').upsert({
-        id: user.id,
-        email: user.email,
-        full_name: user.user_metadata?.full_name || profile.full_name || '',
-      }, { onConflict: 'id' });
-    }
-
-    window.location.href = '/frontend/pages/dashboard.html';
+    window.location.href = DASHBOARD;
   } catch (err) {
     console.warn('Session check error:', err);
   }
 }
 checkSession();
-// ─────────────────────────────────────────────────
-// Google OAuth Handler
-// Reusable function for all Google OAuth buttons
-// ─────────────────────────────────────────────────
+
+// ── Google OAuth ──────────────────────────────────────
 async function handleGoogleOAuth() {
-showLoading();
-const { error } = await supabase.auth.signInWithOAuth({
-provider: 'google',
-options: {
-redirectTo: getOnboardingRedirectURL()
+  showLoading();
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin + ONBOARDING }
+  });
+  if (error) { hideLoading(); alert('Google sign in failed: ' + error.message); }
 }
+
+document.getElementById('google-btn').addEventListener('click', handleGoogleOAuth);
+document.getElementById('login-google-btn').addEventListener('click', handleGoogleOAuth);
+document.getElementById('signup-google-btn').addEventListener('click', handleGoogleOAuth);
+
+// ── Email Sign Up ─────────────────────────────────────
+document.getElementById('signup-submit').addEventListener('click', async () => {
+  hideError('signup-error');
+  const name     = document.getElementById('signup-name').value.trim();
+  const email    = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value;
+  const confirm  = document.getElementById('signup-password-confirm').value;
+
+  if (!name || !email || !password) { showError('signup-error', 'Please fill in all fields.'); return; }
+  if (password.length < 8)          { showError('signup-error', 'Password must be at least 8 characters.'); return; }
+  if (password !== confirm)         { showError('signup-error', 'Passwords do not match.'); return; }
+
+  showLoading();
+  const { data, error } = await supabase.auth.signUp({
+    email, password,
+    options: { data: { full_name: name } }
+  });
+  hideLoading();
+
+  if (error) {
+    const msg = error.message.toLowerCase();
+    if (msg.includes('already registered') || msg.includes('already exists')) {
+      showError('signup-error', 'This email is already registered. Please log in.');
+    } else if (msg.includes('rate limit') || msg.includes('too many')) {
+      showError('signup-error', 'Too many attempts. Please wait a moment and try again.');
+    } else {
+      showError('signup-error', error.message);
+    }
+    return;
+  }
+
+  // Save initial user row
+  const userId = data?.user?.id || data?.session?.user?.id;
+  if (userId) {
+    await supabase.from('users').upsert({ id: userId, email, full_name: name }, { onConflict: 'id' });
+  }
+
+  hideModal('signup-modal');
+  window.location.href = ONBOARDING;
 });
-if (error) {
-hideLoading();
-alert('Google sign in failed: ' + error.message);
-}
-}
-// Google button on hero section
-document.getElementById('google-btn').addEventListener('click',
-handleGoogleOAuth);
-// Google button on login modal
-document.getElementById('login-google-btn').addEventListener('click',
-handleGoogleOAuth);
-// Google button on signup modal
-document.getElementById('signup-google-btn').addEventListener('click',
-handleGoogleOAuth);
-// ─────────────────────────────────────────────────
-// Email Sign Up (new users with no Google/Facebook)
-// ─────────────────────────────────────────────────
-document.getElementById('signup-submit').addEventListener('click',
-async () => {
-hideError('signup-error');
-const name = document.getElementById('signup-name').value.trim();
-const email = document.getElementById('signup-email').value.trim();
-const password = document.getElementById('signup-password').value;
-const confirmPassword =
-document.getElementById('signup-password-confirm').value;
-// Basic validation before hitting the API
-if (!name || !email || !password) {
-showError('signup-error', 'Please fill in all fields.');
-return;
-}
-if (password.length < 8) {
-showError('signup-error', 'Password must be at least 8
-characters.');
-return;
-}
-if (password !== confirmPassword) {
-showError('signup-error', 'Passwords do not match.');
-return;
-}
-showLoading();
-const { data, error } = await supabase.auth.signUp({
-email,
-password,
-options: {
-// Pass the name through so onboarding can pre-fill it
-data: { full_name: name }
-}
+
+// ── Email Login ───────────────────────────────────────
+document.getElementById('login-submit').addEventListener('click', async () => {
+  hideError('login-error');
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+
+  if (!email || !password) { showError('login-error', 'Please enter your email and password.'); return; }
+
+  showLoading();
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  hideLoading();
+
+  if (error) { showError('login-error', 'Incorrect email or password. Please try again.'); return; }
+
+  // Check if profile is complete
+  const { data: profile } = await supabase
+    .from('users')
+    .select('id, phone')
+    .eq('id', data.user.id)
+    .maybeSingle();
+
+  window.location.href = (profile && profile.phone) ? DASHBOARD : ONBOARDING;
 });
-hideLoading();
-if (error) {
-const stmt = error.message.toLowerCase();
-if (stmt.includes('already registered') || stmt.includes('already
-exists') || stmt.includes('user already exists')) {
-showError('signup-error', 'This email is already in our system.
-Please log in or reset your password.');
-} else if (stmt.includes('rate limit') || stmt.includes('email rate
-exceeded') || stmt.includes('too many requests')) {
-showError('signup-error', 'Too many sign-up attempts. Please wait a
-moment and try again.');
-} else {
-showError('signup-error', error.message);
-}
-return;
-}
-// Store initial user row to avoid empty profile rows on later login.
-const userId = data?.user?.id || data?.session?.user?.id;
-let authUser = userId ? { id: userId, email, full_name: name } : null;
-if (!authUser) {
-const getUserResp = await supabase.auth.getUser();
-if (getUserResp?.data?.user?.id) {
-authUser = { id: getUserResp.data.user.id, email, full_name: name };
-}
-}
-if (authUser) {
-await supabase.from('users').upsert(authUser, { onConflict: 'id' });
-}
-// New account created. Redirect to onboarding.
-hideModal('signup-modal');
-window.location.href = '/frontend/pages/onboarding.html';
-});
-// ─────────────────────────────────────────────────
-// Email Login (returning users)
-// ─────────────────────────────────────────────────
-document.getElementById('login-submit').addEventListener('click',
-async () => {
-hideError('login-error');
-const email = document.getElementById('login-email').value.trim();
-const password = document.getElementById('login-password').value;
-if (!email || !password) {
-showError('login-error', 'Please enter your email and password.');
-return;
-}
-showLoading();
-const { data, error } = await supabase.auth.signInWithPassword({ email,
-password });
-hideLoading();
-if (error) {
-showError('login-error', 'Incorrect email or password. Please try
-again.');
-return;
-}
-// Logged in --- check if they have a profile
-const { data: profile } = await supabase
-.from('users')
-.select('id')
-.eq('id', data.user.id)
-.single();
-if (profile) {
-window.location.href = 'pages/dashboard.html';
-} else {
-window.location.href = 'pages/onboarding.html';
-}
-});
-// ─────────────────────────────────────────────────
-// Modal open / close / switch logic
-// ─────────────────────────────────────────────────
-document.getElementById('nav-login-btn').addEventListener('click',
-() => showModal('login-modal'));
-document.getElementById('nav-signup-btn').addEventListener('click',
-() => showModal('signup-modal'));
-document.getElementById('email-signup-btn').addEventListener('click',
-() => showModal('signup-modal'));
-document.getElementById('close-login').addEventListener('click', ()
-=> hideModal('login-modal'));
-document.getElementById('close-signup').addEventListener('click', ()
-=> hideModal('signup-modal'));
-// Switch between modals
-document.getElementById('switch-to-signup').addEventListener('click',
-() => {
-hideModal('login-modal');
-showModal('signup-modal');
-});
-document.getElementById('switch-to-login').addEventListener('click',
-() => {
-hideModal('signup-modal');
-showModal('login-modal');
-});
-// Close modal when clicking outside the modal box
-document.getElementById('login-modal').addEventListener('click', e
-=> {
-if (e.target === document.getElementById('login-modal'))
-hideModal('login-modal');
-});
-document.getElementById('signup-modal').addEventListener('click', e
-=> {
-if (e.target === document.getElementById('signup-modal'))
-hideModal('signup-modal');
-});
-// ─────────────────────────────────────────────────
-// Hamburger Menu Toggle for Mobile
-// ─────────────────────────────────────────────────
-const hamburger = document.getElementById('hamburger-toggle');
+
+// ── Modal open / close / switch ───────────────────────
+document.getElementById('nav-login-btn').addEventListener('click',   () => showModal('login-modal'));
+document.getElementById('nav-signup-btn').addEventListener('click',  () => showModal('signup-modal'));
+document.getElementById('email-signup-btn').addEventListener('click',() => showModal('signup-modal'));
+document.getElementById('close-login').addEventListener('click',     () => hideModal('login-modal'));
+document.getElementById('close-signup').addEventListener('click',    () => hideModal('signup-modal'));
+document.getElementById('switch-to-signup').addEventListener('click',() => { hideModal('login-modal');  showModal('signup-modal'); });
+document.getElementById('switch-to-login').addEventListener('click', () => { hideModal('signup-modal'); showModal('login-modal');  });
+
+document.getElementById('login-modal').addEventListener('click',  e => { if (e.target === document.getElementById('login-modal'))  hideModal('login-modal');  });
+document.getElementById('signup-modal').addEventListener('click', e => { if (e.target === document.getElementById('signup-modal')) hideModal('signup-modal'); });
+
+// ── Hamburger menu ────────────────────────────────────
+const hamburger  = document.getElementById('hamburger-toggle');
 const mobileMenu = document.getElementById('mobile-menu');
-const mobilLoginBtn = document.getElementById('mobile-login-btn');
-const mobileSignupBtn = document.getElementById('mobile-signup-btn');
-hamburger.addEventListener('click', (e) => {
-// Don't toggle if clicking inside the mobile menu
-if (e.target.closest('#mobile-menu')) {
-return;
-}
-e.stopPropagation();
-hamburger.classList.toggle('active');
-mobileMenu.classList.toggle('show');
+
+hamburger.addEventListener('click', e => {
+  e.stopPropagation();
+  hamburger.classList.toggle('active');
+  mobileMenu.classList.toggle('show');
 });
-// Mobile Login Button
-mobilLoginBtn.addEventListener('click', (e) => {
-e.preventDefault();
-e.stopPropagation();
-hamburger.classList.remove('active');
-mobileMenu.classList.remove('show');
-// Add small delay to ensure menu closes before modal opens
-setTimeout(() => {
-showModal('login-modal');
-}, 100);
+
+document.getElementById('mobile-login-btn').addEventListener('click', e => {
+  e.stopPropagation();
+  hamburger.classList.remove('active');
+  mobileMenu.classList.remove('show');
+  setTimeout(() => showModal('login-modal'), 100);
 });
-// Mobile Signup Button
-mobileSignupBtn.addEventListener('click', (e) => {
-e.preventDefault();
-e.stopPropagation();
-hamburger.classList.remove('active');
-mobileMenu.classList.remove('show');
-// Add small delay to ensure menu closes before modal opens
-setTimeout(() => {
-showModal('signup-modal');
-}, 100);
+
+document.getElementById('mobile-signup-btn').addEventListener('click', e => {
+  e.stopPropagation();
+  hamburger.classList.remove('active');
+  mobileMenu.classList.remove('show');
+  setTimeout(() => showModal('signup-modal'), 100);
 });
-// Close menu when clicking outside
-document.addEventListener('click', (e) => {
-// Don't close if clicking on hamburger, mobile menu, buttons inside
-mobile menu, or any modal
-if (e.target.closest('nav') ||
-e.target.closest('.modal-overlay') ||
-e.target.closest('#mobile-menu') ||
-e.target.closest('.btn-nav-login') ||
-e.target.closest('.btn-nav-signup')) {
-return;
-}
-hamburger.classList.remove('active');
-mobileMenu.classList.remove('show');
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('nav') && !e.target.closest('.modal-overlay')) {
+    hamburger.classList.remove('active');
+    mobileMenu.classList.remove('show');
+  }
 });
-// ─────────────────────────────────────────────────
-// Password Visibility Toggle
-// ─────────────────────────────────────────────────
+
+// ── Password visibility toggle ────────────────────────
 function togglePasswordVisibility(inputId, toggleId) {
-const input = document.getElementById(inputId);
-const toggle = document.getElementById(toggleId);
-toggle.addEventListener('click', (e) => {
-e.preventDefault();
-if (input.type === 'password') {
-input.type = 'text';
-toggle.textContent = '👁️‍🗨️';
-} else {
-input.type = 'password';
-toggle.textContent = '👁️';
+  const input  = document.getElementById(inputId);
+  const toggle = document.getElementById(toggleId);
+  toggle.addEventListener('click', e => {
+    e.preventDefault();
+    input.type = input.type === 'password' ? 'text' : 'password';
+    toggle.textContent = input.type === 'password' ? '👁️' : '👁️‍🗨️';
+  });
 }
-});
-}
-// Initialize password visibility toggles
-togglePasswordVisibility('login-password', 'login-password-toggle');
-togglePasswordVisibility('signup-password',
-'signup-password-toggle');
-togglePasswordVisibility('signup-password-confirm',
-'signup-password-confirm-toggle');
-// ─────────────────────────────────────────────────
-// Password Confirmation Validation
-// ─────────────────────────────────────────────────
-const signupPassword = document.getElementById('signup-password');
-const signupPasswordConfirm =
-document.getElementById('signup-password-confirm');
-const passwordMismatchError =
-document.getElementById('password-mismatch-error');
-const passwordMinLengthError =
-document.getElementById('password-min-length-error');
-const signupSubmitBtn = document.getElementById('signup-submit');
+togglePasswordVisibility('login-password',          'login-password-toggle');
+togglePasswordVisibility('signup-password',         'signup-password-toggle');
+togglePasswordVisibility('signup-password-confirm', 'signup-password-confirm-toggle');
+
+// ── Password validation ───────────────────────────────
+const pwInput    = document.getElementById('signup-password');
+const pwConfirm  = document.getElementById('signup-password-confirm');
+const pwMinErr   = document.getElementById('password-min-length-error');
+const pwMismatch = document.getElementById('password-mismatch-error');
+const submitBtn  = document.getElementById('signup-submit');
+
 function checkPasswordValidation() {
-const password = signupPassword.value;
-const confirmPassword = signupPasswordConfirm.value;
-let hasError = false;
-// Check password length (minimum 8 characters)
-if (password.length > 0 && password.length < 8) {
-passwordMinLengthError.classList.add('show');
-hasError = true;
-} else {
-passwordMinLengthError.classList.remove('show');
+  const pw  = pwInput.value;
+  const cpw = pwConfirm.value;
+  let hasError = false;
+
+  if (pw.length > 0 && pw.length < 8) { pwMinErr.classList.add('show'); hasError = true; }
+  else { pwMinErr.classList.remove('show'); }
+
+  if (cpw !== '') {
+    if (pw !== cpw) { pwMismatch.classList.add('show'); hasError = true; }
+    else { pwMismatch.classList.remove('show'); }
+  } else { pwMismatch.classList.remove('show'); }
+
+  const valid = pw.length >= 8 && pw === cpw && cpw !== '';
+  submitBtn.disabled = !valid;
+  submitBtn.style.opacity = valid ? '1' : '0.6';
+  submitBtn.style.cursor  = valid ? 'pointer' : 'not-allowed';
 }
-// Check if passwords match (only if confirm password field has content)
-if (confirmPassword !== '') {
-if (password !== confirmPassword) {
-passwordMismatchError.classList.add('show');
-hasError = true;
-} else {
-passwordMismatchError.classList.remove('show');
-}
-} else {
-passwordMismatchError.classList.remove('show');
-}
-// Enable/disable submit button based on validation
-if (password.length >= 8 && password === confirmPassword &&
-confirmPassword !== '') {
-signupSubmitBtn.disabled = false;
-signupSubmitBtn.style.opacity = '1';
-signupSubmitBtn.style.cursor = 'pointer';
-} else {
-signupSubmitBtn.disabled = true;
-signupSubmitBtn.style.opacity = '0.6';
-signupSubmitBtn.style.cursor = 'not-allowed';
-}
-}
-// Listen for password changes
-signupPassword.addEventListener('input', checkPasswordValidation);
-signupPasswordConfirm.addEventListener('input',
-checkPasswordValidation);
+
+pwInput.addEventListener('input',   checkPasswordValidation);
+pwConfirm.addEventListener('input', checkPasswordValidation);
 </script>
-<!-- Hamburger Menu & Mobile Toggle Script -->
-<script src="js/main.js"></script>
+
 </body>
 </html>
