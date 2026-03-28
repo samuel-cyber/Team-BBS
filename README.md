@@ -17,6 +17,42 @@ Built for the 40 million+ informal traders in Nigeria who have never had access 
 
 ---
 
+
+## Tech Stack
+
+| Layer | Tool | Cost |
+|-------|------|------|
+| Frontend hosting | Vercel | Free |
+| Database + Auth | Supabase | Free |
+| Backend server | Node.js + Express | Free (Vercel serverless) |
+| Payments | Interswitch | Per transaction |
+| AI credit scoring | Claude API (Anthropic) | Pay per use |
+| Real-time feed | Supabase Realtime | Free |
+
+---
+
+## Integrated API'S
+
+1.BVN full Details API from interswitch's market place was intagrated for Identity verfication
+2.A Large Language model (Claude) is integrated into the backend for sugggestions based on a large datset of information concerning Nigerian traders (Please note that we used the free tier of Claude's API and as such the Ai suggestions used is limited tokens for testing
+3. Utilization of Hugging face model Illama
+4. Interswitches Payment Gateway (IPG) API from Quickteller was integrated Ajo group contributions. Handles automatic monthly collection and distribution so no member ever touches cash directly. (Note: Our quickteller dashboard was not allowed to go live so we use sandbox mode)
+
+Integration lives in `backend/server.js`.
+
+---
+
+---
+
+## Team
+
+| Role | Work done |
+|------|-----------|
+| Frontend | Landing page, Dashboard, Feed, Ajo, Credit Score page designs + logic |
+| Backend | Auth (Supabase), Onboarding, Sales & Inventory, server.js, Interswitch, Vercel deployment |
+
+---
+
 ## Pages Built
 
 | Page | File | Status |
@@ -61,19 +97,6 @@ BBS--SUWE/
 
 ---
 
-## Tech Stack
-
-| Layer | Tool | Cost |
-|-------|------|------|
-| Frontend hosting | Vercel | Free |
-| Database + Auth | Supabase | Free |
-| Backend server | Node.js + Express | Free (Vercel serverless) |
-| Payments | Interswitch | Per transaction |
-| AI credit scoring | Claude API (Anthropic) | Pay per use |
-| Real-time feed | Supabase Realtime | Free |
-
----
-
 ## Auth — What's Working
 
 | Method | Status |
@@ -95,27 +118,6 @@ Returning user → dashboard.html (straight in)
 
 ---
 
-## Integrated API'S
-
-1.BVN full Details API from interswitch's market place was intagrated for Identity verfication
-2.A Large Language model (Claude) is integrated into the backend for sugggestions based on a large datset of information concerning Nigerian traders (Please note that we used the free tier of Claude's API and as such the Ai suggestions used is limited tokens for testing
-3. Utilization of Hugging face model Illama
-4. Interswitches Payment Gateway (IPG) API from Quickteller was integrated Ajo group contributions. Handles automatic monthly collection and distribution so no member ever touches cash directly. (Note: Our quickteller dashboard was not allowed to go live so we use sandbox mode)
-
-Integration lives in `backend/server.js`.
-
----
-
----
-
-## Team
-
-| Role | Work done |
-|------|-----------|
-| Frontend | Landing page, Dashboard, Feed, Ajo, Credit Score page designs + logic |
-| Backend | Auth (Supabase), Onboarding, Sales & Inventory, server.js, Interswitch, Vercel deployment |
-
----
 
 ## Database — Supabase
 
