@@ -161,7 +161,7 @@ export async function getUserAjoGroupCount(userId) {
   return (data || []).length;
 }
 
-export async function getGroupMembers(groupId, backendUrl = 'https://team-bbs-sandy.vercel.app') {
+export async function getGroupMembers(groupId, backendUrl = 'https://team-bbs-ipxh.onrender.com') {
   try {
     const { data: { session } } = await supabase.auth.getSession();
     const res = await fetch(`${backendUrl}/api/group-members/${groupId}`, {
