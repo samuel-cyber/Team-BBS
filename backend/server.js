@@ -8,7 +8,7 @@ const { createClient } = require('@supabase/supabase-js');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors({
+/*app.use(cors({
   origin: [
     'https://team-bbs-sandy.vercel.app',
     'https://bbs-suwe.vercel.app',
@@ -16,7 +16,22 @@ app.use(cors({
     'http://127.0.0.1:5500'
   ],
   credentials: true
+}));*/
+
+app.use(cors({
+  origin: [
+    'https://team-bbs-sandy.vercel.app',      // your main frontend URL
+    'https://bbs-suwe.vercel.app',             // any other vercel URLs
+    'http://localhost:5500',
+    'http://127.0.0.1:5500',
+    'http://localhost:3000'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-suwe-secret']
 }));
+
+app.options('*', cors()); // ← ADD THIS LINE
 
 //app.use(cors({ origin: '*' }));
 app.use(express.json());
